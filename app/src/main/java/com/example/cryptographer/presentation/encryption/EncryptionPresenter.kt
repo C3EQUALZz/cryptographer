@@ -26,7 +26,7 @@ class EncryptionPresenter(
      * @param key Encryption key
      * @return Result with encrypted text (Base64 encoded) or error
      */
-    suspend fun encryptText(text: String, key: EncryptionKey): Result<EncryptedTextInfo> {
+    fun encryptText(text: String, key: EncryptionKey): Result<EncryptedTextInfo> {
         return try {
             logger.d("Encrypting text: length=${text.length}")
             
@@ -69,7 +69,7 @@ class EncryptionPresenter(
      * @param key Encryption key
      * @return Result with decrypted text or error
      */
-    suspend fun decryptText(
+    fun decryptText(
         encryptedBase64: String,
         ivBase64: String?,
         key: EncryptionKey
