@@ -37,13 +37,13 @@ import java.util.Objects
  */
 abstract class BaseEntity<OIDType>(
     val id: OIDType,
-    createdAt: Instant = Instant.now(),
-    updatedAt: Instant = Instant.now()
+    val createdAt: Instant = Instant.now(),
+    val updatedAt: Instant = Instant.now()
 ) {
     init {
         // Ensure timestamps are consistent
         if (updatedAt.isBefore(createdAt)) {
-            throw InconsistentTimeError.Companion.create(updatedAt, createdAt)
+            throw InconsistentTimeError.create(updatedAt, createdAt)
         }
     }
 
