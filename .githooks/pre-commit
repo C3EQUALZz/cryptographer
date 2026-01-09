@@ -1,0 +1,27 @@
+#!/bin/bash
+# Git pre-commit hook for Kotlin/Android project
+# This hook runs code quality checks before commit
+
+set -e
+
+echo "🔍 Running pre-commit checks..."
+
+# Format code automatically
+echo "📝 Formatting code with Spotless..."
+./gradlew spotlessApply
+
+# Check if there are uncommitted changes after formatting
+if ! git diff --quiet; then
+    echo "⚠️  Spotless made formatting changes. Please review and stage them:"
+    git diff --stat
+    echo ""
+    echo "Run 'git add .' to stage the formatted changes, then commit again."
+    exit 1
+fi
+
+# Run static analysis
+echo "🔎 Running Detekt static analysis..."
+./gradlew detekt
+
+echo "✅ All pre-commit checks passed!"
+

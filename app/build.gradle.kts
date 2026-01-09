@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.spotless)
+    alias(libs.plugins.detekt)
 }
 hilt {
     enableAggregatingTask = false
@@ -77,4 +79,93 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+}
+
+// Spotless configuration (code formatter - like ruff for Python)
+spotless {
+    kotlin {
+        target("**/*.kt")
+        targetExclude("**/build/**", "**/generated/**")
+        ktlint(libs.versions.ktlint.get())
+            .editorConfigOverride(
+                mapOf(
+                    "ktlint_standard_filename" to "disabled",
+                    "ktlint_standard_no-wildcard-imports" to "disabled"
+                )
+            )
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    kotlinGradle {
+        target("**/*.gradle.kts")
+        ktlint(libs.versions.ktlint.get())
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    format("xml") {
+        target("**/*.xml")
+        targetExclude("**/build/**", "**/generated/**")
+        trimTrailingWhitespace()
+        indentWithSpaces(4)
+        endWithNewline()
+    }
+}
+
+// Detekt configuration (static code analyzer - like mypy/pylint for Python)
+detekt {
+    buildUponDefaultConfig = true
+    allRules = false
+    config.setFrom(file("$rootDir/detekt.yml"))
+    baseline = file("$rootDir/detekt-baseline.xml")
+}
+
+tasks.named("check") {
+    dependsOn("spotlessCheck", "detekt")
+}
+
+tasks.named("spotlessApply") {
+    description = "Format code using Spotless (ktlint)"
+}
+
+tasks.named("detekt") {
+    description = "Run Detekt static code analysis"
+}
+
+// Task to install git hooks
+tasks.register("installGitHooks") {
+    description = "Install git hooks for pre-commit checks"
+    doLast {
+        val hooksDir = rootProject.file(".githooks")
+        val preCommitHook = hooksDir.resolve("pre-commit")
+        val installScript = hooksDir.resolve("install.sh")
+        
+        if (!preCommitHook.exists()) {
+            throw GradleException("Pre-commit hook not found at ${preCommitHook.absolutePath}")
+        }
+        
+        // Make hooks executable (Unix-like systems)
+        if (!System.getProperty("os.name").lowercase().contains("windows")) {
+            val chmodProcess = ProcessBuilder("chmod", "+x", preCommitHook.absolutePath)
+                .start()
+            chmodProcess.waitFor()
+            
+            if (installScript.exists()) {
+                val chmodScriptProcess = ProcessBuilder("chmod", "+x", installScript.absolutePath)
+                    .start()
+                chmodScriptProcess.waitFor()
+            }
+        }
+        
+        // Configure git to use .githooks directory
+        val gitProcess = ProcessBuilder("git", "config", "core.hooksPath", ".githooks")
+            .start()
+        val exitCode = gitProcess.waitFor()
+        
+        if (exitCode != 0) {
+            throw GradleException("Failed to configure git hooks path")
+        }
+        
+        println("✅ Git hooks installed successfully!")
+        println("   Pre-commit hook will now run Spotless and Detekt before each commit.")
+    }
 }
