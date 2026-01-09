@@ -1,13 +1,18 @@
 package com.example.cryptographer.setup.ioc
 
 import com.example.cryptographer.domain.text.service.AesEncryptionService
+import com.example.cryptographer.domain.text.usecase.DecryptTextUseCase
 import com.example.cryptographer.domain.text.usecase.DeleteAllKeysUseCase
 import com.example.cryptographer.domain.text.usecase.DeleteKeyUseCase
+import com.example.cryptographer.domain.text.usecase.EncryptTextUseCase
 import com.example.cryptographer.domain.text.usecase.GenerateEncryptionKeyUseCase
 import com.example.cryptographer.domain.text.usecase.LoadAllKeysUseCase
 import com.example.cryptographer.domain.text.usecase.LoadKeyUseCase
+import com.example.cryptographer.domain.text.usecase.PrepareTextForEncryptionUseCase
 import com.example.cryptographer.domain.text.usecase.SaveKeyUseCase
+import com.example.cryptographer.domain.text.usecase.ValidateTextUseCase
 import com.example.cryptographer.infrastructure.key.KeyStorageAdapter
+import com.example.cryptographer.presentation.encryption.EncryptionPresenter
 import com.example.cryptographer.presentation.key.KeyGenerationPresenter
 import dagger.Module
 import dagger.Provides
@@ -101,6 +106,45 @@ object AppModule {
     }
 
     /**
+     * Provides ValidateTextUseCase.
+     */
+    @Provides
+    fun provideValidateTextUseCase(): ValidateTextUseCase {
+        return ValidateTextUseCase()
+    }
+
+    /**
+     * Provides PrepareTextForEncryptionUseCase.
+     */
+    @Provides
+    fun providePrepareTextForEncryptionUseCase(
+        validateTextUseCase: ValidateTextUseCase
+    ): PrepareTextForEncryptionUseCase {
+        return PrepareTextForEncryptionUseCase(validateTextUseCase)
+    }
+
+    /**
+     * Provides EncryptTextUseCase.
+     */
+    @Provides
+    fun provideEncryptTextUseCase(
+        aesEncryptionService: AesEncryptionService,
+        prepareTextUseCase: PrepareTextForEncryptionUseCase
+    ): EncryptTextUseCase {
+        return EncryptTextUseCase(aesEncryptionService, prepareTextUseCase)
+    }
+
+    /**
+     * Provides DecryptTextUseCase.
+     */
+    @Provides
+    fun provideDecryptTextUseCase(
+        aesEncryptionService: AesEncryptionService
+    ): DecryptTextUseCase {
+        return DecryptTextUseCase(aesEncryptionService)
+    }
+
+    /**
      * Provides KeyGenerationPresenter.
      */
     @Provides
@@ -119,6 +163,20 @@ object AppModule {
             deleteKeyUseCase = deleteKeyUseCase,
             deleteAllKeysUseCase = deleteAllKeysUseCase,
             loadAllKeysUseCase = loadAllKeysUseCase
+        )
+    }
+
+    /**
+     * Provides EncryptionPresenter.
+     */
+    @Provides
+    fun provideEncryptionPresenter(
+        encryptTextUseCase: EncryptTextUseCase,
+        decryptTextUseCase: DecryptTextUseCase
+    ): EncryptionPresenter {
+        return EncryptionPresenter(
+            encryptTextUseCase = encryptTextUseCase,
+            decryptTextUseCase = decryptTextUseCase
         )
     }
 }

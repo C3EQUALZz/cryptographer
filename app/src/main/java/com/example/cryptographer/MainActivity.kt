@@ -8,9 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.cryptographer.presentation.key.KeyGenerationScreen
-import com.example.cryptographer.presentation.key.KeyGenerationViewModel
+import com.example.cryptographer.presentation.MainScreen
 import com.example.cryptographer.presentation.common.CryptographerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,9 +23,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    // Hilt automatically provides ViewModel
-                    val viewModel: KeyGenerationViewModel = viewModel()
-                    KeyGenerationScreen(viewModel = viewModel)
+                    MainScreen()
                 }
             }
         }

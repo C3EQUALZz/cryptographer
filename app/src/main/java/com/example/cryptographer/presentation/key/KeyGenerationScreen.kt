@@ -37,6 +37,7 @@ fun KeyGenerationScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .padding(bottom = 88.dp) // Space for floating navigation dock
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
