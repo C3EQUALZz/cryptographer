@@ -1,29 +1,33 @@
 package com.example.cryptographer.presentation.key
 
-import com.example.cryptographer.domain.text.entity.EncryptionAlgorithm
-import com.example.cryptographer.domain.text.entity.EncryptionKey
-import com.example.cryptographer.domain.text.usecase.DeleteAllKeysUseCase
-import com.example.cryptographer.domain.text.usecase.DeleteKeyUseCase
-import com.example.cryptographer.domain.text.usecase.GenerateEncryptionKeyUseCase
-import com.example.cryptographer.domain.text.usecase.KeyItem
-import com.example.cryptographer.domain.text.usecase.LoadAllKeysUseCase
-import com.example.cryptographer.domain.text.usecase.LoadKeyUseCase
-import com.example.cryptographer.domain.text.usecase.SaveKeyUseCase
+import com.example.cryptographer.application.commands.key.create.GenerateAndSaveKeyCommand
+import com.example.cryptographer.application.commands.key.create.GenerateAndSaveKeyCommandHandler
+import com.example.cryptographer.application.commands.key.delete.DeleteKeyCommand
+import com.example.cryptographer.application.commands.key.delete.DeleteKeyCommandHandler
+import com.example.cryptographer.application.commands.key.delete_all.DeleteAllKeysCommand
+import com.example.cryptographer.application.commands.key.delete_all.DeleteAllKeysCommandHandler
+import com.example.cryptographer.application.queries.key.read_all.LoadAllKeysQuery
+import com.example.cryptographer.application.queries.key.read_all.LoadAllKeysQueryHandler
+import com.example.cryptographer.application.queries.key.read_by_id.LoadKeyQuery
+import com.example.cryptographer.application.queries.key.read_by_id.LoadKeyQueryHandler
+import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
+import com.example.cryptographer.domain.text.entities.EncryptionKey
 import com.example.cryptographer.setup.configs.getLogger
 import java.util.Base64
 
 /**
  * Presenter for key generation screen.
- * Coordinates use cases and transforms domain models to presentation models.
+ * Coordinates command/query handlers and transforms Views to presentation models.
+ *
  * This layer separates business logic from ViewModel, making it easier to test.
+ * Following CQRS pattern - uses CommandHandlers and QueryHandlers from Application layer.
  */
 class KeyGenerationPresenter(
-    private val generateEncryptionKeyUseCase: GenerateEncryptionKeyUseCase,
-    private val saveKeyUseCase: SaveKeyUseCase,
-    private val loadKeyUseCase: LoadKeyUseCase,
-    private val deleteKeyUseCase: DeleteKeyUseCase,
-    private val deleteAllKeysUseCase: DeleteAllKeysUseCase,
-    private val loadAllKeysUseCase: LoadAllKeysUseCase
+    private val generateAndSaveKeyHandler: GenerateAndSaveKeyCommandHandler,
+    private val loadKeyHandler: LoadKeyQueryHandler,
+    private val deleteKeyHandler: DeleteKeyCommandHandler,
+    private val deleteAllKeysHandler: DeleteAllKeysCommandHandler,
+    private val loadAllKeysHandler: LoadAllKeysQueryHandler
 ) {
     private val logger = getLogger<KeyGenerationPresenter>()
 
@@ -33,37 +37,48 @@ class KeyGenerationPresenter(
      * @param algorithm Encryption algorithm to use
      * @return Result with generated key info (key, keyId, base64) or error
      */
-    fun generateAndSaveKey(algorithm: EncryptionAlgorithm): Result<GeneratedKeyInfo> {
+    suspend fun generateAndSaveKey(algorithm: EncryptionAlgorithm): Result<GeneratedKeyInfo> {
         return try {
-            logger.d("Generating and saving key: algorithm=$algorithm")
-            
-            // Generate key
-            val keyResult = generateEncryptionKeyUseCase(algorithm)
-            if (keyResult.isFailure) {
-                return Result.failure(keyResult.exceptionOrNull() ?: Exception("Key generation failed"))
+            logger.d("Presenter: Generating and saving key: algorithm=$algorithm")
+
+            // Execute command via CommandHandler
+            val command = GenerateAndSaveKeyCommand(algorithm)
+            val keyIdViewResult = generateAndSaveKeyHandler(command)
+
+            if (keyIdViewResult.isFailure) {
+                return Result.failure(keyIdViewResult.exceptionOrNull() ?: Exception("Key generation and saving failed"))
             }
-            
-            val key = keyResult.getOrThrow()
-            
-            // Save key
-            val saveResult = saveKeyUseCase(key)
-            if (saveResult.isFailure) {
-                return Result.failure(saveResult.exceptionOrNull() ?: Exception("Failed to save key"))
+
+            val keyIdView = keyIdViewResult.getOrThrow()
+            val keyId = keyIdView.keyId
+
+            // Load the saved key to get full key info via QueryHandler
+            val query = LoadKeyQuery(keyId)
+            val keyViewResult = loadKeyHandler(query)
+
+            if (keyViewResult.isFailure) {
+                logger.w("Key was saved but could not be loaded: keyId=$keyId")
+                return Result.failure(keyViewResult.exceptionOrNull() ?: Exception("Key was saved but could not be loaded"))
             }
-            
-            val keyId = saveResult.getOrThrow()
-            val keyBase64 = Base64.getEncoder().encodeToString(key.value)
-            
-            logger.i("Key generated and saved successfully: keyId=$keyId, algorithm=$algorithm")
+
+            val keyView = keyViewResult.getOrThrow()
+
+            // Convert View to domain entity for presentation
+            val key = EncryptionKey(
+                value = Base64.getDecoder().decode(keyView.keyBase64),
+                algorithm = keyView.algorithm
+            )
+
+            logger.i("Presenter: Key generated and saved successfully: keyId=$keyId, algorithm=$algorithm")
             Result.success(
                 GeneratedKeyInfo(
                     key = key,
                     keyId = keyId,
-                    keyBase64 = keyBase64
+                    keyBase64 = keyView.keyBase64
                 )
             )
         } catch (e: Exception) {
-            logger.e("Error generating and saving key: algorithm=$algorithm", e)
+            logger.e("Presenter: Error generating and saving key: algorithm=$algorithm", e)
             Result.failure(e)
         }
     }
@@ -74,23 +89,29 @@ class KeyGenerationPresenter(
      * @param keyId Key identifier
      * @return Result with key info or error
      */
-    fun loadKey(keyId: String): Result<GeneratedKeyInfo> {
+    suspend fun loadKey(keyId: String): Result<GeneratedKeyInfo> {
         return try {
             logger.d("Loading key: keyId=$keyId")
-            val keyResult = loadKeyUseCase(keyId)
-            
-            if (keyResult.isFailure) {
-                return Result.failure(keyResult.exceptionOrNull() ?: Exception("Key not found"))
+            val query = LoadKeyQuery(keyId)
+            val keyViewResult = loadKeyHandler(query)
+
+            if (keyViewResult.isFailure) {
+                return Result.failure(keyViewResult.exceptionOrNull() ?: Exception("Key not found"))
             }
-            
-            val key = keyResult.getOrThrow()
-            val keyBase64 = Base64.getEncoder().encodeToString(key.value)
-            
+
+            val keyView = keyViewResult.getOrThrow()
+
+            // Convert View to domain entity for presentation
+            val key = EncryptionKey(
+                value = Base64.getDecoder().decode(keyView.keyBase64),
+                algorithm = keyView.algorithm
+            )
+
             Result.success(
                 GeneratedKeyInfo(
                     key = key,
                     keyId = keyId,
-                    keyBase64 = keyBase64
+                    keyBase64 = keyView.keyBase64
                 )
             )
         } catch (e: Exception) {
@@ -105,8 +126,9 @@ class KeyGenerationPresenter(
      * @param keyId Key identifier
      * @return Result indicating success or failure
      */
-    fun deleteKey(keyId: String): Result<Unit> {
-        return deleteKeyUseCase(keyId)
+    suspend fun deleteKey(keyId: String): Result<Unit> {
+        val command = DeleteKeyCommand(keyId)
+        return deleteKeyHandler(command)
     }
 
     /**
@@ -114,8 +136,8 @@ class KeyGenerationPresenter(
      *
      * @return Result indicating success or failure
      */
-    fun deleteAllKeys(): Result<Unit> {
-        return deleteAllKeysUseCase()
+    suspend fun deleteAllKeys(): Result<Unit> {
+        return deleteAllKeysHandler(DeleteAllKeysCommand)
     }
 
     /**
@@ -123,8 +145,31 @@ class KeyGenerationPresenter(
      *
      * @return Result with list of key items or error
      */
-    fun loadAllKeys(): Result<List<KeyItem>> {
-        return loadAllKeysUseCase()
+    suspend fun loadAllKeys(): Result<List<KeyItem>> {
+        return try {
+            val query = LoadAllKeysQuery
+            val keyViewsResult = loadAllKeysHandler(query)
+
+            if (keyViewsResult.isFailure) {
+                return Result.failure(keyViewsResult.exceptionOrNull() ?: Exception("Failed to load keys"))
+            }
+
+            val keyViews = keyViewsResult.getOrThrow()
+
+            // Convert Views to presentation models
+            val keyItems = keyViews.map { keyView ->
+                KeyItem(
+                    id = keyView.id,
+                    algorithm = keyView.algorithm,
+                    keyBase64 = keyView.keyBase64
+                )
+            }
+
+            Result.success(keyItems)
+        } catch (e: Exception) {
+            logger.e("Error loading all keys", e)
+            Result.failure(e)
+        }
     }
 }
 
@@ -137,3 +182,11 @@ data class GeneratedKeyInfo(
     val keyBase64: String
 )
 
+/**
+ * Presentation model for a saved key item.
+ */
+data class KeyItem(
+    val id: String,
+    val algorithm: EncryptionAlgorithm,
+    val keyBase64: String
+)

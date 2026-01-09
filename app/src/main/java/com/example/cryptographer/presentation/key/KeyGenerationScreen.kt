@@ -14,10 +14,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.cryptographer.domain.text.entity.EncryptionAlgorithm
+import com.example.cryptographer.R
+import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
 
 /**
  * Screen for generating and viewing encryption keys.
@@ -27,6 +30,7 @@ import com.example.cryptographer.domain.text.entity.EncryptionAlgorithm
 fun KeyGenerationScreen(
     viewModel: KeyGenerationViewModel
 ) {
+    LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val savedKeys by viewModel.savedKeys.collectAsState()
     val clipboardManager = LocalClipboardManager.current
@@ -37,19 +41,18 @@ fun KeyGenerationScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .padding(bottom = 88.dp) // Space for floating navigation dock
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Title - centered
         Text(
-            text = "Генератор ключей шифрования",
+            text = stringResource(R.string.key_generation_title),
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
-        
+
         // Info card with hint
         Card(
             modifier = Modifier
@@ -78,8 +81,7 @@ fun KeyGenerationScreen(
                     modifier = Modifier.size(24.dp)
                 )
                 Text(
-                    text = "Используйте этот инструмент для генерации криптографических ключей AES. " +
-                            "Сгенерированные ключи можно сохранить и использовать для шифрования данных.",
+                    text = stringResource(R.string.key_generation_info),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
@@ -102,10 +104,10 @@ fun KeyGenerationScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
-                    text = "Выберите алгоритм:",
+                    text = stringResource(R.string.select_algorithm),
                     style = MaterialTheme.typography.titleMedium
                 )
-                
+
                 EncryptionAlgorithm.entries.forEach { algorithm ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -142,7 +144,7 @@ fun KeyGenerationScreen(
                 Spacer(modifier = Modifier.width(8.dp))
             }
             Text(
-                text = "Сгенерировать ключ",
+                text = stringResource(R.string.generate_key),
                 style = MaterialTheme.typography.titleMedium
             )
         }
@@ -167,23 +169,23 @@ fun KeyGenerationScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = "Сгенерированный ключ",
+                        text = stringResource(R.string.generated_key),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.primary
                     )
-                    
+
                     HorizontalDivider(
                         modifier = Modifier.padding(vertical = 4.dp),
                         color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
                     )
-                    
+
                     Text(
-                        text = "Алгоритм: ${key.algorithm.name}",
+                        text = stringResource(R.string.algorithm_label, key.algorithm.name),
                         style = MaterialTheme.typography.bodyLarge
                     )
-                    
+
                     Text(
-                        text = "ID ключа: ${uiState.keyId?.take(8)}...",
+                        text = stringResource(R.string.key_id_label, uiState.keyId?.take(8) ?: ""),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -218,7 +220,7 @@ fun KeyGenerationScreen(
                                 },
                                 shape = RoundedCornerShape(8.dp)
                             ) {
-                                Text("Копировать")
+                                Text(stringResource(R.string.copy))
                             }
                         }
                     }
@@ -257,9 +259,9 @@ fun KeyGenerationScreen(
                 thickness = 2.dp,
                 color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
             )
-            
+
             Text(
-                text = "Сохранённые ключи",
+                text = stringResource(R.string.saved_keys),
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
@@ -306,18 +308,18 @@ fun KeyGenerationScreen(
                         ) {
                             Icon(
                                 Icons.Default.Delete,
-                                "Удалить",
+                                stringResource(R.string.delete),
                                 tint = MaterialTheme.colorScheme.error
                             )
                         }
                     }
                 }
             }
-            
+
             // Delete all keys button
             if (savedKeys.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 OutlinedButton(
                     onClick = { showDeleteAllDialog = true },
                     modifier = Modifier
@@ -339,13 +341,13 @@ fun KeyGenerationScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Удалить все ключи",
+                        text = stringResource(R.string.delete_all_keys),
                         style = MaterialTheme.typography.titleMedium
                     )
                 }
             }
         }
-        
+
         // Delete all keys confirmation dialog
         if (showDeleteAllDialog) {
             AlertDialog(
@@ -359,14 +361,13 @@ fun KeyGenerationScreen(
                 },
                 title = {
                     Text(
-                        text = "Удалить все ключи?",
+                        text = stringResource(R.string.delete_all_keys_dialog_title),
                         style = MaterialTheme.typography.titleLarge
                     )
                 },
                 text = {
                     Text(
-                        text = "Вы уверены, что хотите удалить все сохранённые ключи? " +
-                                "Это действие нельзя отменить. Всего ключей: ${savedKeys.size}",
+                        text = stringResource(R.string.delete_all_keys_dialog_message, savedKeys.size),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 },
@@ -381,7 +382,7 @@ fun KeyGenerationScreen(
                         ),
                         shape = RoundedCornerShape(8.dp)
                     ) {
-                        Text("Удалить")
+                        Text(stringResource(R.string.delete))
                     }
                 },
                 dismissButton = {
@@ -389,7 +390,7 @@ fun KeyGenerationScreen(
                         onClick = { showDeleteAllDialog = false },
                         shape = RoundedCornerShape(8.dp)
                     ) {
-                        Text("Отмена")
+                        Text(stringResource(R.string.cancel))
                     }
                 },
                 shape = RoundedCornerShape(16.dp)

@@ -1,17 +1,22 @@
 package com.example.cryptographer.setup.ioc
 
-import com.example.cryptographer.domain.text.service.AesEncryptionService
-import com.example.cryptographer.domain.text.usecase.DecryptTextUseCase
-import com.example.cryptographer.domain.text.usecase.DeleteAllKeysUseCase
-import com.example.cryptographer.domain.text.usecase.DeleteKeyUseCase
-import com.example.cryptographer.domain.text.usecase.EncryptTextUseCase
-import com.example.cryptographer.domain.text.usecase.GenerateEncryptionKeyUseCase
-import com.example.cryptographer.domain.text.usecase.LoadAllKeysUseCase
-import com.example.cryptographer.domain.text.usecase.LoadKeyUseCase
-import com.example.cryptographer.domain.text.usecase.PrepareTextForEncryptionUseCase
-import com.example.cryptographer.domain.text.usecase.SaveKeyUseCase
-import com.example.cryptographer.domain.text.usecase.ValidateTextUseCase
-import com.example.cryptographer.infrastructure.key.KeyStorageAdapter
+import com.example.cryptographer.application.commands.text.convert_encoding.ConvertTextEncodingCommandHandler
+import com.example.cryptographer.application.commands.text.decrypt.DecryptTextCommandHandler
+import com.example.cryptographer.application.commands.key.delete_all.DeleteAllKeysCommandHandler
+import com.example.cryptographer.application.commands.key.delete.DeleteKeyCommandHandler
+import com.example.cryptographer.application.commands.text.encrypt.EncryptTextCommandHandler
+import com.example.cryptographer.application.commands.key.create.GenerateAndSaveKeyCommandHandler
+import com.example.cryptographer.application.common.ports.key.KeyCommandGateway
+import com.example.cryptographer.application.common.ports.key.KeyQueryGateway
+import com.example.cryptographer.application.queries.key.read_all.LoadAllKeysQueryHandler
+import com.example.cryptographer.application.queries.key.read_by_id.LoadKeyQueryHandler
+import com.example.cryptographer.domain.text.ports.TextIdGeneratorPort
+import com.example.cryptographer.domain.text.services.AesEncryptionService
+import com.example.cryptographer.domain.text.services.TextService
+import com.example.cryptographer.infrastructure.key.KeyCommandGatewayAdapter
+import com.example.cryptographer.infrastructure.key.KeyQueryGatewayAdapter
+import com.example.cryptographer.infrastructure.text.UuidTextIdGenerator
+import com.example.cryptographer.presentation.encoding.EncodingPresenter
 import com.example.cryptographer.presentation.encryption.EncryptionPresenter
 import com.example.cryptographer.presentation.key.KeyGenerationPresenter
 import dagger.Module
@@ -21,10 +26,10 @@ import dagger.hilt.components.SingletonComponent
 
 /**
  * Hilt module for providing application-wide dependencies.
- * 
+ *
  * Note: This module is automatically discovered by Hilt through annotation processing.
  * The "unused" warning from IDEA is expected - Hilt uses this module via reflection.
- * 
+ *
  * Scope strategy:
  * - No @Singleton annotation: New instances are created for each injection.
  *   This is safe for stateless classes (services, use cases) and avoids potential issues
@@ -45,103 +50,126 @@ object AppModule {
     }
 
     /**
-     * Provides GenerateEncryptionKeyUseCase.
-     * Creates a new instance for each injection (stateless, so safe).
+     * Provides KeyCommandGateway implementation.
+     * Uses KeyCommandGatewayAdapter as the implementation.
      */
     @Provides
-    fun provideGenerateEncryptionKeyUseCase(
-        aesEncryptionService: AesEncryptionService
-    ): GenerateEncryptionKeyUseCase {
-        return GenerateEncryptionKeyUseCase(aesEncryptionService)
+    fun provideKeyCommandGateway(
+        adapter: KeyCommandGatewayAdapter
+    ): KeyCommandGateway {
+        return adapter
     }
 
     /**
-     * Provides SaveKeyUseCase.
+     * Provides KeyQueryGateway implementation.
+     * Uses KeyQueryGatewayAdapter as the implementation.
      */
     @Provides
-    fun provideSaveKeyUseCase(
-        keyStorageAdapter: KeyStorageAdapter
-    ): SaveKeyUseCase {
-        return SaveKeyUseCase(keyStorageAdapter)
+    fun provideKeyQueryGateway(
+        adapter: KeyQueryGatewayAdapter
+    ): KeyQueryGateway {
+        return adapter
     }
 
     /**
-     * Provides LoadKeyUseCase.
+     * Provides GenerateAndSaveKeyCommandHandler.
      */
     @Provides
-    fun provideLoadKeyUseCase(
-        keyStorageAdapter: KeyStorageAdapter
-    ): LoadKeyUseCase {
-        return LoadKeyUseCase(keyStorageAdapter)
-    }
-
-    /**
-     * Provides DeleteKeyUseCase.
-     */
-    @Provides
-    fun provideDeleteKeyUseCase(
-        keyStorageAdapter: KeyStorageAdapter
-    ): DeleteKeyUseCase {
-        return DeleteKeyUseCase(keyStorageAdapter)
-    }
-
-    /**
-     * Provides DeleteAllKeysUseCase.
-     */
-    @Provides
-    fun provideDeleteAllKeysUseCase(
-        keyStorageAdapter: KeyStorageAdapter
-    ): DeleteAllKeysUseCase {
-        return DeleteAllKeysUseCase(keyStorageAdapter)
-    }
-
-    /**
-     * Provides LoadAllKeysUseCase.
-     */
-    @Provides
-    fun provideLoadAllKeysUseCase(
-        keyStorageAdapter: KeyStorageAdapter
-    ): LoadAllKeysUseCase {
-        return LoadAllKeysUseCase(keyStorageAdapter)
-    }
-
-    /**
-     * Provides ValidateTextUseCase.
-     */
-    @Provides
-    fun provideValidateTextUseCase(): ValidateTextUseCase {
-        return ValidateTextUseCase()
-    }
-
-    /**
-     * Provides PrepareTextForEncryptionUseCase.
-     */
-    @Provides
-    fun providePrepareTextForEncryptionUseCase(
-        validateTextUseCase: ValidateTextUseCase
-    ): PrepareTextForEncryptionUseCase {
-        return PrepareTextForEncryptionUseCase(validateTextUseCase)
-    }
-
-    /**
-     * Provides EncryptTextUseCase.
-     */
-    @Provides
-    fun provideEncryptTextUseCase(
+    fun provideGenerateAndSaveKeyCommandHandler(
         aesEncryptionService: AesEncryptionService,
-        prepareTextUseCase: PrepareTextForEncryptionUseCase
-    ): EncryptTextUseCase {
-        return EncryptTextUseCase(aesEncryptionService, prepareTextUseCase)
+        commandGateway: KeyCommandGateway
+    ): GenerateAndSaveKeyCommandHandler {
+        return GenerateAndSaveKeyCommandHandler(aesEncryptionService, commandGateway)
     }
 
     /**
-     * Provides DecryptTextUseCase.
+     * Provides LoadKeyQueryHandler.
      */
     @Provides
-    fun provideDecryptTextUseCase(
+    fun provideLoadKeyQueryHandler(
+        queryGateway: KeyQueryGateway
+    ): LoadKeyQueryHandler {
+        return LoadKeyQueryHandler(queryGateway)
+    }
+
+    /**
+     * Provides DeleteKeyCommandHandler.
+     */
+    @Provides
+    fun provideDeleteKeyCommandHandler(
+        commandGateway: KeyCommandGateway
+    ): DeleteKeyCommandHandler {
+        return DeleteKeyCommandHandler(commandGateway)
+    }
+
+    /**
+     * Provides DeleteAllKeysCommandHandler.
+     */
+    @Provides
+    fun provideDeleteAllKeysCommandHandler(
+        commandGateway: KeyCommandGateway
+    ): DeleteAllKeysCommandHandler {
+        return DeleteAllKeysCommandHandler(commandGateway)
+    }
+
+    /**
+     * Provides LoadAllKeysQueryHandler.
+     */
+    @Provides
+    fun provideLoadAllKeysQueryHandler(
+        queryGateway: KeyQueryGateway
+    ): LoadAllKeysQueryHandler {
+        return LoadAllKeysQueryHandler(queryGateway)
+    }
+
+    /**
+     * Provides EncryptTextCommandHandler.
+     * Uses TextService for text validation to ensure consistency.
+     */
+    @Provides
+    fun provideEncryptTextCommandHandler(
+        aesEncryptionService: AesEncryptionService,
+        textService: TextService
+    ): EncryptTextCommandHandler {
+        return EncryptTextCommandHandler(aesEncryptionService, textService)
+    }
+
+    /**
+     * Provides DecryptTextCommandHandler.
+     */
+    @Provides
+    fun provideDecryptTextCommandHandler(
         aesEncryptionService: AesEncryptionService
-    ): DecryptTextUseCase {
-        return DecryptTextUseCase(aesEncryptionService)
+    ): DecryptTextCommandHandler {
+        return DecryptTextCommandHandler(aesEncryptionService)
+    }
+
+    /**
+     * Provides ConvertTextEncodingCommandHandler.
+     */
+    @Provides
+    fun provideConvertTextEncodingCommandHandler(): ConvertTextEncodingCommandHandler {
+        return ConvertTextEncodingCommandHandler()
+    }
+
+    /**
+     * Provides TextIdGeneratorPort implementation.
+     * Uses UUID for generating unique text IDs.
+     */
+    @Provides
+    fun provideTextIdGeneratorPort(): TextIdGeneratorPort {
+        return UuidTextIdGenerator()
+    }
+
+    /**
+     * Provides TextService.
+     * Domain service for creating Text entities with ID generation.
+     */
+    @Provides
+    fun provideTextService(
+        textIdGenerator: TextIdGeneratorPort
+    ): TextService {
+        return TextService(textIdGenerator)
     }
 
     /**
@@ -149,20 +177,18 @@ object AppModule {
      */
     @Provides
     fun provideKeyGenerationPresenter(
-        generateEncryptionKeyUseCase: GenerateEncryptionKeyUseCase,
-        saveKeyUseCase: SaveKeyUseCase,
-        loadKeyUseCase: LoadKeyUseCase,
-        deleteKeyUseCase: DeleteKeyUseCase,
-        deleteAllKeysUseCase: DeleteAllKeysUseCase,
-        loadAllKeysUseCase: LoadAllKeysUseCase
+        generateAndSaveKeyHandler: GenerateAndSaveKeyCommandHandler,
+        loadKeyHandler: LoadKeyQueryHandler,
+        deleteKeyHandler: DeleteKeyCommandHandler,
+        deleteAllKeysHandler: DeleteAllKeysCommandHandler,
+        loadAllKeysHandler: LoadAllKeysQueryHandler
     ): KeyGenerationPresenter {
         return KeyGenerationPresenter(
-            generateEncryptionKeyUseCase = generateEncryptionKeyUseCase,
-            saveKeyUseCase = saveKeyUseCase,
-            loadKeyUseCase = loadKeyUseCase,
-            deleteKeyUseCase = deleteKeyUseCase,
-            deleteAllKeysUseCase = deleteAllKeysUseCase,
-            loadAllKeysUseCase = loadAllKeysUseCase
+            generateAndSaveKeyHandler = generateAndSaveKeyHandler,
+            loadKeyHandler = loadKeyHandler,
+            deleteKeyHandler = deleteKeyHandler,
+            deleteAllKeysHandler = deleteAllKeysHandler,
+            loadAllKeysHandler = loadAllKeysHandler
         )
     }
 
@@ -171,13 +197,23 @@ object AppModule {
      */
     @Provides
     fun provideEncryptionPresenter(
-        encryptTextUseCase: EncryptTextUseCase,
-        decryptTextUseCase: DecryptTextUseCase
+        encryptTextHandler: EncryptTextCommandHandler,
+        decryptTextHandler: DecryptTextCommandHandler
     ): EncryptionPresenter {
         return EncryptionPresenter(
-            encryptTextUseCase = encryptTextUseCase,
-            decryptTextUseCase = decryptTextUseCase
+            encryptTextHandler = encryptTextHandler,
+            decryptTextHandler = decryptTextHandler
         )
+    }
+
+    /**
+     * Provides EncodingPresenter.
+     */
+    @Provides
+    fun provideEncodingPresenter(
+        convertTextEncodingHandler: ConvertTextEncodingCommandHandler
+    ): EncodingPresenter {
+        return EncodingPresenter(convertTextEncodingHandler)
     }
 }
 

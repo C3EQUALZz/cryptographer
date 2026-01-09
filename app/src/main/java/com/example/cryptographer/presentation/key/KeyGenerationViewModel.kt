@@ -1,11 +1,14 @@
 package com.example.cryptographer.presentation.key
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cryptographer.domain.text.entity.EncryptionAlgorithm
-import com.example.cryptographer.domain.text.entity.EncryptionKey
+import com.example.cryptographer.R
+import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
+import com.example.cryptographer.domain.text.entities.EncryptionKey
 import com.example.cryptographer.setup.configs.getLogger
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +17,7 @@ import javax.inject.Inject
 
 /**
  * ViewModel for key generation and management screen.
- * 
+ *
  * Responsibilities:
  * - Manages UI state (loading, errors, displayed data)
  * - Delegates business logic to Presenter
@@ -22,7 +25,8 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class KeyGenerationViewModel @Inject constructor(
-    private val presenter: KeyGenerationPresenter
+    private val presenter: KeyGenerationPresenter,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
     private val logger = getLogger<KeyGenerationViewModel>()
 
@@ -61,7 +65,7 @@ class KeyGenerationViewModel @Inject constructor(
                     logger.e("Key generation failed: algorithm=$algorithm, error=${error.message}", error)
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = error.message ?: "Failed to generate key"
+                        error = error.message ?: context.getString(R.string.failed_to_generate_key)
                     )
                 }
         }
@@ -85,7 +89,7 @@ class KeyGenerationViewModel @Inject constructor(
                 .onFailure { error ->
                     logger.w("Key not found: keyId=$keyId")
                     _uiState.value = _uiState.value.copy(
-                        error = error.message ?: "Key not found"
+                        error = error.message ?: context.getString(R.string.key_not_found)
                     )
                 }
         }
@@ -133,7 +137,7 @@ class KeyGenerationViewModel @Inject constructor(
                 .onFailure { error ->
                     logger.e("Failed to delete all keys: ${error.message}", error)
                     _uiState.value = _uiState.value.copy(
-                        error = "Не удалось удалить все ключи: ${error.message}"
+                        error = context.getString(R.string.failed_to_delete_all_keys, error.message ?: "")
                     )
                 }
         }

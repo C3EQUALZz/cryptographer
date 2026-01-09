@@ -1,0 +1,72 @@
+<resources>
+    <!-- App name -->
+    <string name="app_name">Криптограф</string>
+    
+    <!-- Navigation -->
+    <string name="menu">Меню</string>
+    <string name="close_menu">Закрыть меню</string>
+    <string name="screens">Экраны</string>
+    <string name="encryption_algorithms">Алгоритмы шифрования</string>
+    <string name="language_selection">Язык</string>
+    
+    <!-- Screen titles -->
+    <string name="screen_key_generation">Генерация ключей</string>
+    <string name="screen_encryption">Шифрование</string>
+    <string name="screen_encoding">Кодирование</string>
+    
+    <!-- Screen names -->
+    <string name="key_generation">Генерация ключей</string>
+    <string name="encryption_decryption">Шифрование/Дешифрование</string>
+    <string name="encoding">Кодирование</string>
+    
+    <!-- Key Generation Screen -->
+    <string name="key_generation_title">Генератор ключей шифрования</string>
+    <string name="key_generation_info">Используйте этот инструмент для генерации криптографических ключей AES. Сгенерированные ключи можно сохранить и использовать для кодирования.</string>
+    <string name="select_algorithm">Выберите алгоритм:</string>
+    <string name="generate_key">Сгенерировать ключ</string>
+    <string name="saved_keys">Сохранённые ключи</string>
+    <string name="delete_all_keys">Удалить все ключи</string>
+    <string name="delete_all_keys_confirmation">Вы уверены, что хотите удалить все ключи? Это действие нельзя отменить.</string>
+    <string name="delete_all_keys_title">Удалить все ключи</string>
+    <string name="confirm">Подтвердить</string>
+    <string name="cancel">Отмена</string>
+    <string name="copy">Копировать</string>
+    <string name="delete">Удалить</string>
+    <string name="key_id">ID: %1$s</string>
+    <string name="generated_key">Сгенерированный ключ</string>
+    <string name="algorithm_label">Алгоритм: %1$s</string>
+    <string name="key_id_label">ID ключа: %1$s...</string>
+    <string name="delete_all_keys_dialog_title">Удалить все ключи?</string>
+    <string name="delete_all_keys_dialog_message">Вы уверены, что хотите удалить все сохранённые ключи? Это действие нельзя отменить. Всего ключей: %1$d</string>
+    <string name="failed_to_delete_all_keys">Не удалось удалить все ключи: %1$s</string>
+    <string name="failed_to_generate_key">Не удалось сгенерировать ключ</string>
+    <string name="key_not_found">Ключ не найден</string>
+    
+    <!-- Encryption Screen -->
+    <string name="encryption_title">Шифрование и дешифрование</string>
+    <string name="encryption_info">Используйте этот инструмент для шифрования и дешифрования текста с помощью AES ключей. Выберите ключ и введите текст для шифрования или дешифрования.</string>
+    <string name="encryption_section">Шифрование</string>
+    <string name="decryption_section">Дешифрование</string>
+    <string name="select_key">Выберите ключ</string>
+    <string name="no_keys_available">Нет доступных ключей. Пожалуйста, сначала сгенерируйте ключи.</string>
+    <string name="enter_text_to_encrypt">Введите текст для шифрования</string>
+    <string name="enter_text_placeholder">Введите текст…</string>
+    <string name="encrypt">Зашифровать</string>
+    <string name="encrypted_text">Зашифрованный текст:</string>
+    <string name="enter_encrypted_text">Введите зашифрованный текст (Base64)</string>
+    <string name="enter_encrypted_text_placeholder">Введите зашифрованный текст…</string>
+    <string name="decrypt">Расшифровать</string>
+    <string name="decrypted_text">Расшифрованный текст:</string>
+    <string name="clear_all">Очистить всё</string>
+    
+    <!-- Encoding Screen -->
+    <string name="encoding_title">Кодирование текста</string>
+    <string name="encoding_info">Введите текст для просмотра в разных кодировках: UTF-8, ASCII и BASE64.</string>
+    <string name="source_text">Исходный текст</string>
+    <string name="enter_text_for_encoding">Введите текст</string>
+    <string name="enter_text_for_encoding_placeholder">Введите текст для кодирования…</string>
+    <string name="utf8">UTF-8</string>
+    <string name="ascii">ASCII</string>
+    <string name="base64">BASE64</string>
+</resources>
+

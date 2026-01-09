@@ -2,21 +2,24 @@ package com.example.cryptographer.presentation.encryption
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cryptographer.domain.text.entity.EncryptionKey
-import com.example.cryptographer.domain.text.usecase.KeyItem
-import com.example.cryptographer.domain.text.usecase.LoadAllKeysUseCase
-import com.example.cryptographer.domain.text.usecase.LoadKeyUseCase
+import com.example.cryptographer.application.common.views.KeyView
+import com.example.cryptographer.application.queries.key.read_all.LoadAllKeysQuery
+import com.example.cryptographer.application.queries.key.read_all.LoadAllKeysQueryHandler
+import com.example.cryptographer.application.queries.key.read_by_id.LoadKeyQuery
+import com.example.cryptographer.application.queries.key.read_by_id.LoadKeyQueryHandler
+import com.example.cryptographer.domain.text.entities.EncryptionKey
 import com.example.cryptographer.setup.configs.getLogger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.Base64
 import javax.inject.Inject
 
 /**
  * ViewModel for encryption/decryption screen.
- * 
+ *
  * Responsibilities:
  * - Manages UI state (input text, encrypted text, selected key, etc.)
  * - Delegates business logic to Presenter
@@ -25,16 +28,16 @@ import javax.inject.Inject
 @HiltViewModel
 class EncryptionViewModel @Inject constructor(
     private val presenter: EncryptionPresenter,
-    private val loadKeyUseCase: LoadKeyUseCase,
-    private val loadAllKeysUseCase: LoadAllKeysUseCase
+    private val loadKeyHandler: LoadKeyQueryHandler,
+    private val loadAllKeysHandler: LoadAllKeysQueryHandler
 ) : ViewModel() {
     private val logger = getLogger<EncryptionViewModel>()
 
     private val _uiState = MutableStateFlow(EncryptionUiState())
     val uiState: StateFlow<EncryptionUiState> = _uiState.asStateFlow()
 
-    private val _availableKeys = MutableStateFlow<List<KeyItem>>(emptyList())
-    val availableKeys: StateFlow<List<KeyItem>> = _availableKeys.asStateFlow()
+    private val _availableKeys = MutableStateFlow<List<KeyView>>(emptyList())
+    val availableKeys: StateFlow<List<KeyView>> = _availableKeys.asStateFlow()
 
     init {
         loadAvailableKeys()
@@ -76,8 +79,14 @@ class EncryptionViewModel @Inject constructor(
     fun selectKey(keyId: String) {
         logger.d("Selecting key: keyId=$keyId")
         viewModelScope.launch {
-            loadKeyUseCase(keyId)
-                .onSuccess { key ->
+            val query = LoadKeyQuery(keyId)
+            loadKeyHandler(query)
+                .onSuccess { keyView ->
+                    // Convert KeyView to EncryptionKey domain entity
+                    val key = EncryptionKey(
+                        value = Base64.getDecoder().decode(keyView.keyBase64),
+                        algorithm = keyView.algorithm
+                    )
                     _uiState.value = _uiState.value.copy(
                         selectedKey = key,
                         selectedKeyId = keyId,
@@ -206,9 +215,10 @@ class EncryptionViewModel @Inject constructor(
      */
     private fun loadAvailableKeys() {
         viewModelScope.launch {
-            loadAllKeysUseCase()
-                .onSuccess { keys ->
-                    _availableKeys.value = keys
+            val query = LoadAllKeysQuery
+            loadAllKeysHandler(query)
+                .onSuccess { keyViews ->
+                    _availableKeys.value = keyViews
                 }
                 .onFailure { error ->
                     logger.e("Failed to load available keys: ${error.message}", error)
