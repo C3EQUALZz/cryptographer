@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cryptographer.presentation.key.KeyGenerationScreen
 import com.example.cryptographer.presentation.key.KeyGenerationViewModel
-import com.example.cryptographer.ui.theme.CryptographerTheme
+import com.example.cryptographer.presentation.common.CryptographerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

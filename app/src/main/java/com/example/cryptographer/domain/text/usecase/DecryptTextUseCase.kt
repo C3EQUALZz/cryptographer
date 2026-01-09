@@ -5,7 +5,7 @@ import com.example.cryptographer.domain.text.entity.EncryptionKey
 import com.example.cryptographer.domain.text.entity.Text
 import com.example.cryptographer.domain.text.entity.TextEncoding
 import com.example.cryptographer.domain.text.service.AesEncryptionService
-import com.example.cryptographer.util.Logger
+import com.example.cryptographer.setup.configs.getLogger
 
 /**
  * Use Case for decrypting text using AES algorithm.
@@ -14,6 +14,7 @@ import com.example.cryptographer.util.Logger
 class DecryptTextUseCase(
     private val aesEncryptionService: AesEncryptionService
 ) {
+    private val logger = getLogger<DecryptTextUseCase>()
     /**
      * Decrypts encrypted text using the provided AES key.
      *
@@ -26,17 +27,17 @@ class DecryptTextUseCase(
         key: EncryptionKey
     ): Result<Text> {
         return try {
-            Logger.d("Decrypting text: algorithm=${key.algorithm}, encryptedSize=${encryptedText.encryptedData.size} bytes")
+            logger.d("Decrypting text: algorithm=${key.algorithm}, encryptedSize=${encryptedText.encryptedData.size} bytes")
             // Decrypt using AES service
             val decryptedBytes = aesEncryptionService.decrypt(encryptedText, key).getOrElse { error ->
-                Logger.e("Text decryption failed: ${error.message}", error)
+                logger.e("Text decryption failed: ${error.message}", error)
                 return Result.failure(error)
             }
 
             // Convert bytes back to text
             val decryptedContent = String(decryptedBytes, Charsets.UTF_8)
 
-            Logger.i("Text decryption successful: algorithm=${key.algorithm}, decryptedLength=${decryptedContent.length}")
+            logger.i("Text decryption successful: algorithm=${key.algorithm}, decryptedLength=${decryptedContent.length}")
             Result.success(
                 Text(
                     content = decryptedContent,
@@ -44,7 +45,7 @@ class DecryptTextUseCase(
                 )
             )
         } catch (e: Exception) {
-            Logger.e("Text decryption error: ${e.message}", e)
+            logger.e("Text decryption error: ${e.message}", e)
             Result.failure(
                 Exception("Text decryption error: ${e.message}", e)
             )

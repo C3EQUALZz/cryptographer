@@ -4,26 +4,28 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cryptographer.domain.text.entity.EncryptionAlgorithm
 import com.example.cryptographer.domain.text.entity.EncryptionKey
-import com.example.cryptographer.domain.text.usecase.GenerateEncryptionKeyUseCase
-import com.example.cryptographer.infrastructure.key.KeyStorageAdapter
-import com.example.cryptographer.util.Logger
+import com.example.cryptographer.domain.text.usecase.KeyItem
+import com.example.cryptographer.setup.configs.getLogger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.util.Base64
-import java.util.UUID
 import javax.inject.Inject
 
 /**
  * ViewModel for key generation and management screen.
+ * 
+ * Responsibilities:
+ * - Manages UI state (loading, errors, displayed data)
+ * - Delegates business logic to Presenter
+ * - Handles coroutine scoping for async operations
  */
 @HiltViewModel
 class KeyGenerationViewModel @Inject constructor(
-    private val generateEncryptionKeyUseCase: GenerateEncryptionKeyUseCase,
-    private val keyStorageAdapter: KeyStorageAdapter
+    private val presenter: KeyGenerationPresenter
 ) : ViewModel() {
+    private val logger = getLogger<KeyGenerationViewModel>()
 
     private val _uiState = MutableStateFlow(KeyGenerationUiState())
     val uiState: StateFlow<KeyGenerationUiState> = _uiState.asStateFlow()
@@ -39,38 +41,25 @@ class KeyGenerationViewModel @Inject constructor(
      * Generates a new encryption key for the selected algorithm.
      */
     fun generateKey(algorithm: EncryptionAlgorithm) {
-        Logger.d("Key generation requested: algorithm=$algorithm")
+        logger.d("Key generation requested: algorithm=$algorithm")
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
                 isLoading = true,
                 error = null
             )
 
-            generateEncryptionKeyUseCase(algorithm)
-                .onSuccess { key ->
-                    val keyId = UUID.randomUUID().toString()
-                    Logger.d("Key generated successfully, saving: keyId=$keyId, algorithm=$algorithm")
-                    val saved = keyStorageAdapter.saveKey(keyId, key)
-                    
-                    if (saved) {
-                        Logger.i("Key saved successfully: keyId=$keyId, algorithm=$algorithm")
-                        _uiState.value = _uiState.value.copy(
-                            isLoading = false,
-                            generatedKey = key,
-                            keyId = keyId,
-                            keyBase64 = Base64.getEncoder().encodeToString(key.value)
-                        )
-                        loadSavedKeys()
-                    } else {
-                        Logger.e("Failed to save generated key: keyId=$keyId, algorithm=$algorithm")
-                        _uiState.value = _uiState.value.copy(
-                            isLoading = false,
-                            error = "Failed to save key"
-                        )
-                    }
+            presenter.generateAndSaveKey(algorithm)
+                .onSuccess { keyInfo ->
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        generatedKey = keyInfo.key,
+                        keyId = keyInfo.keyId,
+                        keyBase64 = keyInfo.keyBase64
+                    )
+                    loadSavedKeys()
                 }
                 .onFailure { error ->
-                    Logger.e("Key generation failed: algorithm=$algorithm, error=${error.message}", error)
+                    logger.e("Key generation failed: algorithm=$algorithm, error=${error.message}", error)
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         error = error.message ?: "Failed to generate key"
@@ -83,23 +72,23 @@ class KeyGenerationViewModel @Inject constructor(
      * Loads a saved key by ID.
      */
     fun loadKey(keyId: String) {
-        Logger.d("Loading key: keyId=$keyId")
+        logger.d("Loading key: keyId=$keyId")
         viewModelScope.launch {
-            val key = keyStorageAdapter.getKey(keyId)
-            if (key != null) {
-                Logger.d("Key loaded successfully: keyId=$keyId, algorithm=${key.algorithm}")
-                _uiState.value = _uiState.value.copy(
-                    generatedKey = key,
-                    keyId = keyId,
-                    keyBase64 = Base64.getEncoder().encodeToString(key.value),
-                    error = null
-                )
-            } else {
-                Logger.w("Key not found: keyId=$keyId")
-                _uiState.value = _uiState.value.copy(
-                    error = "Key not found"
-                )
-            }
+            presenter.loadKey(keyId)
+                .onSuccess { keyInfo ->
+                    _uiState.value = _uiState.value.copy(
+                        generatedKey = keyInfo.key,
+                        keyId = keyInfo.keyId,
+                        keyBase64 = keyInfo.keyBase64,
+                        error = null
+                    )
+                }
+                .onFailure { error ->
+                    logger.w("Key not found: keyId=$keyId")
+                    _uiState.value = _uiState.value.copy(
+                        error = error.message ?: "Key not found"
+                    )
+                }
         }
     }
 
@@ -107,21 +96,22 @@ class KeyGenerationViewModel @Inject constructor(
      * Deletes a saved key.
      */
     fun deleteKey(keyId: String) {
-        Logger.d("Deleting key: keyId=$keyId")
+        logger.d("Deleting key: keyId=$keyId")
         viewModelScope.launch {
-            if (keyStorageAdapter.deleteKey(keyId)) {
-                Logger.i("Key deleted successfully: keyId=$keyId")
-                loadSavedKeys()
-                if (_uiState.value.keyId == keyId) {
-                    _uiState.value = _uiState.value.copy(
-                        generatedKey = null,
-                        keyId = null,
-                        keyBase64 = null
-                    )
+            presenter.deleteKey(keyId)
+                .onSuccess {
+                    loadSavedKeys()
+                    if (_uiState.value.keyId == keyId) {
+                        _uiState.value = _uiState.value.copy(
+                            generatedKey = null,
+                            keyId = null,
+                            keyBase64 = null
+                        )
+                    }
                 }
-            } else {
-                Logger.e("Failed to delete key: keyId=$keyId")
-            }
+                .onFailure { error ->
+                    logger.e("Failed to delete key: keyId=$keyId, error=${error.message}")
+                }
         }
     }
 
@@ -138,24 +128,48 @@ class KeyGenerationViewModel @Inject constructor(
     }
 
     /**
+     * Deletes all saved keys.
+     */
+    fun deleteAllKeys() {
+        logger.d("Deleting all keys requested")
+        viewModelScope.launch {
+            presenter.deleteAllKeys()
+                .onSuccess {
+                    loadSavedKeys()
+                    _uiState.value = _uiState.value.copy(
+                        generatedKey = null,
+                        keyId = null,
+                        keyBase64 = null,
+                        error = null
+                    )
+                }
+                .onFailure { error ->
+                    logger.e("Failed to delete all keys: ${error.message}", error)
+                    _uiState.value = _uiState.value.copy(
+                        error = "Не удалось удалить все ключи: ${error.message}"
+                    )
+                }
+        }
+    }
+
+    /**
      * Loads all saved keys.
      */
     private fun loadSavedKeys() {
         viewModelScope.launch {
-            Logger.d("Loading all saved keys")
-            val keyIds = keyStorageAdapter.getAllKeyIds()
-            Logger.d("Found ${keyIds.size} saved key(s)")
-            val keys = keyIds.mapNotNull { keyId ->
-                keyStorageAdapter.getKey(keyId)?.let { key ->
-                    SavedKeyItem(
-                        id = keyId,
-                        algorithm = key.algorithm,
-                        keyBase64 = Base64.getEncoder().encodeToString(key.value)
-                    )
+            presenter.loadAllKeys()
+                .onSuccess { keys ->
+                    _savedKeys.value = keys.map { keyItem ->
+                        SavedKeyItem(
+                            id = keyItem.id,
+                            algorithm = keyItem.algorithm,
+                            keyBase64 = keyItem.keyBase64
+                        )
+                    }
                 }
-            }
-            _savedKeys.value = keys
-            Logger.d("Loaded ${keys.size} key(s) successfully")
+                .onFailure { error ->
+                    logger.e("Failed to load saved keys: ${error.message}", error)
+                }
         }
     }
 }
