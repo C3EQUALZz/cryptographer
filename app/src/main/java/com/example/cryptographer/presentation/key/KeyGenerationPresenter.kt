@@ -114,7 +114,7 @@ class KeyGenerationPresenter(
      *
      * @return Result indicating success or failure
      */
-    suspend fun deleteAllKeys(): Result<Unit> {
+    fun deleteAllKeys(): Result<Unit> {
         return deleteAllKeysUseCase()
     }
 

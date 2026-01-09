@@ -17,7 +17,7 @@ class DeleteKeyUseCase(
      * @param keyId Key identifier
      * @return Result indicating success or failure
      */
-    suspend operator fun invoke(keyId: String): Result<Unit> {
+    operator fun invoke(keyId: String): Result<Unit> {
         return try {
             logger.d("Deleting key: keyId=$keyId")
             val deleted = keyStorageAdapter.deleteKey(keyId)

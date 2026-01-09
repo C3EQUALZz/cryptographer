@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cryptographer.domain.text.entity.EncryptionAlgorithm
 import com.example.cryptographer.domain.text.entity.EncryptionKey
-import com.example.cryptographer.domain.text.usecase.KeyItem
 import com.example.cryptographer.setup.configs.getLogger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -113,18 +112,6 @@ class KeyGenerationViewModel @Inject constructor(
                     logger.e("Failed to delete key: keyId=$keyId, error=${error.message}")
                 }
         }
-    }
-
-    /**
-     * Clears the current generated key from UI.
-     */
-    fun clearGeneratedKey() {
-        _uiState.value = _uiState.value.copy(
-            generatedKey = null,
-            keyId = null,
-            keyBase64 = null,
-            error = null
-        )
     }
 
     /**

@@ -1,6 +1,5 @@
 package com.example.cryptographer.domain.text.usecase
 
-import com.example.cryptographer.domain.text.entity.EncryptionKey
 import com.example.cryptographer.infrastructure.key.KeyStorageAdapter
 import com.example.cryptographer.setup.configs.getLogger
 import java.util.Base64
@@ -19,7 +18,7 @@ class LoadAllKeysUseCase(
      *
      * @return Result with list of key items (id, algorithm, base64) or error
      */
-    suspend operator fun invoke(): Result<List<KeyItem>> {
+    operator fun invoke(): Result<List<KeyItem>> {
         return try {
             logger.d("Loading all saved keys")
             val keyIds = keyStorageAdapter.getAllKeyIds()

@@ -18,7 +18,7 @@ class LoadKeyUseCase(
      * @param keyId Key identifier
      * @return Result with encryption key or error
      */
-    suspend operator fun invoke(keyId: String): Result<EncryptionKey> {
+    operator fun invoke(keyId: String): Result<EncryptionKey> {
         return try {
             logger.d("Loading key: keyId=$keyId")
             val key = keyStorageAdapter.getKey(keyId)

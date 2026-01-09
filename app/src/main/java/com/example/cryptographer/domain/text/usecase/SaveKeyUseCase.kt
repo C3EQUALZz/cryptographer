@@ -20,7 +20,7 @@ class SaveKeyUseCase(
      * @param key Encryption key to save
      * @return Result with generated key ID or error
      */
-    suspend operator fun invoke(key: EncryptionKey): Result<String> {
+    operator fun invoke(key: EncryptionKey): Result<String> {
         return try {
             val keyId = UUID.randomUUID().toString()
             logger.d("Saving key: keyId=$keyId, algorithm=${key.algorithm}")
