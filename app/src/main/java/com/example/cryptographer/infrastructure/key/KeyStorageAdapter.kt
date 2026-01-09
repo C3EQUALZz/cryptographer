@@ -2,8 +2,11 @@ package com.example.cryptographer.infrastructure.key
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import com.example.cryptographer.domain.text.entity.EncryptionKey
 import com.example.cryptographer.domain.text.entity.EncryptionAlgorithm
+import com.example.cryptographer.util.Logger
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.Base64
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,7 +19,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class KeyStorageAdapter @Inject constructor(
-    private val context: Context
+    @param:ApplicationContext private val context: Context
 ) {
     private val prefs: SharedPreferences by lazy {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -30,12 +33,14 @@ class KeyStorageAdapter @Inject constructor(
             val keyBase64 = Base64.getEncoder().encodeToString(key.value)
             val algorithmName = key.algorithm.name
             
-            prefs.edit()
-                .putString("${KEY_PREFIX}_${keyId}_value", keyBase64)
-                .putString("${KEY_PREFIX}_${keyId}_algorithm", algorithmName)
-                .apply()
+            prefs.edit {
+                putString("${KEY_PREFIX}_${keyId}_value", keyBase64)
+                putString("${KEY_PREFIX}_${keyId}_algorithm", algorithmName)
+            }
+            Logger.d("Key saved successfully: keyId=$keyId, algorithm=$algorithmName")
             true
         } catch (e: Exception) {
+            Logger.e("Failed to save key: keyId=$keyId, algorithm=${key.algorithm}", e)
             false
         }
     }
@@ -49,17 +54,20 @@ class KeyStorageAdapter @Inject constructor(
             val algorithmName = prefs.getString("${KEY_PREFIX}_${keyId}_algorithm", null)
             
             if (keyBase64 == null || algorithmName == null) {
+                Logger.d("Key not found: keyId=$keyId")
                 return null
             }
             
             val keyBytes = Base64.getDecoder().decode(keyBase64)
             val algorithm = EncryptionAlgorithm.valueOf(algorithmName)
             
+            Logger.d("Key retrieved successfully: keyId=$keyId, algorithm=$algorithmName")
             EncryptionKey(
                 value = keyBytes,
                 algorithm = algorithm
             )
         } catch (e: Exception) {
+            Logger.e("Failed to retrieve key: keyId=$keyId", e)
             null
         }
     }
@@ -80,12 +88,14 @@ class KeyStorageAdapter @Inject constructor(
      */
     fun deleteKey(keyId: String): Boolean {
         return try {
-            prefs.edit()
-                .remove("${KEY_PREFIX}_${keyId}_value")
-                .remove("${KEY_PREFIX}_${keyId}_algorithm")
-                .apply()
+            prefs.edit {
+                remove("${KEY_PREFIX}_${keyId}_value")
+                remove("${KEY_PREFIX}_${keyId}_algorithm")
+            }
+            Logger.d("Key deleted successfully: keyId=$keyId")
             true
         } catch (e: Exception) {
+            Logger.e("Failed to delete key: keyId=$keyId", e)
             false
         }
     }
