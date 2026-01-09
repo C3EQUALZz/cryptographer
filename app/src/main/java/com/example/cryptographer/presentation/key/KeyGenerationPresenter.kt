@@ -33,7 +33,7 @@ class KeyGenerationPresenter(
      * @param algorithm Encryption algorithm to use
      * @return Result with generated key info (key, keyId, base64) or error
      */
-    suspend fun generateAndSaveKey(algorithm: EncryptionAlgorithm): Result<GeneratedKeyInfo> {
+    fun generateAndSaveKey(algorithm: EncryptionAlgorithm): Result<GeneratedKeyInfo> {
         return try {
             logger.d("Generating and saving key: algorithm=$algorithm")
             
@@ -74,7 +74,7 @@ class KeyGenerationPresenter(
      * @param keyId Key identifier
      * @return Result with key info or error
      */
-    suspend fun loadKey(keyId: String): Result<GeneratedKeyInfo> {
+    fun loadKey(keyId: String): Result<GeneratedKeyInfo> {
         return try {
             logger.d("Loading key: keyId=$keyId")
             val keyResult = loadKeyUseCase(keyId)
@@ -105,7 +105,7 @@ class KeyGenerationPresenter(
      * @param keyId Key identifier
      * @return Result indicating success or failure
      */
-    suspend fun deleteKey(keyId: String): Result<Unit> {
+    fun deleteKey(keyId: String): Result<Unit> {
         return deleteKeyUseCase(keyId)
     }
 
@@ -123,7 +123,7 @@ class KeyGenerationPresenter(
      *
      * @return Result with list of key items or error
      */
-    suspend fun loadAllKeys(): Result<List<KeyItem>> {
+    fun loadAllKeys(): Result<List<KeyItem>> {
         return loadAllKeysUseCase()
     }
 }
