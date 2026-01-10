@@ -14,27 +14,27 @@ import org.junit.Before
 import org.junit.Test
 
 /**
- * Unit tests for EncryptTextCommandHandler.
+ * Unit tests for AesEncryptTextCommandHandler.
  */
-class EncryptTextCommandHandlerTest {
+class AesEncryptTextCommandHandlerTest {
 
     private lateinit var aesService: AesEncryptionService
     private lateinit var textService: TextService
-    private lateinit var handler: EncryptTextCommandHandler
+    private lateinit var handler: AesEncryptTextCommandHandler
 
     @Before
     fun setUp() {
         aesService = AesEncryptionService()
         textService = TextService(StubTextIdGenerator())
-        handler = EncryptTextCommandHandler(aesService, textService)
+        handler = AesEncryptTextCommandHandler(aesService, textService)
     }
 
     @Test
-    fun `invoke should encrypt text successfully`() {
+    fun `invoke should encrypt text successfully with AES_256`() {
         // Given
         val key = KeyFactory.createAes256()
         val rawText = "Hello, World!"
-        val command = EncryptTextCommand(rawText, key)
+        val command = AesEncryptTextCommand(rawText, key)
 
         // When
         val result = handler(command)
@@ -48,11 +48,28 @@ class EncryptTextCommandHandlerTest {
     }
 
     @Test
+    fun `invoke should encrypt text successfully with AES_128`() {
+        // Given
+        val key = KeyFactory.createAes128()
+        val rawText = "Hello, AES-128!"
+        val command = AesEncryptTextCommand(rawText, key)
+
+        // When
+        val result = handler(command)
+
+        // Then
+        assertTrue(result.isSuccess)
+        val encryptedTextView = result.getOrThrow()
+        assertNotNull(encryptedTextView.encryptedText)
+        assertEquals(EncryptionAlgorithm.AES_128, encryptedTextView.encryptedText.algorithm)
+    }
+
+    @Test
     fun `invoke should fail with invalid text`() {
         // Given
         val key = KeyFactory.createAes256()
         val invalidText = "" // Empty text
-        val command = EncryptTextCommand(invalidText, key)
+        val command = AesEncryptTextCommand(invalidText, key)
 
         // When
         val result = handler(command)
@@ -67,9 +84,9 @@ class EncryptTextCommandHandlerTest {
         val mockAesService = mockk<AesEncryptionService>()
         every { mockAesService.encrypt(any(), any()) } returns Result.failure(Exception("Encryption failed"))
 
-        val handlerWithMock = EncryptTextCommandHandler(mockAesService, textService)
+        val handlerWithMock = AesEncryptTextCommandHandler(mockAesService, textService)
         val key = KeyFactory.createAes256()
-        val command = EncryptTextCommand("Test text", key)
+        val command = AesEncryptTextCommand("Test text", key)
 
         // When
         val result = handlerWithMock(command)

@@ -7,36 +7,36 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.UUID
 
 /**
- * Command Handler for generating and saving an encryption key.
+ * Command Handler for generating and saving an AES encryption key.
  *
- * This is a Command Handler in CQRS pattern - it handles write operations.
+ * This is a specialized Command Handler for AES key generation.
  * Following Clean Architecture principles:
  * - Located in Application layer (application boundary)
  * - Uses domain services for business logic
  * - Uses Gateway for infrastructure operations
  * - Returns View (DTO) for presentation layer
  */
-class GenerateAndSaveKeyCommandHandler(
+class AesGenerateAndSaveKeyCommandHandler(
     private val aesEncryptionService: AesEncryptionService,
     private val commandGateway: KeyCommandGateway
 ) {
     private val logger = KotlinLogging.logger {}
 
     /**
-     * Handles the GenerateAndSaveKeyCommand.
+     * Handles the AesGenerateAndSaveKeyCommand.
      *
      * @param command Command to execute
      * @return Result with KeyIdView or error
      */
-    operator fun invoke(command: GenerateAndSaveKeyCommand): Result<KeyIdView> {
+    operator fun invoke(command: AesGenerateAndSaveKeyCommand): Result<KeyIdView> {
         return try {
-            logger.debug { "Handling GenerateAndSaveKeyCommand: algorithm=${command.algorithm}" }
+            logger.debug { "Handling AES GenerateAndSaveKeyCommand: algorithm=${command.algorithm}" }
 
-            // Generate key using domain service
+            // Generate key using AES domain service
             val keyResult = aesEncryptionService.generateKey(command.algorithm)
             if (keyResult.isFailure) {
-                val error = keyResult.exceptionOrNull() ?: Exception("Key generation failed")
-                logger.error(error) { "Key generation failed: ${error.message}" }
+                val error = keyResult.exceptionOrNull() ?: Exception("AES key generation failed")
+                logger.error(error) { "AES key generation failed: ${error.message}" }
                 return Result.failure(error)
             }
 
@@ -44,20 +44,21 @@ class GenerateAndSaveKeyCommandHandler(
 
             // Generate unique ID and save key via Gateway
             val keyId = UUID.randomUUID().toString()
-            logger.debug { "Saving key: keyId=$keyId, algorithm=${key.algorithm}" }
+            logger.debug { "Saving AES key: keyId=$keyId, algorithm=${key.algorithm}" }
 
             val saved = commandGateway.saveKey(keyId, key)
 
             if (saved) {
-                logger.info { "Key generated and saved successfully: keyId=$keyId, algorithm=${command.algorithm}" }
+                logger.info { "AES key generated and saved successfully: keyId=$keyId, algorithm=${command.algorithm}" }
                 Result.success(KeyIdView(keyId))
             } else {
-                logger.error { "Failed to save key: keyId=$keyId" }
-                Result.failure(Exception("Failed to save key"))
+                logger.error { "Failed to save AES key: keyId=$keyId" }
+                Result.failure(Exception("Failed to save AES key"))
             }
         } catch (e: Exception) {
-            logger.error(e) { "Error handling GenerateAndSaveKeyCommand: algorithm=${command.algorithm}" }
+            logger.error(e) { "Error handling AES GenerateAndSaveKeyCommand: algorithm=${command.algorithm}" }
             Result.failure(e)
         }
     }
 }
+

@@ -11,17 +11,17 @@ import org.junit.Before
 import org.junit.Test
 
 /**
- * Unit tests for DecryptTextCommandHandler.
+ * Unit tests for AesDecryptTextCommandHandler.
  */
-class DecryptTextCommandHandlerTest {
+class AesDecryptTextCommandHandlerTest {
 
     private lateinit var aesService: AesEncryptionService
-    private lateinit var handler: DecryptTextCommandHandler
+    private lateinit var handler: AesDecryptTextCommandHandler
 
     @Before
     fun setUp() {
         aesService = AesEncryptionService()
-        handler = DecryptTextCommandHandler(aesService)
+        handler = AesDecryptTextCommandHandler(aesService)
     }
 
     @Test
@@ -36,7 +36,7 @@ class DecryptTextCommandHandlerTest {
         assertTrue(encryptResult.isSuccess)
         val encryptedText = encryptResult.getOrThrow()
 
-        val command = DecryptTextCommand(encryptedText, key)
+        val command = AesDecryptTextCommand(encryptedText, key)
 
         // When
         val result = handler(command)
@@ -53,10 +53,10 @@ class DecryptTextCommandHandlerTest {
         val mockAesService = mockk<AesEncryptionService>()
         every { mockAesService.decrypt(any(), any()) } returns Result.failure(Exception("Decryption failed"))
 
-        val handlerWithMock = DecryptTextCommandHandler(mockAesService)
+        val handlerWithMock = AesDecryptTextCommandHandler(mockAesService)
         val key = KeyFactory.createAes256()
         val encryptedText = EncryptedTextFactory.create()
-        val command = DecryptTextCommand(encryptedText, key)
+        val command = AesDecryptTextCommand(encryptedText, key)
 
         // When
         val result = handlerWithMock(command)
@@ -70,7 +70,7 @@ class DecryptTextCommandHandlerTest {
         // Given
         val key = KeyFactory.createAes256()
         val encryptedText = EncryptedTextFactory.createWithoutIv()
-        val command = DecryptTextCommand(encryptedText, key)
+        val command = AesDecryptTextCommand(encryptedText, key)
 
         // When
         val result = handler(command)

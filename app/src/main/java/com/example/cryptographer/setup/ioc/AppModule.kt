@@ -1,17 +1,21 @@
 package com.example.cryptographer.setup.ioc
 
 import com.example.cryptographer.application.commands.text.convert_encoding.ConvertTextEncodingCommandHandler
-import com.example.cryptographer.application.commands.text.decrypt.DecryptTextCommandHandler
+import com.example.cryptographer.application.commands.text.decrypt.AesDecryptTextCommandHandler
+import com.example.cryptographer.application.commands.text.decrypt.ChaCha20DecryptTextCommandHandler
 import com.example.cryptographer.application.commands.key.delete_all.DeleteAllKeysCommandHandler
 import com.example.cryptographer.application.commands.key.delete.DeleteKeyCommandHandler
-import com.example.cryptographer.application.commands.text.encrypt.EncryptTextCommandHandler
-import com.example.cryptographer.application.commands.key.create.GenerateAndSaveKeyCommandHandler
+import com.example.cryptographer.application.commands.text.encrypt.AesEncryptTextCommandHandler
+import com.example.cryptographer.application.commands.text.encrypt.ChaCha20EncryptTextCommandHandler
+import com.example.cryptographer.application.commands.key.create.AesGenerateAndSaveKeyCommandHandler
+import com.example.cryptographer.application.commands.key.create.ChaCha20GenerateAndSaveKeyCommandHandler
 import com.example.cryptographer.application.common.ports.key.KeyCommandGateway
 import com.example.cryptographer.application.common.ports.key.KeyQueryGateway
 import com.example.cryptographer.application.queries.key.read_all.LoadAllKeysQueryHandler
 import com.example.cryptographer.application.queries.key.read_by_id.LoadKeyQueryHandler
 import com.example.cryptographer.domain.text.ports.TextIdGeneratorPort
 import com.example.cryptographer.domain.text.services.AesEncryptionService
+import com.example.cryptographer.domain.text.services.ChaCha20EncryptionService
 import com.example.cryptographer.domain.text.services.TextService
 import com.example.cryptographer.application.commands.language.update.SaveLanguageCommandHandler
 import com.example.cryptographer.application.commands.theme.update.SaveThemeCommandHandler
@@ -59,6 +63,16 @@ object AppModule {
     }
 
     /**
+     * Provides ChaCha20 encryption service.
+     * Creates a new instance for each injection (stateless, so safe).
+     * Note: ChaCha20 is available in Java 11+ and Android API 28+.
+     */
+    @Provides
+    fun provideChaCha20EncryptionService(): ChaCha20EncryptionService {
+        return ChaCha20EncryptionService()
+    }
+
+    /**
      * Provides KeyCommandGateway implementation.
      * Uses KeyCommandGatewayAdapter as the implementation.
      */
@@ -81,14 +95,25 @@ object AppModule {
     }
 
     /**
-     * Provides GenerateAndSaveKeyCommandHandler.
+     * Provides AesGenerateAndSaveKeyCommandHandler.
      */
     @Provides
-    fun provideGenerateAndSaveKeyCommandHandler(
+    fun provideAesGenerateAndSaveKeyCommandHandler(
         aesEncryptionService: AesEncryptionService,
         commandGateway: KeyCommandGateway
-    ): GenerateAndSaveKeyCommandHandler {
-        return GenerateAndSaveKeyCommandHandler(aesEncryptionService, commandGateway)
+    ): AesGenerateAndSaveKeyCommandHandler {
+        return AesGenerateAndSaveKeyCommandHandler(aesEncryptionService, commandGateway)
+    }
+
+    /**
+     * Provides ChaCha20GenerateAndSaveKeyCommandHandler.
+     */
+    @Provides
+    fun provideChaCha20GenerateAndSaveKeyCommandHandler(
+        chaCha20EncryptionService: ChaCha20EncryptionService,
+        commandGateway: KeyCommandGateway
+    ): ChaCha20GenerateAndSaveKeyCommandHandler {
+        return ChaCha20GenerateAndSaveKeyCommandHandler(chaCha20EncryptionService, commandGateway)
     }
 
     /**
@@ -132,25 +157,47 @@ object AppModule {
     }
 
     /**
-     * Provides EncryptTextCommandHandler.
+     * Provides AesEncryptTextCommandHandler.
      * Uses TextService for text validation to ensure consistency.
      */
     @Provides
-    fun provideEncryptTextCommandHandler(
+    fun provideAesEncryptTextCommandHandler(
         aesEncryptionService: AesEncryptionService,
         textService: TextService
-    ): EncryptTextCommandHandler {
-        return EncryptTextCommandHandler(aesEncryptionService, textService)
+    ): AesEncryptTextCommandHandler {
+        return AesEncryptTextCommandHandler(aesEncryptionService, textService)
     }
 
     /**
-     * Provides DecryptTextCommandHandler.
+     * Provides ChaCha20EncryptTextCommandHandler.
+     * Uses TextService for text validation to ensure consistency.
      */
     @Provides
-    fun provideDecryptTextCommandHandler(
+    fun provideChaCha20EncryptTextCommandHandler(
+        chaCha20EncryptionService: ChaCha20EncryptionService,
+        textService: TextService
+    ): ChaCha20EncryptTextCommandHandler {
+        return ChaCha20EncryptTextCommandHandler(chaCha20EncryptionService, textService)
+    }
+
+    /**
+     * Provides AesDecryptTextCommandHandler.
+     */
+    @Provides
+    fun provideAesDecryptTextCommandHandler(
         aesEncryptionService: AesEncryptionService
-    ): DecryptTextCommandHandler {
-        return DecryptTextCommandHandler(aesEncryptionService)
+    ): AesDecryptTextCommandHandler {
+        return AesDecryptTextCommandHandler(aesEncryptionService)
+    }
+
+    /**
+     * Provides ChaCha20DecryptTextCommandHandler.
+     */
+    @Provides
+    fun provideChaCha20DecryptTextCommandHandler(
+        chaCha20EncryptionService: ChaCha20EncryptionService
+    ): ChaCha20DecryptTextCommandHandler {
+        return ChaCha20DecryptTextCommandHandler(chaCha20EncryptionService)
     }
 
     /**
@@ -186,14 +233,16 @@ object AppModule {
      */
     @Provides
     fun provideKeyGenerationPresenter(
-        generateAndSaveKeyHandler: GenerateAndSaveKeyCommandHandler,
+        aesGenerateAndSaveKeyHandler: AesGenerateAndSaveKeyCommandHandler,
+        chaCha20GenerateAndSaveKeyHandler: ChaCha20GenerateAndSaveKeyCommandHandler,
         loadKeyHandler: LoadKeyQueryHandler,
         deleteKeyHandler: DeleteKeyCommandHandler,
         deleteAllKeysHandler: DeleteAllKeysCommandHandler,
         loadAllKeysHandler: LoadAllKeysQueryHandler
     ): KeyGenerationPresenter {
         return KeyGenerationPresenter(
-            generateAndSaveKeyHandler = generateAndSaveKeyHandler,
+            aesGenerateAndSaveKeyHandler = aesGenerateAndSaveKeyHandler,
+            chaCha20GenerateAndSaveKeyHandler = chaCha20GenerateAndSaveKeyHandler,
             loadKeyHandler = loadKeyHandler,
             deleteKeyHandler = deleteKeyHandler,
             deleteAllKeysHandler = deleteAllKeysHandler,
@@ -206,12 +255,16 @@ object AppModule {
      */
     @Provides
     fun provideEncryptionPresenter(
-        encryptTextHandler: EncryptTextCommandHandler,
-        decryptTextHandler: DecryptTextCommandHandler
+        aesEncryptHandler: AesEncryptTextCommandHandler,
+        chaCha20EncryptHandler: ChaCha20EncryptTextCommandHandler,
+        aesDecryptHandler: AesDecryptTextCommandHandler,
+        chaCha20DecryptHandler: ChaCha20DecryptTextCommandHandler
     ): EncryptionPresenter {
         return EncryptionPresenter(
-            encryptTextHandler = encryptTextHandler,
-            decryptTextHandler = decryptTextHandler
+            aesEncryptHandler = aesEncryptHandler,
+            chaCha20EncryptHandler = chaCha20EncryptHandler,
+            aesDecryptHandler = aesDecryptHandler,
+            chaCha20DecryptHandler = chaCha20DecryptHandler
         )
     }
 

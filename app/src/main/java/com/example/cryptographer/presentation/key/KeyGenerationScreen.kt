@@ -118,7 +118,7 @@ fun KeyGenerationScreen(
                             onClick = { selectedAlgorithm = algorithm }
                         )
                         Text(
-                            text = algorithm.name,
+                            text = getAlgorithmDisplayName(algorithm),
                             modifier = Modifier.padding(start = 8.dp),
                             style = MaterialTheme.typography.bodyLarge
                         )
@@ -397,5 +397,20 @@ fun KeyGenerationScreen(
             )
         }
     }
+}
+
+/**
+ * Returns localized display name for encryption algorithm.
+ */
+@Composable
+private fun getAlgorithmDisplayName(algorithm: EncryptionAlgorithm): String {
+    return stringResource(
+        when (algorithm) {
+            EncryptionAlgorithm.AES_128 -> R.string.algorithm_aes_128
+            EncryptionAlgorithm.AES_192 -> R.string.algorithm_aes_192
+            EncryptionAlgorithm.AES_256 -> R.string.algorithm_aes_256
+            EncryptionAlgorithm.CHACHA20_256 -> R.string.algorithm_chacha20_256
+        }
+    )
 }
 

@@ -6,6 +6,7 @@ package com.example.cryptographer.domain.text.value_objects
 enum class EncryptionAlgorithm {
     AES_128,
     AES_192,
-    AES_256
+    AES_256,
+    CHACHA20_256
 }
 

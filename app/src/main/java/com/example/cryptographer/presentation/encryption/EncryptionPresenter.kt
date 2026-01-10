@@ -1,9 +1,13 @@
 package com.example.cryptographer.presentation.encryption
 
-import com.example.cryptographer.application.commands.text.decrypt.DecryptTextCommand
-import com.example.cryptographer.application.commands.text.decrypt.DecryptTextCommandHandler
-import com.example.cryptographer.application.commands.text.encrypt.EncryptTextCommand
-import com.example.cryptographer.application.commands.text.encrypt.EncryptTextCommandHandler
+import com.example.cryptographer.application.commands.text.decrypt.AesDecryptTextCommand
+import com.example.cryptographer.application.commands.text.decrypt.AesDecryptTextCommandHandler
+import com.example.cryptographer.application.commands.text.decrypt.ChaCha20DecryptTextCommand
+import com.example.cryptographer.application.commands.text.decrypt.ChaCha20DecryptTextCommandHandler
+import com.example.cryptographer.application.commands.text.encrypt.AesEncryptTextCommand
+import com.example.cryptographer.application.commands.text.encrypt.AesEncryptTextCommandHandler
+import com.example.cryptographer.application.commands.text.encrypt.ChaCha20EncryptTextCommand
+import com.example.cryptographer.application.commands.text.encrypt.ChaCha20EncryptTextCommandHandler
 import com.example.cryptographer.domain.text.entities.EncryptedText
 import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
 import com.example.cryptographer.domain.text.entities.EncryptionKey
@@ -16,12 +20,14 @@ import java.util.Base64
  *
  * This presenter follows Clean Architecture and CQRS:
  * - Accepts raw strings (DTOs) from ViewModel
- * - Uses CommandHandlers from Application layer
+ * - Uses specialized CommandHandlers from Application layer based on algorithm
  * - Converts Views to presentation DTOs
  */
 class EncryptionPresenter(
-    private val encryptTextHandler: EncryptTextCommandHandler,
-    private val decryptTextHandler: DecryptTextCommandHandler
+    private val aesEncryptHandler: AesEncryptTextCommandHandler,
+    private val chaCha20EncryptHandler: ChaCha20EncryptTextCommandHandler,
+    private val aesDecryptHandler: AesDecryptTextCommandHandler,
+    private val chaCha20DecryptHandler: ChaCha20DecryptTextCommandHandler
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -36,9 +42,19 @@ class EncryptionPresenter(
         return try {
             logger.debug { "Presenter: Encrypting text: length=${rawText.length}, algorithm=${key.algorithm}" }
 
-            // Execute command via CommandHandler
-            val command = EncryptTextCommand(rawText, key)
-            val encryptedTextViewResult = encryptTextHandler(command)
+            // Select handler and create command based on algorithm
+            val encryptedTextViewResult = when (key.algorithm) {
+                EncryptionAlgorithm.AES_128,
+                EncryptionAlgorithm.AES_192,
+                EncryptionAlgorithm.AES_256 -> {
+                    val command = AesEncryptTextCommand(rawText, key)
+                    aesEncryptHandler(command)
+                }
+                EncryptionAlgorithm.CHACHA20_256 -> {
+                    val command = ChaCha20EncryptTextCommand(rawText, key)
+                    chaCha20EncryptHandler(command)
+                }
+            }
 
             if (encryptedTextViewResult.isFailure) {
                 val error = encryptedTextViewResult.exceptionOrNull() ?: Exception("Encryption failed")
@@ -97,9 +113,19 @@ class EncryptionPresenter(
                 initializationVector = iv
             )
 
-            // Execute command via CommandHandler
-            val command = DecryptTextCommand(encryptedText, key)
-            val decryptedTextViewResult = decryptTextHandler(command)
+            // Select handler and create command based on algorithm
+            val decryptedTextViewResult = when (key.algorithm) {
+                EncryptionAlgorithm.AES_128,
+                EncryptionAlgorithm.AES_192,
+                EncryptionAlgorithm.AES_256 -> {
+                    val command = AesDecryptTextCommand(encryptedText, key)
+                    aesDecryptHandler(command)
+                }
+                EncryptionAlgorithm.CHACHA20_256 -> {
+                    val command = ChaCha20DecryptTextCommand(encryptedText, key)
+                    chaCha20DecryptHandler(command)
+                }
+            }
 
             if (decryptedTextViewResult.isFailure) {
                 val error = decryptedTextViewResult.exceptionOrNull() ?: Exception("Decryption failed")

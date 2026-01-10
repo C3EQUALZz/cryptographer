@@ -4,14 +4,13 @@ import com.example.cryptographer.domain.text.entities.EncryptedText
 import com.example.cryptographer.domain.text.entities.EncryptionKey
 
 /**
- * Command for decrypting text.
+ * Command for decrypting text using ChaCha20 algorithm.
  *
  * This is a Command DTO in CQRS pattern - it represents
- * an intent to perform a read operation (decryption).
- * Note: Decryption is technically a read operation, but we treat it as a command
- * because it requires input and produces output.
+ * an intent to perform a read operation (decryption) using ChaCha20.
  */
-data class DecryptTextCommand(
+data class ChaCha20DecryptTextCommand(
     val encryptedText: EncryptedText,
     val key: EncryptionKey
 )
+

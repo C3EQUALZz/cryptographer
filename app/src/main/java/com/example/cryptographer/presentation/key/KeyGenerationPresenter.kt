@@ -1,7 +1,9 @@
 package com.example.cryptographer.presentation.key
 
-import com.example.cryptographer.application.commands.key.create.GenerateAndSaveKeyCommand
-import com.example.cryptographer.application.commands.key.create.GenerateAndSaveKeyCommandHandler
+import com.example.cryptographer.application.commands.key.create.AesGenerateAndSaveKeyCommand
+import com.example.cryptographer.application.commands.key.create.AesGenerateAndSaveKeyCommandHandler
+import com.example.cryptographer.application.commands.key.create.ChaCha20GenerateAndSaveKeyCommand
+import com.example.cryptographer.application.commands.key.create.ChaCha20GenerateAndSaveKeyCommandHandler
 import com.example.cryptographer.application.commands.key.delete.DeleteKeyCommand
 import com.example.cryptographer.application.commands.key.delete.DeleteKeyCommandHandler
 import com.example.cryptographer.application.commands.key.delete_all.DeleteAllKeysCommand
@@ -20,10 +22,11 @@ import java.util.Base64
  * Coordinates command/query handlers and transforms Views to presentation models.
  *
  * This layer separates business logic from ViewModel, making it easier to test.
- * Following CQRS pattern - uses CommandHandlers and QueryHandlers from Application layer.
+ * Following CQRS pattern - uses specialized CommandHandlers and QueryHandlers from Application layer.
  */
 class KeyGenerationPresenter(
-    private val generateAndSaveKeyHandler: GenerateAndSaveKeyCommandHandler,
+    private val aesGenerateAndSaveKeyHandler: AesGenerateAndSaveKeyCommandHandler,
+    private val chaCha20GenerateAndSaveKeyHandler: ChaCha20GenerateAndSaveKeyCommandHandler,
     private val loadKeyHandler: LoadKeyQueryHandler,
     private val deleteKeyHandler: DeleteKeyCommandHandler,
     private val deleteAllKeysHandler: DeleteAllKeysCommandHandler,
@@ -41,9 +44,19 @@ class KeyGenerationPresenter(
         return try {
             logger.debug { "Presenter: Generating and saving key: algorithm=$algorithm" }
 
-            // Execute command via CommandHandler
-            val command = GenerateAndSaveKeyCommand(algorithm)
-            val keyIdViewResult = generateAndSaveKeyHandler(command)
+            // Select handler and create command based on algorithm
+            val keyIdViewResult = when (algorithm) {
+                EncryptionAlgorithm.AES_128,
+                EncryptionAlgorithm.AES_192,
+                EncryptionAlgorithm.AES_256 -> {
+                    val command = AesGenerateAndSaveKeyCommand(algorithm)
+                    aesGenerateAndSaveKeyHandler(command)
+                }
+                EncryptionAlgorithm.CHACHA20_256 -> {
+                    val command = ChaCha20GenerateAndSaveKeyCommand(algorithm)
+                    chaCha20GenerateAndSaveKeyHandler(command)
+                }
+            }
 
             if (keyIdViewResult.isFailure) {
                 return Result.failure(keyIdViewResult.exceptionOrNull() ?: Exception("Key generation and saving failed"))

@@ -1,8 +1,11 @@
 package com.example.cryptographer.presentation.encryption
 
-import com.example.cryptographer.application.commands.text.decrypt.DecryptTextCommandHandler
-import com.example.cryptographer.application.commands.text.encrypt.EncryptTextCommand
-import com.example.cryptographer.application.commands.text.encrypt.EncryptTextCommandHandler
+import com.example.cryptographer.application.commands.text.decrypt.AesDecryptTextCommandHandler
+import com.example.cryptographer.application.commands.text.decrypt.ChaCha20DecryptTextCommandHandler
+import com.example.cryptographer.application.commands.text.encrypt.AesEncryptTextCommand
+import com.example.cryptographer.application.commands.text.encrypt.AesEncryptTextCommandHandler
+import com.example.cryptographer.application.commands.text.encrypt.ChaCha20EncryptTextCommand
+import com.example.cryptographer.application.commands.text.encrypt.ChaCha20EncryptTextCommandHandler
 import com.example.cryptographer.application.common.views.DecryptedTextView
 import com.example.cryptographer.application.common.views.EncryptedTextView
 import com.example.cryptographer.domain.text.entities.EncryptedText
@@ -21,17 +24,23 @@ import java.util.Base64
  */
 class EncryptionPresenterTest {
 
-    private lateinit var encryptTextHandler: EncryptTextCommandHandler
-    private lateinit var decryptTextHandler: DecryptTextCommandHandler
+    private lateinit var aesEncryptHandler: AesEncryptTextCommandHandler
+    private lateinit var chaCha20EncryptHandler: ChaCha20EncryptTextCommandHandler
+    private lateinit var aesDecryptHandler: AesDecryptTextCommandHandler
+    private lateinit var chaCha20DecryptHandler: ChaCha20DecryptTextCommandHandler
     private lateinit var presenter: EncryptionPresenter
 
     @Before
     fun setUp() {
-        encryptTextHandler = mockk()
-        decryptTextHandler = mockk()
+        aesEncryptHandler = mockk()
+        chaCha20EncryptHandler = mockk()
+        aesDecryptHandler = mockk()
+        chaCha20DecryptHandler = mockk()
         presenter = EncryptionPresenter(
-            encryptTextHandler = encryptTextHandler,
-            decryptTextHandler = decryptTextHandler
+            aesEncryptHandler = aesEncryptHandler,
+            chaCha20EncryptHandler = chaCha20EncryptHandler,
+            aesDecryptHandler = aesDecryptHandler,
+            chaCha20DecryptHandler = chaCha20DecryptHandler
         )
     }
 
@@ -53,7 +62,7 @@ class EncryptionPresenterTest {
 
         val encryptedTextView = EncryptedTextView(encryptedText = encryptedTextEntity)
 
-        every { encryptTextHandler(EncryptTextCommand(rawText, key)) } returns Result.success(encryptedTextView)
+        every { aesEncryptHandler(AesEncryptTextCommand(rawText, key)) } returns Result.success(encryptedTextView)
 
         // When
         val result = presenter.encryptText(rawText, key)
@@ -65,7 +74,7 @@ class EncryptionPresenterTest {
         assertEquals(ivBase64, encryptedInfo.ivBase64)
         assertEquals(EncryptionAlgorithm.AES_256, encryptedInfo.algorithm)
 
-        verify(exactly = 1) { encryptTextHandler(EncryptTextCommand(rawText, key)) }
+        verify(exactly = 1) { aesEncryptHandler(AesEncryptTextCommand(rawText, key)) }
     }
 
     @Test
@@ -75,7 +84,7 @@ class EncryptionPresenterTest {
         val key = KeyFactory.createAes256()
         val error = Exception("Encryption failed")
 
-        every { encryptTextHandler(EncryptTextCommand(rawText, key)) } returns Result.failure(error)
+        every { aesEncryptHandler(AesEncryptTextCommand(rawText, key)) } returns Result.failure(error)
 
         // When
         val result = presenter.encryptText(rawText, key)
@@ -84,7 +93,7 @@ class EncryptionPresenterTest {
         assertTrue(result.isFailure)
         assertEquals(error, result.exceptionOrNull())
 
-        verify(exactly = 1) { encryptTextHandler(EncryptTextCommand(rawText, key)) }
+        verify(exactly = 1) { aesEncryptHandler(AesEncryptTextCommand(rawText, key)) }
     }
 
     @Test
@@ -102,7 +111,7 @@ class EncryptionPresenterTest {
         val encryptedBase64 = Base64.getEncoder().encodeToString(encryptedData)
         val encryptedTextView = EncryptedTextView(encryptedText = encryptedTextEntity)
 
-        every { encryptTextHandler(EncryptTextCommand(rawText, key)) } returns Result.success(encryptedTextView)
+        every { aesEncryptHandler(AesEncryptTextCommand(rawText, key)) } returns Result.success(encryptedTextView)
 
         // When
         val result = presenter.encryptText(rawText, key)
@@ -128,7 +137,7 @@ class EncryptionPresenterTest {
         val decryptedTextView = DecryptedTextView(decryptedText = decryptedText)
 
         // Use any() matcher since EncryptedText is created inside the presenter with a new ID
-        every { decryptTextHandler(any()) } returns Result.success(decryptedTextView)
+        every { aesDecryptHandler(any()) } returns Result.success(decryptedTextView)
 
         // When
         val result = presenter.decryptText(encryptedBase64, ivBase64, key)
@@ -137,7 +146,7 @@ class EncryptionPresenterTest {
         assertTrue(result.isSuccess)
         assertEquals(decryptedText, result.getOrThrow())
 
-        verify(exactly = 1) { decryptTextHandler(any()) }
+        verify(exactly = 1) { aesDecryptHandler(any()) }
     }
 
     @Test
@@ -152,7 +161,7 @@ class EncryptionPresenterTest {
         val decryptedTextView = DecryptedTextView(decryptedText = decryptedText)
 
         // Use any() matcher since EncryptedText is created inside the presenter with a new ID
-        every { decryptTextHandler(any()) } returns Result.success(decryptedTextView)
+        every { aesDecryptHandler(any()) } returns Result.success(decryptedTextView)
 
         // When
         val result = presenter.decryptText(encryptedBase64, ivBase64, key)
@@ -161,7 +170,7 @@ class EncryptionPresenterTest {
         assertTrue(result.isSuccess)
         assertEquals(decryptedText, result.getOrThrow())
 
-        verify(exactly = 1) { decryptTextHandler(any()) }
+        verify(exactly = 1) { aesDecryptHandler(any()) }
     }
 
     @Test
@@ -176,7 +185,7 @@ class EncryptionPresenterTest {
         val decryptedTextView = DecryptedTextView(decryptedText = decryptedText)
 
         // Use any() matcher since EncryptedText is created inside the presenter with a new ID
-        every { decryptTextHandler(any()) } returns Result.success(decryptedTextView)
+        every { aesDecryptHandler(any()) } returns Result.success(decryptedTextView)
 
         // When
         val result = presenter.decryptText(encryptedBase64, ivBase64, key)
@@ -197,7 +206,7 @@ class EncryptionPresenterTest {
         val error = Exception("Decryption failed")
 
         // Use any() matcher since EncryptedText is created inside the presenter with a new ID
-        every { decryptTextHandler(any()) } returns Result.failure(error)
+        every { aesDecryptHandler(any()) } returns Result.failure(error)
 
         // When
         val result = presenter.decryptText(encryptedBase64, ivBase64, key)
@@ -206,7 +215,7 @@ class EncryptionPresenterTest {
         assertTrue(result.isFailure)
         assertNotNull(result.exceptionOrNull()?.message)
 
-        verify(exactly = 1) { decryptTextHandler(any()) }
+        verify(exactly = 1) { aesDecryptHandler(any()) }
     }
 
     @Test
@@ -223,7 +232,8 @@ class EncryptionPresenterTest {
         assertNotNull(result.exceptionOrNull()?.message)
         assertTrue(result.exceptionOrNull()?.message?.contains("Base64") == true)
 
-        verify(exactly = 0) { decryptTextHandler(any()) }
+        verify(exactly = 0) { aesDecryptHandler(any()) }
+        verify(exactly = 0) { chaCha20DecryptHandler(any()) }
     }
 
     @Test
@@ -242,6 +252,64 @@ class EncryptionPresenterTest {
         assertNotNull(result.exceptionOrNull()?.message)
         assertTrue(result.exceptionOrNull()?.message?.contains("Base64") == true)
 
-        verify(exactly = 0) { decryptTextHandler(any()) }
+        verify(exactly = 0) { aesDecryptHandler(any()) }
+        verify(exactly = 0) { chaCha20DecryptHandler(any()) }
+    }
+
+    @Test
+    fun `encryptText should work with ChaCha20 algorithm`() {
+        // Given
+        val rawText = "Hello, ChaCha20!"
+        val key = KeyFactory.createChaCha20_256()
+        val encryptedData = ByteArray(32)
+        val iv = ByteArray(12) // ChaCha20 uses 96-bit (12-byte) nonce
+        val encryptedTextEntity = EncryptedText(
+            encryptedData = encryptedData,
+            algorithm = EncryptionAlgorithm.CHACHA20_256,
+            initializationVector = iv
+        )
+
+        val encryptedBase64 = Base64.getEncoder().encodeToString(encryptedData)
+        val ivBase64 = Base64.getEncoder().encodeToString(iv)
+        val encryptedTextView = EncryptedTextView(encryptedText = encryptedTextEntity)
+
+        every { chaCha20EncryptHandler(ChaCha20EncryptTextCommand(rawText, key)) } returns Result.success(encryptedTextView)
+
+        // When
+        val result = presenter.encryptText(rawText, key)
+
+        // Then
+        assertTrue(result.isSuccess)
+        val encryptedInfo = result.getOrThrow()
+        assertEquals(encryptedBase64, encryptedInfo.encryptedBase64)
+        assertEquals(ivBase64, encryptedInfo.ivBase64)
+        assertEquals(EncryptionAlgorithm.CHACHA20_256, encryptedInfo.algorithm)
+
+        verify(exactly = 1) { chaCha20EncryptHandler(ChaCha20EncryptTextCommand(rawText, key)) }
+    }
+
+    @Test
+    fun `decryptText should work with ChaCha20 algorithm`() {
+        // Given
+        val decryptedText = "Hello, ChaCha20!"
+        val key = KeyFactory.createChaCha20_256()
+        val encryptedData = ByteArray(32)
+        val iv = ByteArray(12) // ChaCha20 uses 96-bit (12-byte) nonce
+        val encryptedBase64 = Base64.getEncoder().encodeToString(encryptedData)
+        val ivBase64 = Base64.getEncoder().encodeToString(iv)
+
+        val decryptedTextView = DecryptedTextView(decryptedText = decryptedText)
+
+        // Use any() matcher since EncryptedText is created inside the presenter with a new ID
+        every { chaCha20DecryptHandler(any()) } returns Result.success(decryptedTextView)
+
+        // When
+        val result = presenter.decryptText(encryptedBase64, ivBase64, key)
+
+        // Then
+        assertTrue(result.isSuccess)
+        assertEquals(decryptedText, result.getOrThrow())
+
+        verify(exactly = 1) { chaCha20DecryptHandler(any()) }
     }
 }

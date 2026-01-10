@@ -1,5 +1,6 @@
 package com.example.cryptographer.domain.text.services
 
+import com.example.cryptographer.domain.common.errors.UnsupportedAlgorithmError
 import com.example.cryptographer.domain.common.services.DomainService
 import com.example.cryptographer.domain.text.entities.EncryptedText
 import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
@@ -62,6 +63,9 @@ class AesEncryptionService : DomainService() {
                     initializationVector = iv
                 )
             )
+        } catch (e: UnsupportedAlgorithmError) {
+            logger.error(e) { "Encryption failed: unsupported algorithm=${key.algorithm}" }
+            Result.failure(e)
         } catch (e: Exception) {
             logger.error(e) { "Encryption failed: algorithm=${key.algorithm}, error=${e.message}" }
             Result.failure(
@@ -99,6 +103,9 @@ class AesEncryptionService : DomainService() {
 
             logger.debug { "Decryption successful: algorithm=${key.algorithm}, decryptedSize=${decryptedData.size} bytes" }
             Result.success(decryptedData)
+        } catch (e: UnsupportedAlgorithmError) {
+            logger.error(e) { "Decryption failed: unsupported algorithm=${key.algorithm}" }
+            Result.failure(e)
         } catch (e: Exception) {
             logger.error(e) { "Decryption failed: algorithm=${key.algorithm}, error=${e.message}" }
             Result.failure(
@@ -119,6 +126,7 @@ class AesEncryptionService : DomainService() {
                 EncryptionAlgorithm.AES_128 -> 128
                 EncryptionAlgorithm.AES_192 -> 192
                 EncryptionAlgorithm.AES_256 -> 256
+                EncryptionAlgorithm.CHACHA20_256 -> throw UnsupportedAlgorithmError(algorithm, "AesEncryptionService")
             }
 
             logger.debug { "Generating encryption key: algorithm=$algorithm, keySize=$keySize bits" }
@@ -133,6 +141,9 @@ class AesEncryptionService : DomainService() {
                     algorithm = algorithm
                 )
             )
+        } catch (e: UnsupportedAlgorithmError) {
+            logger.error(e) { "Key generation failed: unsupported algorithm=$algorithm" }
+            Result.failure(e)
         } catch (e: Exception) {
             logger.error(e) { "Key generation failed: algorithm=$algorithm, error=${e.message}" }
             Result.failure(
@@ -150,6 +161,7 @@ class AesEncryptionService : DomainService() {
             EncryptionAlgorithm.AES_128 -> 16 // 128 bits = 16 bytes
             EncryptionAlgorithm.AES_192 -> 24 // 192 bits = 24 bytes
             EncryptionAlgorithm.AES_256 -> 32 // 256 bits = 32 bytes
+            EncryptionAlgorithm.CHACHA20_256 -> throw UnsupportedAlgorithmError(key.algorithm, "AesEncryptionService")
         }
 
         if (key.value.size != expectedKeyLength) {

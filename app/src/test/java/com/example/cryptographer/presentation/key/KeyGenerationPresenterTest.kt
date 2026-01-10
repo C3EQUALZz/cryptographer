@@ -1,7 +1,9 @@
 package com.example.cryptographer.presentation.key
 
-import com.example.cryptographer.application.commands.key.create.GenerateAndSaveKeyCommand
-import com.example.cryptographer.application.commands.key.create.GenerateAndSaveKeyCommandHandler
+import com.example.cryptographer.application.commands.key.create.AesGenerateAndSaveKeyCommand
+import com.example.cryptographer.application.commands.key.create.AesGenerateAndSaveKeyCommandHandler
+import com.example.cryptographer.application.commands.key.create.ChaCha20GenerateAndSaveKeyCommand
+import com.example.cryptographer.application.commands.key.create.ChaCha20GenerateAndSaveKeyCommandHandler
 import com.example.cryptographer.application.commands.key.delete.DeleteKeyCommand
 import com.example.cryptographer.application.commands.key.delete.DeleteKeyCommandHandler
 import com.example.cryptographer.application.commands.key.delete_all.DeleteAllKeysCommand
@@ -28,7 +30,8 @@ import java.util.Base64
  */
 class KeyGenerationPresenterTest {
 
-    private lateinit var generateAndSaveKeyHandler: GenerateAndSaveKeyCommandHandler
+    private lateinit var aesGenerateAndSaveKeyHandler: AesGenerateAndSaveKeyCommandHandler
+    private lateinit var chaCha20GenerateAndSaveKeyHandler: ChaCha20GenerateAndSaveKeyCommandHandler
     private lateinit var loadKeyHandler: LoadKeyQueryHandler
     private lateinit var deleteKeyHandler: DeleteKeyCommandHandler
     private lateinit var deleteAllKeysHandler: DeleteAllKeysCommandHandler
@@ -37,13 +40,15 @@ class KeyGenerationPresenterTest {
 
     @Before
     fun setUp() {
-        generateAndSaveKeyHandler = mockk()
+        aesGenerateAndSaveKeyHandler = mockk()
+        chaCha20GenerateAndSaveKeyHandler = mockk()
         loadKeyHandler = mockk()
         deleteKeyHandler = mockk()
         deleteAllKeysHandler = mockk()
         loadAllKeysHandler = mockk()
         presenter = KeyGenerationPresenter(
-            generateAndSaveKeyHandler = generateAndSaveKeyHandler,
+            aesGenerateAndSaveKeyHandler = aesGenerateAndSaveKeyHandler,
+            chaCha20GenerateAndSaveKeyHandler = chaCha20GenerateAndSaveKeyHandler,
             loadKeyHandler = loadKeyHandler,
             deleteKeyHandler = deleteKeyHandler,
             deleteAllKeysHandler = deleteAllKeysHandler,
@@ -66,7 +71,7 @@ class KeyGenerationPresenterTest {
             keyBase64 = keyBase64
         )
 
-        coEvery { generateAndSaveKeyHandler(any()) } returns Result.success(keyIdView)
+        coEvery { aesGenerateAndSaveKeyHandler(AesGenerateAndSaveKeyCommand(algorithm)) } returns Result.success(keyIdView)
         coEvery { loadKeyHandler(LoadKeyQuery(keyId)) } returns Result.success(keyView)
 
         // When
@@ -80,7 +85,7 @@ class KeyGenerationPresenterTest {
         assertEquals(algorithm, keyInfo.key.algorithm)
         assertEquals(32, keyInfo.key.value.size) // AES-256 = 32 bytes
 
-        coVerify(exactly = 1) { generateAndSaveKeyHandler(GenerateAndSaveKeyCommand(algorithm)) }
+        coVerify(exactly = 1) { aesGenerateAndSaveKeyHandler(AesGenerateAndSaveKeyCommand(algorithm)) }
         coVerify(exactly = 1) { loadKeyHandler(LoadKeyQuery(keyId)) }
     }
 
@@ -90,7 +95,7 @@ class KeyGenerationPresenterTest {
         val algorithm = EncryptionAlgorithm.AES_128
         val error = Exception("Key generation failed")
 
-        coEvery { generateAndSaveKeyHandler(any()) } returns Result.failure(error)
+        coEvery { aesGenerateAndSaveKeyHandler(AesGenerateAndSaveKeyCommand(algorithm)) } returns Result.failure(error)
 
         // When
         val result = presenter.generateAndSaveKey(algorithm)
@@ -99,7 +104,7 @@ class KeyGenerationPresenterTest {
         assertTrue(result.isFailure)
         assertEquals(error, result.exceptionOrNull())
 
-        coVerify(exactly = 1) { generateAndSaveKeyHandler(GenerateAndSaveKeyCommand(algorithm)) }
+        coVerify(exactly = 1) { aesGenerateAndSaveKeyHandler(AesGenerateAndSaveKeyCommand(algorithm)) }
         coVerify(exactly = 0) { loadKeyHandler(any()) }
     }
 
@@ -111,7 +116,7 @@ class KeyGenerationPresenterTest {
         val keyIdView = KeyIdView(keyId = keyId)
         val loadError = Exception("Key not found")
 
-        coEvery { generateAndSaveKeyHandler(any()) } returns Result.success(keyIdView)
+        coEvery { aesGenerateAndSaveKeyHandler(AesGenerateAndSaveKeyCommand(algorithm)) } returns Result.success(keyIdView)
         coEvery { loadKeyHandler(LoadKeyQuery(keyId)) } returns Result.failure(loadError)
 
         // When
@@ -122,7 +127,7 @@ class KeyGenerationPresenterTest {
         assertNotNull(result.exceptionOrNull()?.message)
         assertTrue(result.exceptionOrNull()?.message?.contains("saved but could not be loaded") == true)
 
-        coVerify(exactly = 1) { generateAndSaveKeyHandler(GenerateAndSaveKeyCommand(algorithm)) }
+        coVerify(exactly = 1) { aesGenerateAndSaveKeyHandler(AesGenerateAndSaveKeyCommand(algorithm)) }
         coVerify(exactly = 1) { loadKeyHandler(LoadKeyQuery(keyId)) }
     }
 
@@ -297,5 +302,38 @@ class KeyGenerationPresenterTest {
         assertEquals(error, result.exceptionOrNull())
 
         coVerify(exactly = 1) { loadAllKeysHandler(LoadAllKeysQuery) }
+    }
+    
+    @Test
+    fun `generateAndSaveKey should work with ChaCha20 algorithm`() = runTest {
+        // Given
+        val algorithm = EncryptionAlgorithm.CHACHA20_256
+        val key = KeyFactory.createChaCha20_256(id = "test-key-id")
+        val keyId = "test-key-id"
+        val keyBase64 = Base64.getEncoder().encodeToString(key.value)
+        
+        val keyIdView = KeyIdView(keyId = keyId)
+        val keyView = KeyView(
+            id = keyId,
+            algorithm = algorithm,
+            keyBase64 = keyBase64
+        )
+
+        coEvery { chaCha20GenerateAndSaveKeyHandler(ChaCha20GenerateAndSaveKeyCommand(algorithm)) } returns Result.success(keyIdView)
+        coEvery { loadKeyHandler(LoadKeyQuery(keyId)) } returns Result.success(keyView)
+
+        // When
+        val result = presenter.generateAndSaveKey(algorithm)
+
+        // Then
+        assertTrue(result.isSuccess)
+        val keyInfo = result.getOrThrow()
+        assertEquals(keyId, keyInfo.keyId)
+        assertEquals(keyBase64, keyInfo.keyBase64)
+        assertEquals(algorithm, keyInfo.key.algorithm)
+        assertEquals(32, keyInfo.key.value.size) // ChaCha20-256 = 32 bytes
+
+        coVerify(exactly = 1) { chaCha20GenerateAndSaveKeyHandler(ChaCha20GenerateAndSaveKeyCommand(algorithm)) }
+        coVerify(exactly = 1) { loadKeyHandler(LoadKeyQuery(keyId)) }
     }
 }

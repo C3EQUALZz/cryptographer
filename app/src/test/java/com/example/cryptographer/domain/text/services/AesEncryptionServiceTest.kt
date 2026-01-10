@@ -1,5 +1,6 @@
 package com.example.cryptographer.domain.text.services
 
+import com.example.cryptographer.domain.common.errors.UnsupportedAlgorithmError
 import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
 import com.example.cryptographer.test.factories.KeyFactory
 import org.junit.Assert.*
@@ -129,6 +130,56 @@ class AesEncryptionServiceTest {
         
         // Encrypted data should be different (due to different IVs)
         assertFalse(encrypted1.encryptedData.contentEquals(encrypted2.encryptedData))
+    }
+
+    @Test
+    fun `generateKey should fail for non-AES algorithms`() {
+        // When
+        val result = aesService.generateKey(EncryptionAlgorithm.CHACHA20_256)
+
+        // Then
+        assertTrue(result.isFailure)
+        val error = result.exceptionOrNull()
+        assertNotNull("Error should not be null", error)
+        assertTrue("Error should be UnsupportedAlgorithmError, but was ${error?.javaClass?.simpleName}", error is UnsupportedAlgorithmError)
+        assertEquals(EncryptionAlgorithm.CHACHA20_256, (error as UnsupportedAlgorithmError).algorithm)
+        assertEquals("AesEncryptionService", (error as UnsupportedAlgorithmError).serviceName)
+    }
+
+    @Test
+    fun `encrypt should fail with wrong algorithm`() {
+        // Given
+        val wrongKey = KeyFactory.createChaCha20_256() // ChaCha20 key, not AES
+        val data = "Test".toByteArray(Charsets.UTF_8)
+
+        // When
+        val result = aesService.encrypt(data, wrongKey)
+
+        // Then
+        assertTrue(result.isFailure)
+        val error = result.exceptionOrNull()
+        assertTrue(error is UnsupportedAlgorithmError)
+        assertEquals(EncryptionAlgorithm.CHACHA20_256, (error as UnsupportedAlgorithmError).algorithm)
+        assertEquals("AesEncryptionService", (error as UnsupportedAlgorithmError).serviceName)
+    }
+
+    @Test
+    fun `decrypt should fail with wrong algorithm`() {
+        // Given
+        val wrongKey = KeyFactory.createChaCha20_256() // ChaCha20 key, not AES
+        val encryptedText = com.example.cryptographer.test.factories.EncryptedTextFactory.create(
+            algorithm = EncryptionAlgorithm.CHACHA20_256
+        )
+
+        // When
+        val result = aesService.decrypt(encryptedText, wrongKey)
+
+        // Then
+        assertTrue(result.isFailure)
+        val error = result.exceptionOrNull()
+        assertTrue(error is UnsupportedAlgorithmError)
+        assertEquals(EncryptionAlgorithm.CHACHA20_256, (error as UnsupportedAlgorithmError).algorithm)
+        assertEquals("AesEncryptionService", (error as UnsupportedAlgorithmError).serviceName)
     }
 }
 

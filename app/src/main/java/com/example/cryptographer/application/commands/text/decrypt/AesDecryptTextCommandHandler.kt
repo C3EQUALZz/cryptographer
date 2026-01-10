@@ -5,45 +5,46 @@ import com.example.cryptographer.domain.text.services.AesEncryptionService
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**
- * Command Handler for decrypting text.
+ * Command Handler for decrypting text using AES algorithm.
  *
- * This is a Command Handler in CQRS pattern - it handles read operations (decryption).
+ * This is a specialized Command Handler for AES decryption.
  * Following Clean Architecture principles:
  * - Located in Application layer (application boundary)
  * - Uses domain services for business logic
  * - Returns View (DTO) for presentation layer
  */
-class DecryptTextCommandHandler(
+class AesDecryptTextCommandHandler(
     private val aesEncryptionService: AesEncryptionService
 ) {
     private val logger = KotlinLogging.logger {}
 
     /**
-     * Handles the DecryptTextCommand.
+     * Handles the AesDecryptTextCommand.
      *
      * @param command Command to execute
      * @return Result with DecryptedTextView or error
      */
-    operator fun invoke(command: DecryptTextCommand): Result<DecryptedTextView> {
+    operator fun invoke(command: AesDecryptTextCommand): Result<DecryptedTextView> {
         return try {
-            logger.debug { "Handling DecryptTextCommand: algorithm=${command.key.algorithm}, encryptedSize=${command.encryptedText.encryptedData.size} bytes" }
+            logger.debug { "Handling AES DecryptTextCommand: algorithm=${command.key.algorithm}, encryptedSize=${command.encryptedText.encryptedData.size} bytes" }
 
             // Decrypt using AES service
             val decryptedBytes = aesEncryptionService.decrypt(command.encryptedText, command.key).getOrElse { error ->
-                logger.error(error) { "Text decryption failed: ${error.message}" }
+                logger.error(error) { "AES text decryption failed: ${error.message}" }
                 return Result.failure(error)
             }
 
             // Convert bytes back to text string
             val decryptedContent = String(decryptedBytes, Charsets.UTF_8)
 
-            logger.info { "Text decryption successful: algorithm=${command.key.algorithm}, decryptedLength=${decryptedContent.length}" }
+            logger.info { "AES text decryption successful: algorithm=${command.key.algorithm}, decryptedLength=${decryptedContent.length}" }
             Result.success(DecryptedTextView(decryptedContent))
         } catch (e: Exception) {
-            logger.error(e) { "Error handling DecryptTextCommand: ${e.message}" }
+            logger.error(e) { "Error handling AES DecryptTextCommand: ${e.message}" }
             Result.failure(
-                Exception("Text decryption error: ${e.message}", e)
+                Exception("AES text decryption error: ${e.message}", e)
             )
         }
     }
 }
+

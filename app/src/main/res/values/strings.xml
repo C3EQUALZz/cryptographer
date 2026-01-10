@@ -23,8 +23,12 @@
     
     <!-- Key Generation Screen -->
     <string name="key_generation_title">Encryption Key Generator</string>
-    <string name="key_generation_info">Use this tool to generate AES cryptographic keys. Generated keys can be saved and used for encoding.</string>
+    <string name="key_generation_info">Use this tool to generate cryptographic keys. Generated keys can be saved and used for encoding.</string>
     <string name="select_algorithm">Select algorithm:</string>
+    <string name="algorithm_aes_128">AES-128</string>
+    <string name="algorithm_aes_192">AES-192</string>
+    <string name="algorithm_aes_256">AES-256</string>
+    <string name="algorithm_chacha20_256">ChaCha20-256</string>
     <string name="generate_key">Generate Key</string>
     <string name="saved_keys">Saved Keys</string>
     <string name="delete_all_keys">Delete All Keys</string>
