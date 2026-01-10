@@ -46,6 +46,12 @@ android {
     buildFeatures {
         compose = true
     }
+
+    testOptions {
+        unitTests {
+            isReturnDefaultValues = true
+        }
+    }
 }
 
 kapt {
@@ -57,20 +63,20 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
-    
+
     // Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    
+
     // Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.lifecycle.viewmodel.compose)
-    
+
     // Testing
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
@@ -121,6 +127,11 @@ detekt {
     baseline = file("$rootDir/detekt-baseline.xml")
 }
 
+// Suppress warning about dynamic Java agent loading (used by MockK)
+tasks.withType<Test>().configureEach {
+    jvmArgs("-XX:+EnableDynamicAgentLoading")
+}
+
 tasks.named("check") {
     dependsOn("spotlessCheck", "detekt")
 }
@@ -140,33 +151,33 @@ tasks.register("installGitHooks") {
         val hooksDir = rootProject.file(".githooks")
         val preCommitHook = hooksDir.resolve("pre-commit")
         val installScript = hooksDir.resolve("install.sh")
-        
+
         if (!preCommitHook.exists()) {
             throw GradleException("Pre-commit hook not found at ${preCommitHook.absolutePath}")
         }
-        
+
         // Make hooks executable (Unix-like systems)
         if (!System.getProperty("os.name").lowercase().contains("windows")) {
             val chmodProcess = ProcessBuilder("chmod", "+x", preCommitHook.absolutePath)
                 .start()
             chmodProcess.waitFor()
-            
+
             if (installScript.exists()) {
                 val chmodScriptProcess = ProcessBuilder("chmod", "+x", installScript.absolutePath)
                     .start()
                 chmodScriptProcess.waitFor()
             }
         }
-        
+
         // Configure git to use .githooks directory
         val gitProcess = ProcessBuilder("git", "config", "core.hooksPath", ".githooks")
             .start()
         val exitCode = gitProcess.waitFor()
-        
+
         if (exitCode != 0) {
             throw GradleException("Failed to configure git hooks path")
         }
-        
+
         println("✅ Git hooks installed successfully!")
         println("   Pre-commit hook will now run Spotless and Detekt before each commit.")
     }

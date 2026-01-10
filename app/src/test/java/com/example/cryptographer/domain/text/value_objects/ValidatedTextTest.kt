@@ -19,7 +19,8 @@ class ValidatedTextTest {
 
         // Then
         assertTrue(result.isSuccess)
-        assertEquals(validText.trim(), result.getOrThrow().content)
+        // Note: Text is normalized (trimmed and whitespace normalized)
+        assertEquals("Hello, World!", result.getOrThrow().content)
     }
 
     @Test
@@ -65,27 +66,34 @@ class ValidatedTextTest {
     fun `create should normalize whitespace`() {
         // Given
         val textWithExtraSpaces = "Hello    World   Test"
+        // Note: After normalization, multiple spaces are replaced with single space
 
         // When
         val result = ValidatedText.create(textWithExtraSpaces)
 
         // Then
         assertTrue(result.isSuccess)
-        assertEquals("Hello World Test", result.getOrThrow().content)
+        val validatedText = result.getOrThrow()
+        // Text is normalized: trimmed and multiple spaces replaced with single space
+        assertEquals("Hello World Test", validatedText.content)
     }
 
     @Test
     fun `create should normalize line breaks`() {
         // Given
         val textWithLineBreaks = "Line1\r\nLine2\rLine3"
+        // Expected after normalization: "Line1\nLine2\nLine3"
 
         // When
         val result = ValidatedText.create(textWithLineBreaks)
 
         // Then
         assertTrue(result.isSuccess)
-        assertTrue(result.getOrThrow().content.contains("\n"))
-        assertFalse(result.getOrThrow().content.contains("\r"))
+        val validatedText = result.getOrThrow()
+        // Line breaks are normalized to \n (Windows \r\n and Mac \r become \n)
+        assertEquals("Line1\nLine2\nLine3", validatedText.content)
+        assertTrue(validatedText.content.contains("\n"))
+        assertFalse(validatedText.content.contains("\r"))
     }
 
     @Test
@@ -99,7 +107,8 @@ class ValidatedTextTest {
 
         // Then
         assertNotNull(bytes)
-        assertEquals(text, String(bytes, Charsets.UTF_8))
+        // Note: Text is normalized, so we check against normalized content
+        assertEquals(validatedText.content, String(bytes, Charsets.UTF_8))
     }
 
     @Test

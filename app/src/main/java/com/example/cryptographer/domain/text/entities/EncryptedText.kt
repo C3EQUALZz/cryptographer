@@ -16,24 +16,4 @@ class EncryptedText(
     val initializationVector: ByteArray? = null,
     createdAt: Instant = Instant.now(),
     updatedAt: Instant = Instant.now()
-) : BaseEntity<String>(id, createdAt, updatedAt) {
-    
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is EncryptedText) return false
-        if (!encryptedData.contentEquals(other.encryptedData)) return false
-        if (algorithm != other.algorithm) return false
-        if (initializationVector != null) {
-            if (other.initializationVector == null) return false
-            if (!initializationVector.contentEquals(other.initializationVector)) return false
-        } else if (other.initializationVector != null) return false
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = encryptedData.contentHashCode()
-        result = 31 * result + algorithm.hashCode()
-        result = 31 * result + (initializationVector?.contentHashCode() ?: 0)
-        return result
-    }
-}
+) : BaseEntity<String>(id, createdAt, updatedAt)

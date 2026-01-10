@@ -13,6 +13,15 @@ import com.example.cryptographer.setup.configs.getLogger
 class ValidatedText private constructor(
     val content: String
 ) : BaseValueObject() {
+    
+    init {
+        // Validation must be performed after field initialization
+        // (BaseValueObject.init() is called before fields are initialized)
+        if (content.isBlank()) {
+            throw DomainFieldError("ValidatedText content cannot be blank")
+        }
+    }
+    
     companion object {
         private val logger = getLogger<ValidatedText>()
         private const val MAX_TEXT_LENGTH = 1_000_000 // approximately 1MB
@@ -48,8 +57,16 @@ class ValidatedText private constructor(
                     else -> {
                         // Normalize text (trim, normalize whitespace and line breaks)
                         val normalizedContent = normalizeText(rawText)
-                        logger.d("Text validation successful: length=${normalizedContent.length}")
-                        Result.success(ValidatedText(normalizedContent))
+                        // Check if normalized content is not blank (it might become blank after normalization)
+                        if (normalizedContent.isBlank()) {
+                            logger.w("Text validation failed: text becomes blank after normalization")
+                            Result.failure(
+                                DomainFieldError("Text cannot be empty")
+                            )
+                        } else {
+                            logger.d("Text validation successful: length=${normalizedContent.length}")
+                            Result.success(ValidatedText(normalizedContent))
+                        }
                     }
                 }
             } catch (e: Exception) {
@@ -60,16 +77,16 @@ class ValidatedText private constructor(
 
         /**
          * Normalizes text for encryption:
-         * - Trims whitespace
-         * - Normalizes multiple spaces to single space
-         * - Normalizes line breaks to \n
+         * - Normalizes line breaks to \n (must be done first)
+         * - Normalizes multiple spaces/tabs to single space (but preserves line breaks)
+         * - Trims whitespace from start and end (but preserves line breaks in the middle)
          */
         private fun normalizeText(content: String): String {
             return content
-                .trim()
-                .replace(Regex("\\s+"), " ") // Replace multiple spaces with one
-                .replace("\r\n", "\n") // Normalize line breaks
-                .replace("\r", "\n")
+                .replace("\r\n", "\n") // Normalize Windows line breaks first
+                .replace("\r", "\n") // Normalize Mac line breaks
+                .replace(Regex("[ \t]+"), " ") // Replace multiple spaces/tabs with one space (but not \n)
+                .trim() // Remove whitespace from start and end (but preserve \n in the middle)
         }
 
         /**
@@ -96,11 +113,10 @@ class ValidatedText private constructor(
 
     override fun validate() {
         // Validation is performed in create() method before construction
-        // This method is called by BaseValueObject.init(), but validation
-        // has already been done in create(), so we just ensure content is not blank
-        if (content.isBlank()) {
-            throw DomainFieldError("ValidatedText content cannot be blank")
-        }
+        // and also in init{} block after field initialization.
+        // This method is called by BaseValueObject.init(), but at that point
+        // fields are not yet initialized, so we do nothing here.
+        // Actual validation happens in init{} block and in create() method.
     }
 
     override fun equals(other: Any?): Boolean {

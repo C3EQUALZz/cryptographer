@@ -20,6 +20,15 @@ class Text(
     updatedAt: java.time.Instant = java.time.Instant.now()
 ) : BaseEntity<String>(id, createdAt, updatedAt) {
 
+    val isEmpty: Boolean
+        get() = content.content.isEmpty()
+
+    val isNotEmpty: Boolean
+        get() = content.content.isNotEmpty()
+
+    val rawContent: String
+        get() = content.content
+
     val length: Int
         get() = content.content.length
 

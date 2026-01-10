@@ -34,7 +34,8 @@ class TextServiceTest {
         assertTrue(result.isSuccess)
         val text = result.getOrThrow()
         assertEquals("test-id-123", text.id)
-        assertEquals(rawText.trim(), text.rawContent)
+        // Note: Text is normalized (trimmed and whitespace normalized), so we check normalized version
+        assertEquals("Hello, World!", text.rawContent)
         assertEquals(TextEncoding.UTF8, text.encoding)
     }
 
@@ -94,6 +95,7 @@ class TextServiceTest {
         // Then
         assertTrue(result.isSuccess)
         val text = result.getOrThrow()
+        // Text is normalized: trimmed and multiple spaces replaced with single space
         assertEquals("Hello World", text.rawContent)
     }
 }

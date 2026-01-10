@@ -21,7 +21,13 @@ object TextFactory {
         createdAt: Instant = Instant.now(),
         updatedAt: Instant = Instant.now()
     ): Text {
-        val validatedText = ValidatedText.create(content).getOrThrow()
+        // ValidatedText.create() will handle validation.
+        // Note: In Kotlin, String is non-nullable, so null cannot be passed at compile time.
+        // If you see a warning about null, it may be a false positive from static analysis.
+        val validatedText = ValidatedText.create(content)
+            .getOrElse { error ->
+                throw IllegalArgumentException("Failed to create validated text: ${error.message}", error)
+            }
         return Text(
             id = id,
             content = validatedText,

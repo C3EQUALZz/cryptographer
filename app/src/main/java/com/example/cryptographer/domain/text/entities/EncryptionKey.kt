@@ -15,19 +15,4 @@ class EncryptionKey(
     val algorithm: EncryptionAlgorithm,
     createdAt: Instant = Instant.now(),
     updatedAt: Instant = Instant.now()
-) : BaseEntity<String>(id, createdAt, updatedAt) {
-    
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is EncryptionKey) return false
-        if (!value.contentEquals(other.value)) return false
-        if (algorithm != other.algorithm) return false
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = value.contentHashCode()
-        result = 31 * result + algorithm.hashCode()
-        return result
-    }
-}
+) : BaseEntity<String>(id, createdAt, updatedAt)
