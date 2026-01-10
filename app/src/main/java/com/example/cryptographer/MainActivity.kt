@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
      * Actual async operations should use Gateway through ViewModel.
      */
     private fun getSavedThemeModeSync(): ThemeMode {
-        val prefs = getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
+        val prefs = getSharedPreferences("theme_prefs", MODE_PRIVATE)
         val themeValue = prefs.getString("theme_mode", "system") ?: "system"
         return ThemeMode.fromValue(themeValue)
     }
@@ -78,7 +78,7 @@ class MainActivity : ComponentActivity() {
      * Actual async operations should use Gateway through ViewModel.
      */
     private fun getSavedLanguageSync(context: Context): String {
-        val prefs = context.getSharedPreferences("locale_prefs", Context.MODE_PRIVATE)
+        val prefs = context.getSharedPreferences("locale_prefs", MODE_PRIVATE)
         return prefs.getString("selected_language", "en") ?: "en"
     }
 }

@@ -57,8 +57,9 @@ class KeyGenerationPresenter(
             val keyViewResult = loadKeyHandler(query)
 
             if (keyViewResult.isFailure) {
-                logger.warn { "Key was saved but could not be loaded: keyId=$keyId" }
-                return Result.failure(keyViewResult.exceptionOrNull() ?: Exception("Key was saved but could not be loaded"))
+                val loadError = keyViewResult.exceptionOrNull() ?: Exception("Key was saved but could not be loaded")
+                logger.warn(loadError) { "Key was saved but could not be loaded: keyId=$keyId" }
+                return Result.failure(Exception("Key was saved but could not be loaded: ${loadError.message}"))
             }
 
             val keyView = keyViewResult.getOrThrow()

@@ -33,7 +33,7 @@ class ConvertTextEncodingCommandHandler {
                         try {
                             val decoded = Base64.getDecoder().decode(command.rawText)
                             String(decoded, Charsets.UTF_8)
-                        } catch (e: Exception) {
+                        } catch (_: Exception) {
                             // If Base64 decode fails, treat as UTF-8
                             command.rawText
                         }
@@ -76,7 +76,7 @@ class ConvertTextEncodingCommandHandler {
         return try {
             Base64.getDecoder().decode(text)
             text.matches(Regex("^[A-Za-z0-9+/=]*$"))
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             false
         }
     }

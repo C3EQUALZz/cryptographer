@@ -56,6 +56,23 @@ android {
 
 kapt {
     correctErrorTypes = true
+    // Fix for Kotlin 2.0+ metadata issues with Hilt
+    useBuildCache = true
+    javacOptions {
+        option("-source", "17")
+        option("-target", "17")
+        // Additional options for better compatibility
+        option("-parameters")
+    }
+    arguments {
+        arg("dagger.formatGeneratedSource", "disabled")
+        arg("dagger.fastInit", "enabled")
+        // Fix for metadata issues with Kotlin 2.0+
+        arg("dagger.strictMultibindingValidation", "disabled")
+        arg("dagger.ignoreProvisionKeyWildcards", "enabled")
+    }
+    // Map diagnostic locations for better error reporting
+    mapDiagnosticLocations = true
 }
 
 dependencies {
@@ -63,6 +80,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.material3)
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))
@@ -74,7 +92,6 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt.android)
-    implementation(libs.androidx.material3)
     kapt(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.lifecycle.viewmodel.compose)

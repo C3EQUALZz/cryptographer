@@ -2,7 +2,6 @@ package com.example.cryptographer
 
 import android.app.Application
 import android.content.Context
-import android.content.SharedPreferences
 import com.example.cryptographer.setup.i18n.LocaleHelper
 import dagger.hilt.android.HiltAndroidApp
 
@@ -33,7 +32,7 @@ class CryptographerApplication : Application() {
      * Actual async operations should use SettingsGateway through ViewModel.
      */
     private fun getSavedLanguageSync(context: Context): String {
-        val prefs = context.getSharedPreferences("locale_prefs", Context.MODE_PRIVATE)
+        val prefs = context.getSharedPreferences("locale_prefs", MODE_PRIVATE)
         return prefs.getString("selected_language", "en") ?: "en"
     }
 }
