@@ -1,6 +1,5 @@
 package com.example.cryptographer.presentation.encryption
 
-import com.example.cryptographer.application.commands.text.decrypt.DecryptTextCommand
 import com.example.cryptographer.application.commands.text.decrypt.DecryptTextCommandHandler
 import com.example.cryptographer.application.commands.text.encrypt.EncryptTextCommand
 import com.example.cryptographer.application.commands.text.encrypt.EncryptTextCommandHandler
@@ -12,7 +11,6 @@ import com.example.cryptographer.test.factories.KeyFactory
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import io.mockk.any
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -49,12 +47,12 @@ class EncryptionPresenterTest {
             algorithm = EncryptionAlgorithm.AES_256,
             initializationVector = iv
         )
-        
+
         val encryptedBase64 = Base64.getEncoder().encodeToString(encryptedData)
         val ivBase64 = Base64.getEncoder().encodeToString(iv)
-        
+
         val encryptedTextView = EncryptedTextView(encryptedText = encryptedTextEntity)
-        
+
         every { encryptTextHandler(EncryptTextCommand(rawText, key)) } returns Result.success(encryptedTextView)
 
         // When
@@ -100,10 +98,10 @@ class EncryptionPresenterTest {
             algorithm = EncryptionAlgorithm.AES_128,
             initializationVector = null
         )
-        
+
         val encryptedBase64 = Base64.getEncoder().encodeToString(encryptedData)
         val encryptedTextView = EncryptedTextView(encryptedText = encryptedTextEntity)
-        
+
         every { encryptTextHandler(EncryptTextCommand(rawText, key)) } returns Result.success(encryptedTextView)
 
         // When
@@ -126,9 +124,9 @@ class EncryptionPresenterTest {
         val iv = ByteArray(16)
         val encryptedBase64 = Base64.getEncoder().encodeToString(encryptedData)
         val ivBase64 = Base64.getEncoder().encodeToString(iv)
-        
+
         val decryptedTextView = DecryptedTextView(decryptedText = decryptedText)
-        
+
         // Use any() matcher since EncryptedText is created inside the presenter with a new ID
         every { decryptTextHandler(any()) } returns Result.success(decryptedTextView)
 
@@ -150,9 +148,9 @@ class EncryptionPresenterTest {
         val encryptedData = ByteArray(16)
         val encryptedBase64 = Base64.getEncoder().encodeToString(encryptedData)
         val ivBase64: String? = null
-        
+
         val decryptedTextView = DecryptedTextView(decryptedText = decryptedText)
-        
+
         // Use any() matcher since EncryptedText is created inside the presenter with a new ID
         every { decryptTextHandler(any()) } returns Result.success(decryptedTextView)
 
@@ -174,9 +172,9 @@ class EncryptionPresenterTest {
         val encryptedData = ByteArray(16)
         val encryptedBase64 = Base64.getEncoder().encodeToString(encryptedData)
         val ivBase64 = ""
-        
+
         val decryptedTextView = DecryptedTextView(decryptedText = decryptedText)
-        
+
         // Use any() matcher since EncryptedText is created inside the presenter with a new ID
         every { decryptTextHandler(any()) } returns Result.success(decryptedTextView)
 
@@ -197,7 +195,7 @@ class EncryptionPresenterTest {
         val encryptedBase64 = Base64.getEncoder().encodeToString(encryptedData)
         val ivBase64 = Base64.getEncoder().encodeToString(iv)
         val error = Exception("Decryption failed")
-        
+
         // Use any() matcher since EncryptedText is created inside the presenter with a new ID
         every { decryptTextHandler(any()) } returns Result.failure(error)
 
