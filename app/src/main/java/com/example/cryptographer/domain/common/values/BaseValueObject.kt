@@ -1,7 +1,5 @@
 package com.example.cryptographer.domain.common.values
 
-import com.example.cryptographer.domain.common.errors.DomainFieldError
-
 /**
  * Base class for immutable value objects (VO) in the domain.
  *
@@ -22,27 +20,12 @@ import com.example.cryptographer.domain.common.errors.DomainFieldError
  * - Validation should be performed in init{} block (after field initialization)
  *   or in factory method (before construction)
  * - Value objects are compared by their field values
- * 
+ *
  * IMPORTANT: Do not call validate() from init{} block in BaseValueObject,
  * because fields may not be initialized yet. Instead, implement validation
  * in the child class's init{} block or factory method.
  */
 abstract class BaseValueObject {
-    /**
-     * Validates that the value object is in a valid state.
-     *
-     * This method is provided for consistency, but validation should be
-     * performed in the child class's init{} block or factory method,
-     * because fields may not be initialized when this method is called.
-     *
-     * @throws DomainFieldError if validation fails
-     */
-    protected open fun validate() {
-        // Default implementation does nothing.
-        // Child classes should override this if needed, or implement
-        // validation in init{} block or factory method.
-    }
-
     /**
      * Returns a string representation of this value object.
      *

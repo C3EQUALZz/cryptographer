@@ -15,8 +15,6 @@ class ValidatedText private constructor(
 ) : BaseValueObject() {
 
     init {
-        // Validation must be performed after field initialization
-        // (BaseValueObject.init() is called before fields are initialized)
         if (content.isBlank()) {
             throw DomainFieldError("ValidatedText content cannot be blank")
         }
@@ -109,14 +107,6 @@ class ValidatedText private constructor(
      */
     fun toBytes(): ByteArray {
         return content.toByteArray(Charsets.UTF_8)
-    }
-
-    override fun validate() {
-        // Validation is performed in create() method before construction
-        // and also in init{} block after field initialization.
-        // This method is called by BaseValueObject.init(), but at that point
-        // fields are not yet initialized, so we do nothing here.
-        // Actual validation happens in init{} block and in create() method.
     }
 
     override fun equals(other: Any?): Boolean {
