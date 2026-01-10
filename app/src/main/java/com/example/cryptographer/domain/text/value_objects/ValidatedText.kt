@@ -13,7 +13,7 @@ import com.example.cryptographer.setup.configs.getLogger
 class ValidatedText private constructor(
     val content: String
 ) : BaseValueObject() {
-    
+
     init {
         // Validation must be performed after field initialization
         // (BaseValueObject.init() is called before fields are initialized)
@@ -21,7 +21,7 @@ class ValidatedText private constructor(
             throw DomainFieldError("ValidatedText content cannot be blank")
         }
     }
-    
+
     companion object {
         private val logger = getLogger<ValidatedText>()
         private const val MAX_TEXT_LENGTH = 1_000_000 // approximately 1MB
@@ -98,7 +98,7 @@ class ValidatedText private constructor(
                 val bytes = text.toByteArray(Charsets.UTF_8)
                 val decoded = String(bytes, Charsets.UTF_8)
                 decoded == text
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 false
             }
         }

@@ -1,9 +1,10 @@
 package com.example.cryptographer.domain.text.services
 
 import com.example.cryptographer.domain.text.value_objects.TextEncoding
-import com.example.cryptographer.test.factories.TextFactory
 import com.example.cryptographer.test.stubs.StubTextIdGenerator
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 

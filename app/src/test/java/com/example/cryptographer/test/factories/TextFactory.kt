@@ -37,19 +37,6 @@ object TextFactory {
         )
     }
 
-    /**
-     * Creates a ValidatedText value object.
-     */
-    fun createValidatedText(content: String = "Test text"): ValidatedText {
-        return ValidatedText.create(content).getOrThrow()
-    }
 
-    /**
-     * Creates a long text for testing length limits.
-     */
-    fun createLongText(length: Int = 1000): Text {
-        val content = "a".repeat(length)
-        return create(content = content)
-    }
 }
 
