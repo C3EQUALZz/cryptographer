@@ -70,12 +70,19 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.material.icons.extended)
 
     // Hilt
     implementation(libs.hilt.android)
+    implementation(libs.androidx.material3)
     kapt(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.lifecycle.viewmodel.compose)
+
+    // Logging
+    implementation(libs.kotlin.logging.jvm)
+    implementation(libs.slf4j.api)
+    runtimeOnly(libs.slf4j.android)
 
     // Testing
     testImplementation(libs.junit)

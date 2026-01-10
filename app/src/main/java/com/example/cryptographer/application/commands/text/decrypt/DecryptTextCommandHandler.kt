@@ -2,7 +2,7 @@ package com.example.cryptographer.application.commands.text.decrypt
 
 import com.example.cryptographer.application.common.views.DecryptedTextView
 import com.example.cryptographer.domain.text.services.AesEncryptionService
-import com.example.cryptographer.setup.configs.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**
  * Command Handler for decrypting text.
@@ -16,7 +16,7 @@ import com.example.cryptographer.setup.configs.getLogger
 class DecryptTextCommandHandler(
     private val aesEncryptionService: AesEncryptionService
 ) {
-    private val logger = getLogger<DecryptTextCommandHandler>()
+    private val logger = KotlinLogging.logger {}
 
     /**
      * Handles the DecryptTextCommand.
@@ -26,21 +26,21 @@ class DecryptTextCommandHandler(
      */
     operator fun invoke(command: DecryptTextCommand): Result<DecryptedTextView> {
         return try {
-            logger.d("Handling DecryptTextCommand: algorithm=${command.key.algorithm}, encryptedSize=${command.encryptedText.encryptedData.size} bytes")
+            logger.debug { "Handling DecryptTextCommand: algorithm=${command.key.algorithm}, encryptedSize=${command.encryptedText.encryptedData.size} bytes" }
 
             // Decrypt using AES service
             val decryptedBytes = aesEncryptionService.decrypt(command.encryptedText, command.key).getOrElse { error ->
-                logger.e("Text decryption failed: ${error.message}", error)
+                logger.error(error) { "Text decryption failed: ${error.message}" }
                 return Result.failure(error)
             }
 
             // Convert bytes back to text string
             val decryptedContent = String(decryptedBytes, Charsets.UTF_8)
 
-            logger.i("Text decryption successful: algorithm=${command.key.algorithm}, decryptedLength=${decryptedContent.length}")
+            logger.info { "Text decryption successful: algorithm=${command.key.algorithm}, decryptedLength=${decryptedContent.length}" }
             Result.success(DecryptedTextView(decryptedContent))
         } catch (e: Exception) {
-            logger.e("Error handling DecryptTextCommand: ${e.message}", e)
+            logger.error(e) { "Error handling DecryptTextCommand: ${e.message}" }
             Result.failure(
                 Exception("Text decryption error: ${e.message}", e)
             )

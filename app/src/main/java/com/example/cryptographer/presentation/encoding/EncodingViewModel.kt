@@ -3,7 +3,6 @@ package com.example.cryptographer.presentation.encoding
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cryptographer.domain.text.value_objects.TextEncoding
-import com.example.cryptographer.setup.configs.getLogger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,8 +22,6 @@ import javax.inject.Inject
 class EncodingViewModel @Inject constructor(
     private val presenter: EncodingPresenter
 ) : ViewModel() {
-    private val logger = getLogger<EncodingViewModel>()
-
     private val _uiState = MutableStateFlow(EncodingUiState())
     val uiState: StateFlow<EncodingUiState> = _uiState.asStateFlow()
 

@@ -3,7 +3,7 @@ package com.example.cryptographer.application.commands.key.create
 import com.example.cryptographer.application.common.ports.key.KeyCommandGateway
 import com.example.cryptographer.application.common.views.KeyIdView
 import com.example.cryptographer.domain.text.services.AesEncryptionService
-import com.example.cryptographer.setup.configs.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.UUID
 
 /**
@@ -20,7 +20,7 @@ class GenerateAndSaveKeyCommandHandler(
     private val aesEncryptionService: AesEncryptionService,
     private val commandGateway: KeyCommandGateway
 ) {
-    private val logger = getLogger<GenerateAndSaveKeyCommandHandler>()
+    private val logger = KotlinLogging.logger {}
 
     /**
      * Handles the GenerateAndSaveKeyCommand.
@@ -30,13 +30,13 @@ class GenerateAndSaveKeyCommandHandler(
      */
     operator fun invoke(command: GenerateAndSaveKeyCommand): Result<KeyIdView> {
         return try {
-            logger.d("Handling GenerateAndSaveKeyCommand: algorithm=${command.algorithm}")
+            logger.debug { "Handling GenerateAndSaveKeyCommand: algorithm=${command.algorithm}" }
 
             // Generate key using domain service
             val keyResult = aesEncryptionService.generateKey(command.algorithm)
             if (keyResult.isFailure) {
                 val error = keyResult.exceptionOrNull() ?: Exception("Key generation failed")
-                logger.e("Key generation failed: ${error.message}", error)
+                logger.error(error) { "Key generation failed: ${error.message}" }
                 return Result.failure(error)
             }
 
@@ -44,19 +44,19 @@ class GenerateAndSaveKeyCommandHandler(
 
             // Generate unique ID and save key via Gateway
             val keyId = UUID.randomUUID().toString()
-            logger.d("Saving key: keyId=$keyId, algorithm=${key.algorithm}")
+            logger.debug { "Saving key: keyId=$keyId, algorithm=${key.algorithm}" }
 
             val saved = commandGateway.saveKey(keyId, key)
 
             if (saved) {
-                logger.i("Key generated and saved successfully: keyId=$keyId, algorithm=${command.algorithm}")
+                logger.info { "Key generated and saved successfully: keyId=$keyId, algorithm=${command.algorithm}" }
                 Result.success(KeyIdView(keyId))
             } else {
-                logger.e("Failed to save key: keyId=$keyId")
+                logger.error { "Failed to save key: keyId=$keyId" }
                 Result.failure(Exception("Failed to save key"))
             }
         } catch (e: Exception) {
-            logger.e("Error handling GenerateAndSaveKeyCommand: algorithm=${command.algorithm}", e)
+            logger.error(e) { "Error handling GenerateAndSaveKeyCommand: algorithm=${command.algorithm}" }
             Result.failure(e)
         }
     }

@@ -5,7 +5,7 @@ import com.example.cryptographer.domain.text.entities.Text
 import com.example.cryptographer.domain.text.value_objects.TextEncoding
 import com.example.cryptographer.domain.text.ports.TextIdGeneratorPort
 import com.example.cryptographer.domain.text.value_objects.ValidatedText
-import com.example.cryptographer.setup.configs.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**
  * Domain service for Text entity.
@@ -17,7 +17,7 @@ import com.example.cryptographer.setup.configs.getLogger
 class TextService(
     private val textIdGenerator: TextIdGeneratorPort
 ) : DomainService() {
-    private val logger = getLogger<TextService>()
+    private val logger = KotlinLogging.logger {}
 
     /**
      * Creates a new Text entity from raw string.
@@ -33,17 +33,17 @@ class TextService(
      */
     fun create(rawText: String, encoding: TextEncoding = TextEncoding.UTF8): Result<Text> {
         return try {
-            logger.d("Creating Text entity: length=${rawText.length}, encoding=$encoding")
+            logger.debug { "Creating Text entity: length=${rawText.length}, encoding=$encoding" }
 
             // Validate text using Value Object
             val validatedText = ValidatedText.create(rawText).getOrElse { error ->
-                logger.e("Text validation failed: ${error.message}", error)
+                logger.error(error) { "Text validation failed: ${error.message}" }
                 return Result.failure(error)
             }
 
             // Generate unique ID using ports
             val textId = textIdGenerator.generate()
-            logger.d("Generated text ID: $textId")
+            logger.debug { "Generated text ID: $textId" }
 
             // Create Text entity with ID
             val text = Text(
@@ -52,10 +52,10 @@ class TextService(
                 encoding = encoding
             )
 
-            logger.i("Text entity created successfully: id=$textId, length=${text.length}")
+            logger.info { "Text entity created successfully: id=$textId, length=${text.length}" }
             Result.success(text)
         } catch (e: Exception) {
-            logger.e("Error creating Text entity: ${e.message}", e)
+            logger.error(e) { "Error creating Text entity: ${e.message}" }
             Result.failure(e)
         }
     }

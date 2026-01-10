@@ -8,7 +8,7 @@ import com.example.cryptographer.application.queries.key.read_all.LoadAllKeysQue
 import com.example.cryptographer.application.queries.key.read_by_id.LoadKeyQuery
 import com.example.cryptographer.application.queries.key.read_by_id.LoadKeyQueryHandler
 import com.example.cryptographer.domain.text.entities.EncryptionKey
-import com.example.cryptographer.setup.configs.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,7 +31,7 @@ class EncryptionViewModel @Inject constructor(
     private val loadKeyHandler: LoadKeyQueryHandler,
     private val loadAllKeysHandler: LoadAllKeysQueryHandler
 ) : ViewModel() {
-    private val logger = getLogger<EncryptionViewModel>()
+    private val logger = KotlinLogging.logger {}
 
     private val _uiState = MutableStateFlow(EncryptionUiState())
     val uiState: StateFlow<EncryptionUiState> = _uiState.asStateFlow()
@@ -77,7 +77,7 @@ class EncryptionViewModel @Inject constructor(
      * Selects a key by ID.
      */
     fun selectKey(keyId: String) {
-        logger.d("Selecting key: keyId=$keyId")
+        logger.debug { "Selecting key: keyId=$keyId" }
         viewModelScope.launch {
             val query = LoadKeyQuery(keyId)
             loadKeyHandler(query)
@@ -94,7 +94,7 @@ class EncryptionViewModel @Inject constructor(
                     )
                 }
                 .onFailure { error ->
-                    logger.e("Failed to load key: keyId=$keyId", error)
+                    logger.error(error) { "Failed to load key: keyId=$keyId" }
                     _uiState.value = _uiState.value.copy(
                         error = "Не удалось загрузить ключ: ${error.message}"
                     )
@@ -123,7 +123,7 @@ class EncryptionViewModel @Inject constructor(
             return
         }
 
-        logger.d("Encrypting text: length=${inputText.length}, algorithm=${selectedKey.algorithm}")
+        logger.debug { "Encrypting text: length=${inputText.length}, algorithm=${selectedKey.algorithm}" }
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
                 isLoading = true,
@@ -140,7 +140,7 @@ class EncryptionViewModel @Inject constructor(
                     )
                 }
                 .onFailure { error ->
-                    logger.e("Encryption failed: ${error.message}", error)
+                    logger.error(error) { "Encryption failed: ${error.message}" }
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         error = "Ошибка шифрования: ${error.message}"
@@ -171,7 +171,7 @@ class EncryptionViewModel @Inject constructor(
             return
         }
 
-        logger.d("Decrypting text: algorithm=${selectedKey.algorithm}")
+        logger.debug { "Decrypting text: algorithm=${selectedKey.algorithm}" }
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
                 isLoading = true,
@@ -191,7 +191,7 @@ class EncryptionViewModel @Inject constructor(
                     )
                 }
                 .onFailure { error ->
-                    logger.e("Decryption failed: ${error.message}", error)
+                    logger.error(error) { "Decryption failed: ${error.message}" }
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         error = "Ошибка дешифрования: ${error.message}"
@@ -221,7 +221,7 @@ class EncryptionViewModel @Inject constructor(
                     _availableKeys.value = keyViews
                 }
                 .onFailure { error ->
-                    logger.e("Failed to load available keys: ${error.message}", error)
+                    logger.error(error) { "Failed to load available keys: ${error.message}" }
                 }
         }
     }

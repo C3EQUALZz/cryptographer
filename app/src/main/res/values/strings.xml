@@ -8,6 +8,8 @@
     <string name="screens">Screens</string>
     <string name="encryption_algorithms">Encryption Algorithms</string>
     <string name="language_selection">Language</string>
+    <string name="theme_selection">Theme</string>
+    <string name="dark_theme">Dark Theme</string>
     
     <!-- Screen titles -->
     <string name="screen_key_generation">Key Generation</string>

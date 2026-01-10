@@ -12,7 +12,7 @@ import com.example.cryptographer.application.queries.key.read_by_id.LoadKeyQuery
 import com.example.cryptographer.application.queries.key.read_by_id.LoadKeyQueryHandler
 import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
 import com.example.cryptographer.domain.text.entities.EncryptionKey
-import com.example.cryptographer.setup.configs.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.Base64
 
 /**
@@ -29,7 +29,7 @@ class KeyGenerationPresenter(
     private val deleteAllKeysHandler: DeleteAllKeysCommandHandler,
     private val loadAllKeysHandler: LoadAllKeysQueryHandler
 ) {
-    private val logger = getLogger<KeyGenerationPresenter>()
+    private val logger = KotlinLogging.logger {}
 
     /**
      * Generates and saves a new encryption key.
@@ -39,7 +39,7 @@ class KeyGenerationPresenter(
      */
     suspend fun generateAndSaveKey(algorithm: EncryptionAlgorithm): Result<GeneratedKeyInfo> {
         return try {
-            logger.d("Presenter: Generating and saving key: algorithm=$algorithm")
+            logger.debug { "Presenter: Generating and saving key: algorithm=$algorithm" }
 
             // Execute command via CommandHandler
             val command = GenerateAndSaveKeyCommand(algorithm)
@@ -57,7 +57,7 @@ class KeyGenerationPresenter(
             val keyViewResult = loadKeyHandler(query)
 
             if (keyViewResult.isFailure) {
-                logger.w("Key was saved but could not be loaded: keyId=$keyId")
+                logger.warn { "Key was saved but could not be loaded: keyId=$keyId" }
                 return Result.failure(keyViewResult.exceptionOrNull() ?: Exception("Key was saved but could not be loaded"))
             }
 
@@ -69,7 +69,7 @@ class KeyGenerationPresenter(
                 algorithm = keyView.algorithm
             )
 
-            logger.i("Presenter: Key generated and saved successfully: keyId=$keyId, algorithm=$algorithm")
+            logger.info { "Presenter: Key generated and saved successfully: keyId=$keyId, algorithm=$algorithm" }
             Result.success(
                 GeneratedKeyInfo(
                     key = key,
@@ -78,7 +78,7 @@ class KeyGenerationPresenter(
                 )
             )
         } catch (e: Exception) {
-            logger.e("Presenter: Error generating and saving key: algorithm=$algorithm", e)
+            logger.error(e) { "Presenter: Error generating and saving key: algorithm=$algorithm" }
             Result.failure(e)
         }
     }
@@ -91,7 +91,7 @@ class KeyGenerationPresenter(
      */
     suspend fun loadKey(keyId: String): Result<GeneratedKeyInfo> {
         return try {
-            logger.d("Loading key: keyId=$keyId")
+            logger.debug { "Loading key: keyId=$keyId" }
             val query = LoadKeyQuery(keyId)
             val keyViewResult = loadKeyHandler(query)
 
@@ -115,7 +115,7 @@ class KeyGenerationPresenter(
                 )
             )
         } catch (e: Exception) {
-            logger.e("Error loading key: keyId=$keyId", e)
+            logger.error(e) { "Error loading key: keyId=$keyId" }
             Result.failure(e)
         }
     }
@@ -167,7 +167,7 @@ class KeyGenerationPresenter(
 
             Result.success(keyItems)
         } catch (e: Exception) {
-            logger.e("Error loading all keys", e)
+            logger.error(e) { "Error loading all keys" }
             Result.failure(e)
         }
     }

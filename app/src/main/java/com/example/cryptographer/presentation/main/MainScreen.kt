@@ -1,11 +1,14 @@
-package com.example.cryptographer.presentation
+package com.example.cryptographer.presentation.main
 
+import android.app.Activity
 import android.content.Context
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,6 +17,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cryptographer.R
+import com.example.cryptographer.domain.common.value_objects.Language
+import com.example.cryptographer.domain.common.value_objects.ThemeMode
 import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
 import com.example.cryptographer.presentation.encoding.EncodingScreen
 import com.example.cryptographer.presentation.encoding.EncodingViewModel
@@ -21,48 +26,70 @@ import com.example.cryptographer.presentation.encryption.EncryptionScreen
 import com.example.cryptographer.presentation.encryption.EncryptionViewModel
 import com.example.cryptographer.presentation.key.KeyGenerationScreen
 import com.example.cryptographer.presentation.key.KeyGenerationViewModel
-import com.example.cryptographer.setup.i18n.LocaleHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 /**
  * Main screen that handles navigation between different app screens.
  * Features a navigation drawer with screen selection and algorithm selection.
+ * Uses ViewModel for state management and Presenter for business logic.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    viewModel: MainViewModel = viewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
-    var selectedScreen by remember { mutableStateOf(AppScreen.KeyGeneration) }
-    var selectedAlgorithm by remember { mutableStateOf(EncryptionAlgorithm.AES_256) }
-    var currentLanguage by remember { mutableStateOf(LocaleHelper.getSavedLanguage(context)) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+
+    // Convert string codes to domain enums
+    val currentLanguage = remember(uiState.languageCode) {
+        Language.fromCode(uiState.languageCode)
+    }
+    val currentThemeMode = remember(uiState.themeMode) {
+        ThemeMode.fromValue(uiState.themeMode)
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             NavigationDrawerContent(
-                selectedScreen = selectedScreen,
-                selectedAlgorithm = selectedAlgorithm,
+                selectedScreen = uiState.selectedScreen,
+                selectedAlgorithm = uiState.selectedAlgorithm,
                 currentLanguage = currentLanguage,
+                currentThemeMode = currentThemeMode,
                 drawerState = drawerState,
                 scope = scope,
                 context = context,
-                onScreenSelected = { _ ->
+                onScreenSelected = { screen ->
+                    viewModel.selectScreen(screen)
                     scope.launch {
                         drawerState.close()
                     }
                 },
-                onAlgorithmSelected = { _ ->
+                onAlgorithmSelected = { algorithm ->
+                    viewModel.selectAlgorithm(algorithm)
                     scope.launch {
                         drawerState.close()
                     }
                 },
                 onLanguageSelected = { language ->
-                    LocaleHelper.setLocale(context, language)
+                    viewModel.updateLanguage(language.code)
                     // Restart activity to apply locale change
-                    (context as? android.app.Activity)?.recreate()
+                    scope.launch {
+                        drawerState.close()
+                        (context as? Activity)?.recreate()
+                    }
+                },
+                onThemeModeChanged = { themeMode ->
+                    viewModel.updateThemeMode(themeMode.value)
+                    // Restart activity to apply theme change
+                    scope.launch {
+                        drawerState.close()
+                        (context as? Activity)?.recreate()
+                    }
                 }
             )
         }
@@ -70,7 +97,7 @@ fun MainScreen() {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(getScreenTitle(selectedScreen)) },
+                    title = { Text(getScreenTitle(uiState.selectedScreen)) },
                     navigationIcon = {
                         IconButton(onClick = {
                             scope.launch {
@@ -96,18 +123,18 @@ fun MainScreen() {
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                when (selectedScreen) {
+                when (uiState.selectedScreen) {
                     AppScreen.KeyGeneration -> {
-                        val viewModel: KeyGenerationViewModel = viewModel()
-                        KeyGenerationScreen(viewModel = viewModel)
+                        val keyViewModel: KeyGenerationViewModel = viewModel()
+                        KeyGenerationScreen(viewModel = keyViewModel)
                     }
                     AppScreen.Encryption -> {
-                        val viewModel: EncryptionViewModel = viewModel()
-                        EncryptionScreen(viewModel = viewModel)
+                        val encryptionViewModel: EncryptionViewModel = viewModel()
+                        EncryptionScreen(viewModel = encryptionViewModel)
                     }
                     AppScreen.Encoding -> {
-                        val viewModel: EncodingViewModel = viewModel()
-                        EncodingScreen(viewModel = viewModel)
+                        val encodingViewModel: EncodingViewModel = viewModel()
+                        EncodingScreen(viewModel = encodingViewModel)
                     }
                 }
             }
@@ -123,13 +150,15 @@ fun MainScreen() {
 private fun NavigationDrawerContent(
     selectedScreen: AppScreen,
     selectedAlgorithm: EncryptionAlgorithm,
-    currentLanguage: LocaleHelper.Language,
+    currentLanguage: Language,
+    currentThemeMode: ThemeMode,
     drawerState: DrawerState,
     scope: CoroutineScope,
     context: Context,
     onScreenSelected: (AppScreen) -> Unit,
     onAlgorithmSelected: (EncryptionAlgorithm) -> Unit,
-    onLanguageSelected: (LocaleHelper.Language) -> Unit
+    onLanguageSelected: (Language) -> Unit,
+    onThemeModeChanged: (ThemeMode) -> Unit
 ) {
     var expandedLanguageDropdown by remember { mutableStateOf(false) }
     Surface(
@@ -150,24 +179,22 @@ private fun NavigationDrawerContent(
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = stringResource(R.string.close_menu),
-                    tint = MaterialTheme.colorScheme.onSurface
+                    contentDescription = stringResource(R.string.close_menu)
                 )
             }
 
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .padding(16.dp)
+                    .padding(top = 48.dp)
             ) {
-                // Header
                 Text(
-                    text = stringResource(R.string.app_name),
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(bottom = 24.dp)
+                    text = stringResource(R.string.menu),
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.padding(bottom = 24.dp),
+                    color = MaterialTheme.colorScheme.primary
                 )
-
-                HorizontalDivider(modifier = Modifier.padding(bottom = 16.dp))
 
                 // Language selection section
                 Text(
@@ -177,38 +204,83 @@ private fun NavigationDrawerContent(
                     color = MaterialTheme.colorScheme.primary
                 )
 
-                Box {
-                    ExposedDropdownMenuBox(
+                ExposedDropdownMenuBox(
+                    expanded = expandedLanguageDropdown,
+                    onExpandedChange = { expandedLanguageDropdown = !expandedLanguageDropdown }
+                ) {
+                    OutlinedTextField(
+                        value = currentLanguage.displayName,
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedLanguageDropdown)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryEditable, enabled = true),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    ExposedDropdownMenu(
                         expanded = expandedLanguageDropdown,
-                        onExpandedChange = { expandedLanguageDropdown = !expandedLanguageDropdown }
+                        onDismissRequest = { expandedLanguageDropdown = false }
                     ) {
-                        @Suppress("DEPRECATION")
-                        OutlinedTextField(
-                            value = currentLanguage.displayName,
-                            onValueChange = {},
-                            readOnly = true,
-                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedLanguageDropdown) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .menuAnchor(),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        ExposedDropdownMenu(
-                            expanded = expandedLanguageDropdown,
-                            onDismissRequest = { expandedLanguageDropdown = false }
-                        ) {
-                            LocaleHelper.Language.entries.forEach { language ->
-                                DropdownMenuItem(
-                                    text = { Text(language.displayName) },
-                                    onClick = {
-                                        onLanguageSelected(language)
-                                        expandedLanguageDropdown = false
-                                    },
-                                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
-                                )
-                            }
+                        Language.entries.forEach { language ->
+                            DropdownMenuItem(
+                                text = { Text(language.displayName) },
+                                onClick = {
+                                    onLanguageSelected(language)
+                                    expandedLanguageDropdown = false
+                                },
+                                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                            )
                         }
                     }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                HorizontalDivider(modifier = Modifier.padding(bottom = 16.dp))
+
+                // Theme selection section
+                Text(
+                    text = stringResource(R.string.theme_selection),
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.dark_theme),
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Switch(
+                        checked = when (currentThemeMode) {
+                            ThemeMode.SYSTEM -> {
+                                // If system mode, check actual system theme
+                                (context.resources.configuration.uiMode and
+                                        Configuration.UI_MODE_NIGHT_MASK) ==
+                                        Configuration.UI_MODE_NIGHT_YES
+                            }
+                            ThemeMode.DARK -> true
+                            ThemeMode.LIGHT -> false
+                        },
+                        onCheckedChange = { isDark ->
+                            val newTheme = if (isDark) {
+                                ThemeMode.DARK
+                            } else {
+                                ThemeMode.LIGHT
+                            }
+                            onThemeModeChanged(newTheme)
+                        }
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -283,13 +355,4 @@ private fun getScreenTitle(screen: AppScreen): String {
         AppScreen.Encryption -> stringResource(R.string.screen_encryption)
         AppScreen.Encoding -> stringResource(R.string.screen_encoding)
     }
-}
-
-/**
- * App screens enumeration.
- */
-private enum class AppScreen {
-    KeyGeneration,
-    Encryption,
-    Encoding
 }

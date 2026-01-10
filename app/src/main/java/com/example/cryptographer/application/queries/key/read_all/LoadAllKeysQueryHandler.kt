@@ -2,7 +2,7 @@ package com.example.cryptographer.application.queries.key.read_all
 
 import com.example.cryptographer.application.common.ports.key.KeyQueryGateway
 import com.example.cryptographer.application.common.views.KeyView
-import com.example.cryptographer.setup.configs.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.Base64
 
 /**
@@ -17,7 +17,7 @@ import java.util.Base64
 class LoadAllKeysQueryHandler(
     private val queryGateway: KeyQueryGateway
 ) {
-    private val logger = getLogger<LoadAllKeysQueryHandler>()
+    private val logger = KotlinLogging.logger {}
 
     /**
      * Handles the LoadAllKeysQuery.
@@ -27,9 +27,9 @@ class LoadAllKeysQueryHandler(
      */
     operator fun invoke(query: LoadAllKeysQuery): Result<List<KeyView>> {
         return try {
-            logger.d("Handling LoadAllKeysQuery")
+            logger.debug { "Handling LoadAllKeysQuery" }
             val keyIds = queryGateway.getAllKeyIds()
-            logger.d("Found ${keyIds.size} saved key(s)")
+            logger.debug { "Found ${keyIds.size} saved key(s)" }
 
             val keys = keyIds.mapNotNull { keyId ->
                 queryGateway.getKey(keyId)?.let { key ->
@@ -41,10 +41,10 @@ class LoadAllKeysQueryHandler(
                 }
             }
 
-            logger.d("Loaded ${keys.size} key(s) successfully")
+            logger.debug { "Loaded ${keys.size} key(s) successfully" }
             Result.success(keys)
         } catch (e: Exception) {
-            logger.e("Error handling LoadAllKeysQuery", e)
+            logger.error(e) { "Error handling LoadAllKeysQuery" }
             Result.failure(e)
         }
     }

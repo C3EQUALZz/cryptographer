@@ -6,7 +6,7 @@ import androidx.core.content.edit
 import com.example.cryptographer.application.common.ports.key.KeyCommandGateway
 import com.example.cryptographer.application.common.ports.key.KeyQueryGateway
 import com.example.cryptographer.domain.text.entities.EncryptionKey
-import com.example.cryptographer.setup.configs.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.Base64
 import javax.inject.Inject
@@ -28,7 +28,7 @@ class KeyCommandGatewayAdapter @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val queryGateway: KeyQueryGateway
 ) : KeyCommandGateway {
-    private val logger = getLogger<KeyCommandGatewayAdapter>()
+    private val logger = KotlinLogging.logger {}
 
     private val prefs: SharedPreferences by lazy {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -43,10 +43,10 @@ class KeyCommandGatewayAdapter @Inject constructor(
                 putString("${KEY_PREFIX}_${keyId}_value", keyBase64)
                 putString("${KEY_PREFIX}_${keyId}_algorithm", algorithmName)
             }
-            logger.d("Key saved successfully: keyId=$keyId, algorithm=$algorithmName")
+            logger.debug { "Key saved successfully: keyId=$keyId, algorithm=$algorithmName" }
             true
         } catch (e: Exception) {
-            logger.e("Failed to save key: keyId=$keyId, algorithm=${key.algorithm}", e)
+            logger.error(e) { "Failed to save key: keyId=$keyId, algorithm=${key.algorithm}" }
             false
         }
     }
@@ -57,10 +57,10 @@ class KeyCommandGatewayAdapter @Inject constructor(
                 remove("${KEY_PREFIX}_${keyId}_value")
                 remove("${KEY_PREFIX}_${keyId}_algorithm")
             }
-            logger.d("Key deleted successfully: keyId=$keyId")
+            logger.debug { "Key deleted successfully: keyId=$keyId" }
             true
         } catch (e: Exception) {
-            logger.e("Failed to delete key: keyId=$keyId", e)
+            logger.error(e) { "Failed to delete key: keyId=$keyId" }
             false
         }
     }
@@ -68,7 +68,7 @@ class KeyCommandGatewayAdapter @Inject constructor(
     override fun deleteAllKeys(): Boolean {
         return try {
             val allKeyIds = queryGateway.getAllKeyIds()
-            logger.d("Deleting all keys: count=${allKeyIds.size}")
+            logger.debug { "Deleting all keys: count=${allKeyIds.size}" }
 
             prefs.edit {
                 allKeyIds.forEach { keyId ->
@@ -76,10 +76,10 @@ class KeyCommandGatewayAdapter @Inject constructor(
                     remove("${KEY_PREFIX}_${keyId}_algorithm")
                 }
             }
-            logger.i("All keys deleted successfully: count=${allKeyIds.size}")
+            logger.info { "All keys deleted successfully: count=${allKeyIds.size}" }
             true
         } catch (e: Exception) {
-            logger.e("Failed to delete all keys", e)
+            logger.error(e) { "Failed to delete all keys" }
             false
         }
     }

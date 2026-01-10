@@ -1,7 +1,7 @@
 package com.example.cryptographer.application.commands.key.delete
 
 import com.example.cryptographer.application.common.ports.key.KeyCommandGateway
-import com.example.cryptographer.setup.configs.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**
  * Command Handler for deleting a single encryption key.
@@ -15,7 +15,7 @@ import com.example.cryptographer.setup.configs.getLogger
 class DeleteKeyCommandHandler(
     private val commandGateway: KeyCommandGateway
 ) {
-    private val logger = getLogger<DeleteKeyCommandHandler>()
+    private val logger = KotlinLogging.logger {}
 
     /**
      * Handles the DeleteKeyCommand.
@@ -25,18 +25,18 @@ class DeleteKeyCommandHandler(
      */
     operator fun invoke(command: DeleteKeyCommand): Result<Unit> {
         return try {
-            logger.d("Handling DeleteKeyCommand: keyId=${command.keyId}")
+            logger.debug { "Handling DeleteKeyCommand: keyId=${command.keyId}" }
             val deleted = commandGateway.deleteKey(command.keyId)
 
             if (deleted) {
-                logger.i("Key deleted successfully: keyId=${command.keyId}")
+                logger.info { "Key deleted successfully: keyId=${command.keyId}" }
                 Result.success(Unit)
             } else {
-                logger.e("Failed to delete key: keyId=${command.keyId}")
+                logger.error { "Failed to delete key: keyId=${command.keyId}" }
                 Result.failure(Exception("Failed to delete key"))
             }
         } catch (e: Exception) {
-            logger.e("Error handling DeleteKeyCommand: keyId=${command.keyId}", e)
+            logger.error(e) { "Error handling DeleteKeyCommand: keyId=${command.keyId}" }
             Result.failure(e)
         }
     }

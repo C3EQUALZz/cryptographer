@@ -1,7 +1,7 @@
 package com.example.cryptographer.application.commands.key.delete_all
 
 import com.example.cryptographer.application.common.ports.key.KeyCommandGateway
-import com.example.cryptographer.setup.configs.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**
  * Command Handler for deleting all encryption keys.
@@ -15,7 +15,7 @@ import com.example.cryptographer.setup.configs.getLogger
 class DeleteAllKeysCommandHandler(
     private val commandGateway: KeyCommandGateway
 ) {
-    private val logger = getLogger<DeleteAllKeysCommandHandler>()
+    private val logger = KotlinLogging.logger {}
 
     /**
      * Handles the DeleteAllKeysCommand.
@@ -25,18 +25,18 @@ class DeleteAllKeysCommandHandler(
      */
     operator fun invoke(command: DeleteAllKeysCommand): Result<Unit> {
         return try {
-            logger.d("Handling DeleteAllKeysCommand")
+            logger.debug { "Handling DeleteAllKeysCommand" }
             val success = commandGateway.deleteAllKeys()
 
             if (success) {
-                logger.i("All keys deleted successfully")
+                logger.info { "All keys deleted successfully" }
                 Result.success(Unit)
             } else {
-                logger.e("Failed to delete all keys")
+                logger.error { "Failed to delete all keys" }
                 Result.failure(Exception("Failed to delete all keys"))
             }
         } catch (e: Exception) {
-            logger.e("Error handling DeleteAllKeysCommand", e)
+            logger.error(e) { "Error handling DeleteAllKeysCommand" }
             Result.failure(e)
         }
     }

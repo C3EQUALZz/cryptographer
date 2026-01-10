@@ -7,7 +7,7 @@ import com.example.cryptographer.application.commands.text.encrypt.EncryptTextCo
 import com.example.cryptographer.domain.text.entities.EncryptedText
 import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
 import com.example.cryptographer.domain.text.entities.EncryptionKey
-import com.example.cryptographer.setup.configs.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.Base64
 
 /**
@@ -23,7 +23,7 @@ class EncryptionPresenter(
     private val encryptTextHandler: EncryptTextCommandHandler,
     private val decryptTextHandler: DecryptTextCommandHandler
 ) {
-    private val logger = getLogger<EncryptionPresenter>()
+    private val logger = KotlinLogging.logger {}
 
     /**
      * Encrypts raw text string using the provided key.
@@ -34,7 +34,7 @@ class EncryptionPresenter(
      */
     fun encryptText(rawText: String, key: EncryptionKey): Result<EncryptedTextInfo> {
         return try {
-            logger.d("Presenter: Encrypting text: length=${rawText.length}, algorithm=${key.algorithm}")
+            logger.debug { "Presenter: Encrypting text: length=${rawText.length}, algorithm=${key.algorithm}" }
 
             // Execute command via CommandHandler
             val command = EncryptTextCommand(rawText, key)
@@ -42,7 +42,7 @@ class EncryptionPresenter(
 
             if (encryptedTextViewResult.isFailure) {
                 val error = encryptedTextViewResult.exceptionOrNull() ?: Exception("Encryption failed")
-                logger.e("Presenter: Encryption failed: ${error.message}", error)
+                logger.error(error) { "Presenter: Encryption failed: ${error.message}" }
                 return Result.failure(error)
             }
 
@@ -55,7 +55,7 @@ class EncryptionPresenter(
                 Base64.getEncoder().encodeToString(it)
             }
 
-            logger.i("Presenter: Text encrypted successfully: algorithm=${key.algorithm}, size=${encryptedText.encryptedData.size} bytes")
+            logger.info { "Presenter: Text encrypted successfully: algorithm=${key.algorithm}, size=${encryptedText.encryptedData.size} bytes" }
             Result.success(
                 EncryptedTextInfo(
                     encryptedBase64 = encryptedBase64,
@@ -64,7 +64,7 @@ class EncryptionPresenter(
                 )
             )
         } catch (e: Exception) {
-            logger.e("Presenter: Error encrypting text: ${e.message}", e)
+            logger.error(e) { "Presenter: Error encrypting text: ${e.message}" }
             Result.failure(e)
         }
     }
@@ -83,7 +83,7 @@ class EncryptionPresenter(
         key: EncryptionKey
     ): Result<String> {
         return try {
-            logger.d("Presenter: Decrypting text: algorithm=${key.algorithm}")
+            logger.debug { "Presenter: Decrypting text: algorithm=${key.algorithm}" }
 
             // Convert presentation DTOs to domain entity
             val encryptedData = Base64.getDecoder().decode(encryptedBase64)
@@ -103,20 +103,20 @@ class EncryptionPresenter(
 
             if (decryptedTextViewResult.isFailure) {
                 val error = decryptedTextViewResult.exceptionOrNull() ?: Exception("Decryption failed")
-                logger.e("Presenter: Decryption failed: ${error.message}", error)
+                logger.error(error) { "Presenter: Decryption failed: ${error.message}" }
                 return Result.failure(error)
             }
 
             val decryptedTextView = decryptedTextViewResult.getOrThrow()
             val decryptedText = decryptedTextView.decryptedText
 
-            logger.i("Presenter: Text decrypted successfully: length=${decryptedText.length}")
+            logger.info { "Presenter: Text decrypted successfully: length=${decryptedText.length}" }
             Result.success(decryptedText)
         } catch (e: IllegalArgumentException) {
-            logger.e("Presenter: Invalid Base64 input for decryption: ${e.message}", e)
+            logger.error(e) { "Presenter: Invalid Base64 input for decryption: ${e.message}" }
             Result.failure(Exception("Некорректный формат Base64 для зашифрованного текста или IV."))
         } catch (e: Exception) {
-            logger.e("Presenter: Error decrypting text: ${e.message}", e)
+            logger.error(e) { "Presenter: Error decrypting text: ${e.message}" }
             Result.failure(Exception("Ошибка дешифрования: ${e.message}"))
         }
     }

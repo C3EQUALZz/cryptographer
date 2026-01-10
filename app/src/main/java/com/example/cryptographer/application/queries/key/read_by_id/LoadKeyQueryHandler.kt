@@ -2,7 +2,7 @@ package com.example.cryptographer.application.queries.key.read_by_id
 
 import com.example.cryptographer.application.common.ports.key.KeyQueryGateway
 import com.example.cryptographer.application.common.views.KeyView
-import com.example.cryptographer.setup.configs.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.Base64
 
 /**
@@ -17,7 +17,7 @@ import java.util.Base64
 class LoadKeyQueryHandler(
     private val queryGateway: KeyQueryGateway
 ) {
-    private val logger = getLogger<LoadKeyQueryHandler>()
+    private val logger = KotlinLogging.logger {}
 
     /**
      * Handles the LoadKeyQuery.
@@ -27,11 +27,11 @@ class LoadKeyQueryHandler(
      */
     operator fun invoke(query: LoadKeyQuery): Result<KeyView> {
         return try {
-            logger.d("Handling LoadKeyQuery: keyId=${query.keyId}")
+            logger.debug { "Handling LoadKeyQuery: keyId=${query.keyId}" }
             val key = queryGateway.getKey(query.keyId)
 
             if (key != null) {
-                logger.d("Key loaded successfully: keyId=${query.keyId}, algorithm=${key.algorithm}")
+                logger.debug { "Key loaded successfully: keyId=${query.keyId}, algorithm=${key.algorithm}" }
                 Result.success(
                     KeyView(
                         id = query.keyId,
@@ -40,11 +40,11 @@ class LoadKeyQueryHandler(
                     )
                 )
             } else {
-                logger.w("Key not found: keyId=${query.keyId}")
+                logger.warn { "Key not found: keyId=${query.keyId}" }
                 Result.failure(Exception("Key not found"))
             }
         } catch (e: Exception) {
-            logger.e("Error handling LoadKeyQuery: keyId=${query.keyId}", e)
+            logger.error(e) { "Error handling LoadKeyQuery: keyId=${query.keyId}" }
             Result.failure(e)
         }
     }

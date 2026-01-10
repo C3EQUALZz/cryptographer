@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import com.example.cryptographer.application.common.ports.key.KeyQueryGateway
 import com.example.cryptographer.domain.text.entities.EncryptionKey
 import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
-import com.example.cryptographer.setup.configs.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.Base64
 import javax.inject.Inject
@@ -26,7 +26,7 @@ import javax.inject.Inject
 class KeyQueryGatewayAdapter @Inject constructor(
     @param:ApplicationContext private val context: Context
 ) : KeyQueryGateway {
-    private val logger = getLogger<KeyQueryGatewayAdapter>()
+    private val logger = KotlinLogging.logger {}
 
     private val prefs: SharedPreferences by lazy {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -38,20 +38,20 @@ class KeyQueryGatewayAdapter @Inject constructor(
             val algorithmName = prefs.getString("${KEY_PREFIX}_${keyId}_algorithm", null)
 
             if (keyBase64 == null || algorithmName == null) {
-                logger.d("Key not found: keyId=$keyId")
+                logger.debug { "Key not found: keyId=$keyId" }
                 return null
             }
 
             val keyBytes = Base64.getDecoder().decode(keyBase64)
             val algorithm = EncryptionAlgorithm.valueOf(algorithmName)
 
-            logger.d("Key retrieved successfully: keyId=$keyId, algorithm=$algorithmName")
+            logger.debug { "Key retrieved successfully: keyId=$keyId, algorithm=$algorithmName" }
             EncryptionKey(
                 value = keyBytes,
                 algorithm = algorithm
             )
         } catch (e: Exception) {
-            logger.e("Failed to retrieve key: keyId=$keyId", e)
+            logger.error(e) { "Failed to retrieve key: keyId=$keyId" }
             null
         }
     }

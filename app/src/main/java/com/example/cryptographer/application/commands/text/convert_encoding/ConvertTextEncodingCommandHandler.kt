@@ -2,7 +2,7 @@ package com.example.cryptographer.application.commands.text.convert_encoding
 
 import com.example.cryptographer.application.common.views.ConvertedEncodingView
 import com.example.cryptographer.domain.text.value_objects.TextEncoding
-import com.example.cryptographer.setup.configs.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.Base64
 
 /**
@@ -14,7 +14,7 @@ import java.util.Base64
  * - Returns View (DTO) for presentation layer
  */
 class ConvertTextEncodingCommandHandler {
-    private val logger = getLogger<ConvertTextEncodingCommandHandler>()
+    private val logger = KotlinLogging.logger {}
 
     /**
      * Handles the ConvertTextEncodingCommand.
@@ -24,7 +24,7 @@ class ConvertTextEncodingCommandHandler {
      */
     operator fun invoke(command: ConvertTextEncodingCommand): Result<ConvertedEncodingView> {
         return try {
-            logger.d("Handling ConvertTextEncodingCommand: length=${command.rawText.length}, targetEncoding=${command.targetEncoding}")
+            logger.debug { "Handling ConvertTextEncodingCommand: length=${command.rawText.length}, targetEncoding=${command.targetEncoding}" }
 
             val converted = when (command.targetEncoding) {
                 TextEncoding.UTF8 -> {
@@ -58,10 +58,10 @@ class ConvertTextEncodingCommandHandler {
                 }
             }
 
-            logger.i("Text conversion successful: targetEncoding=${command.targetEncoding}, convertedLength=${converted.length}")
+            logger.info { "Text conversion successful: targetEncoding=${command.targetEncoding}, convertedLength=${converted.length}" }
             Result.success(ConvertedEncodingView(converted))
         } catch (e: Exception) {
-            logger.e("Error handling ConvertTextEncodingCommand: ${e.message}", e)
+            logger.error(e) { "Error handling ConvertTextEncodingCommand: ${e.message}" }
             Result.failure(
                 Exception("Ошибка конвертации текста: ${e.message}", e)
             )

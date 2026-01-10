@@ -8,6 +8,8 @@
     <string name="screens">Экраны</string>
     <string name="encryption_algorithms">Алгоритмы шифрования</string>
     <string name="language_selection">Язык</string>
+    <string name="theme_selection">Тема</string>
+    <string name="dark_theme">Тёмная тема</string>
     
     <!-- Screen titles -->
     <string name="screen_key_generation">Генерация ключей</string>

@@ -2,7 +2,7 @@ package com.example.cryptographer.domain.text.value_objects
 
 import com.example.cryptographer.domain.common.errors.DomainFieldError
 import com.example.cryptographer.domain.common.values.BaseValueObject
-import com.example.cryptographer.setup.configs.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**
  * Value Object for validated text.
@@ -21,7 +21,7 @@ class ValidatedText private constructor(
     }
 
     companion object {
-        private val logger = getLogger<ValidatedText>()
+        private val logger = KotlinLogging.logger {}
         private const val MAX_TEXT_LENGTH = 1_000_000 // approximately 1MB
 
         /**
@@ -35,19 +35,19 @@ class ValidatedText private constructor(
             return try {
                 when {
                     rawText.isBlank() -> {
-                        logger.w("Text validation failed: text is blank")
+                        logger.warn { "Text validation failed: text is blank" }
                         Result.failure(
                             DomainFieldError("Text cannot be empty")
                         )
                     }
                     rawText.length > MAX_TEXT_LENGTH -> {
-                        logger.w("Text validation failed: text exceeds maximum length (${rawText.length} > $MAX_TEXT_LENGTH)")
+                        logger.warn { "Text validation failed: text exceeds maximum length (${rawText.length} > $MAX_TEXT_LENGTH)" }
                         Result.failure(
                             DomainFieldError("Text exceeds maximum length: $MAX_TEXT_LENGTH characters")
                         )
                     }
                     !isValidUtf8(rawText) -> {
-                        logger.w("Text validation failed: invalid UTF-8 encoding")
+                        logger.warn { "Text validation failed: invalid UTF-8 encoding" }
                         Result.failure(
                             DomainFieldError("Text contains invalid UTF-8 characters")
                         )
@@ -57,18 +57,18 @@ class ValidatedText private constructor(
                         val normalizedContent = normalizeText(rawText)
                         // Check if normalized content is not blank (it might become blank after normalization)
                         if (normalizedContent.isBlank()) {
-                            logger.w("Text validation failed: text becomes blank after normalization")
+                            logger.warn { "Text validation failed: text becomes blank after normalization" }
                             Result.failure(
                                 DomainFieldError("Text cannot be empty")
                             )
                         } else {
-                            logger.d("Text validation successful: length=${normalizedContent.length}")
+                            logger.debug { "Text validation successful: length=${normalizedContent.length}" }
                             Result.success(ValidatedText(normalizedContent))
                         }
                     }
                 }
             } catch (e: Exception) {
-                logger.e("Text validation error: ${e.message}", e)
+                logger.error(e) { "Text validation error: ${e.message}" }
                 Result.failure(e)
             }
         }

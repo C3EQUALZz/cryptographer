@@ -4,13 +4,17 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.content.res.Resources
-import android.os.Build
 import androidx.core.content.edit
+import com.example.cryptographer.domain.common.value_objects.Language
 import java.util.Locale
 
 /**
- * Helper class for managing application locale.
- * Follows Android best practices for i18n.
+ * Helper class for managing application locale context.
+ * This is a utility class for Android-specific locale operations.
+ *
+ * Note: This class handles only Context operations (attachBaseContext).
+ * Actual saving/loading of language preference is handled by SettingsGateway
+ * through MainPresenter/MainViewModel (following Clean Architecture).
  */
 object LocaleHelper {
     private const val PREFS_NAME = "locale_prefs"
@@ -18,21 +22,9 @@ object LocaleHelper {
     private const val DEFAULT_LANGUAGE = "en"
 
     /**
-     * Supported languages in the application.
-     */
-    enum class Language(val code: String, val displayName: String) {
-        ENGLISH("en", "English"),
-        RUSSIAN("ru", "Русский");
-
-        companion object {
-            fun fromCode(code: String): Language {
-                return Language.entries.find { it.code == code } ?: ENGLISH
-            }
-        }
-    }
-
-    /**
-     * Gets the saved language from SharedPreferences.
+     * Gets the saved language from SharedPreferences (synchronous).
+     * This is used only for attachBaseContext where async operations are not possible.
+     * For all other cases, use SettingsGateway through MainViewModel.
      */
     fun getSavedLanguage(context: Context): Language {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -41,38 +33,22 @@ object LocaleHelper {
     }
 
     /**
-     * Saves the selected language to SharedPreferences.
-     */
-    fun saveLanguage(context: Context, language: Language) {
-        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit {
-            putString(KEY_SELECTED_LANGUAGE, language.code)
-        }
-    }
-
-    /**
-     * Sets the locale for the given context.
-     * Returns a new context with the updated locale.
-     */
-    fun setLocale(context: Context, language: Language): Context {
-        saveLanguage(context, language)
-        return updateContextLocale(context, language)
-    }
-
-    /**
      * Updates the context with the saved locale.
      * Should be called in Application.onCreate() and Activity.attachBaseContext().
+     * 
+     * Note: For attachBaseContext, languageCode should be passed directly
+     * to avoid async operations during Activity lifecycle.
      */
-    fun onAttach(context: Context): Context {
-        val language = getSavedLanguage(context)
-        return updateContextLocale(context, language)
+    fun onAttach(context: Context, languageCode: String? = null): Context {
+        val code = languageCode ?: getSavedLanguage(context).code
+        return updateContextLocale(context, code)
     }
 
     /**
-     * Updates the context's locale configuration.
+     * Updates the context's locale configuration by language code.
      */
-    private fun updateContextLocale(context: Context, language: Language): Context {
-        val locale = Locale.forLanguageTag(language.code)
+    private fun updateContextLocale(context: Context, languageCode: String): Context {
+        val locale = Locale.forLanguageTag(languageCode)
         Locale.setDefault(locale)
 
         val resources: Resources = context.resources

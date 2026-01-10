@@ -4,7 +4,7 @@ import com.example.cryptographer.domain.common.services.DomainService
 import com.example.cryptographer.domain.text.entities.EncryptedText
 import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
 import com.example.cryptographer.domain.text.entities.EncryptionKey
-import com.example.cryptographer.setup.configs.getLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
@@ -21,7 +21,7 @@ import javax.crypto.spec.SecretKeySpec
  * (keys, matrices, parameters, etc.).
  */
 class AesEncryptionService : DomainService() {
-    private val logger = getLogger<AesEncryptionService>()
+    private val logger = KotlinLogging.logger {}
 
     companion object {
         private const val ALGORITHM = "AES"
@@ -41,7 +41,7 @@ class AesEncryptionService : DomainService() {
         return try {
             validateKey(key)
 
-            logger.d("Starting encryption: algorithm=${key.algorithm}, dataSize=${data.size} bytes")
+            logger.debug { "Starting encryption: algorithm=${key.algorithm}, dataSize=${data.size} bytes" }
             val secretKey = SecretKeySpec(key.value, ALGORITHM)
             val cipher = Cipher.getInstance(TRANSFORMATION)
 
@@ -54,7 +54,7 @@ class AesEncryptionService : DomainService() {
 
             val encryptedData = cipher.doFinal(data)
 
-            logger.d("Encryption successful: algorithm=${key.algorithm}, encryptedSize=${encryptedData.size} bytes")
+            logger.debug { "Encryption successful: algorithm=${key.algorithm}, encryptedSize=${encryptedData.size} bytes" }
             Result.success(
                 EncryptedText(
                     encryptedData = encryptedData,
@@ -63,7 +63,7 @@ class AesEncryptionService : DomainService() {
                 )
             )
         } catch (e: Exception) {
-            logger.e("Encryption failed: algorithm=${key.algorithm}, error=${e.message}", e)
+            logger.error(e) { "Encryption failed: algorithm=${key.algorithm}, error=${e.message}" }
             Result.failure(
                 Exception("Encryption error: ${e.message}", e)
             )
@@ -82,13 +82,13 @@ class AesEncryptionService : DomainService() {
             validateKey(key)
 
             if (encryptedText.initializationVector == null) {
-                logger.w("Decryption failed: IV is missing")
+                logger.warn { "Decryption failed: IV is missing" }
                 return Result.failure(
                     IllegalArgumentException("IV (Initialization Vector) is missing for decryption")
                 )
             }
 
-            logger.d("Starting decryption: algorithm=${key.algorithm}, encryptedSize=${encryptedText.encryptedData.size} bytes")
+            logger.debug { "Starting decryption: algorithm=${key.algorithm}, encryptedSize=${encryptedText.encryptedData.size} bytes" }
             val secretKey = SecretKeySpec(key.value, ALGORITHM)
             val cipher = Cipher.getInstance(TRANSFORMATION)
 
@@ -97,10 +97,10 @@ class AesEncryptionService : DomainService() {
 
             val decryptedData = cipher.doFinal(encryptedText.encryptedData)
 
-            logger.d("Decryption successful: algorithm=${key.algorithm}, decryptedSize=${decryptedData.size} bytes")
+            logger.debug { "Decryption successful: algorithm=${key.algorithm}, decryptedSize=${decryptedData.size} bytes" }
             Result.success(decryptedData)
         } catch (e: Exception) {
-            logger.e("Decryption failed: algorithm=${key.algorithm}, error=${e.message}", e)
+            logger.error(e) { "Decryption failed: algorithm=${key.algorithm}, error=${e.message}" }
             Result.failure(
                 Exception("Decryption error: ${e.message}", e)
             )
@@ -121,12 +121,12 @@ class AesEncryptionService : DomainService() {
                 EncryptionAlgorithm.AES_256 -> 256
             }
 
-            logger.d("Generating encryption key: algorithm=$algorithm, keySize=$keySize bits")
+            logger.debug { "Generating encryption key: algorithm=$algorithm, keySize=$keySize bits" }
             val keyGenerator = KeyGenerator.getInstance(ALGORITHM)
             keyGenerator.init(keySize)
             val secretKey: SecretKey = keyGenerator.generateKey()
 
-            logger.d("Key generated successfully: algorithm=$algorithm, keyLength=${secretKey.encoded.size} bytes")
+            logger.debug { "Key generated successfully: algorithm=$algorithm, keyLength=${secretKey.encoded.size} bytes" }
             Result.success(
                 EncryptionKey(
                     value = secretKey.encoded,
@@ -134,7 +134,7 @@ class AesEncryptionService : DomainService() {
                 )
             )
         } catch (e: Exception) {
-            logger.e("Key generation failed: algorithm=$algorithm, error=${e.message}", e)
+            logger.error(e) { "Key generation failed: algorithm=$algorithm, error=${e.message}" }
             Result.failure(
                 Exception("Key generation error: ${e.message}", e)
             )

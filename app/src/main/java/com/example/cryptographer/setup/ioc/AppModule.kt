@@ -13,12 +13,21 @@ import com.example.cryptographer.application.queries.key.read_by_id.LoadKeyQuery
 import com.example.cryptographer.domain.text.ports.TextIdGeneratorPort
 import com.example.cryptographer.domain.text.services.AesEncryptionService
 import com.example.cryptographer.domain.text.services.TextService
+import com.example.cryptographer.application.commands.language.update.SaveLanguageCommandHandler
+import com.example.cryptographer.application.commands.theme.update.SaveThemeCommandHandler
+import com.example.cryptographer.application.common.ports.settings.SettingsCommandGateway
+import com.example.cryptographer.application.common.ports.settings.SettingsQueryGateway
+import com.example.cryptographer.application.queries.language.read.LoadLanguageQueryHandler
+import com.example.cryptographer.application.queries.theme.read.LoadThemeQueryHandler
 import com.example.cryptographer.infrastructure.key.KeyCommandGatewayAdapter
 import com.example.cryptographer.infrastructure.key.KeyQueryGatewayAdapter
+import com.example.cryptographer.infrastructure.settings.SettingsCommandGatewayAdapter
+import com.example.cryptographer.infrastructure.settings.SettingsQueryGatewayAdapter
 import com.example.cryptographer.infrastructure.text.UuidTextIdGenerator
 import com.example.cryptographer.presentation.encoding.EncodingPresenter
 import com.example.cryptographer.presentation.encryption.EncryptionPresenter
 import com.example.cryptographer.presentation.key.KeyGenerationPresenter
+import com.example.cryptographer.presentation.main.MainPresenter
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -214,6 +223,86 @@ object AppModule {
         convertTextEncodingHandler: ConvertTextEncodingCommandHandler
     ): EncodingPresenter {
         return EncodingPresenter(convertTextEncodingHandler)
+    }
+
+    /**
+     * Provides SettingsCommandGateway implementation.
+     * Uses SettingsCommandGatewayAdapter as the implementation.
+     */
+    @Provides
+    fun provideSettingsCommandGateway(
+        adapter: SettingsCommandGatewayAdapter
+    ): SettingsCommandGateway {
+        return adapter
+    }
+
+    /**
+     * Provides SettingsQueryGateway implementation.
+     * Uses SettingsQueryGatewayAdapter as the implementation.
+     */
+    @Provides
+    fun provideSettingsQueryGateway(
+        adapter: SettingsQueryGatewayAdapter
+    ): SettingsQueryGateway {
+        return adapter
+    }
+
+    /**
+     * Provides SaveThemeCommandHandler.
+     */
+    @Provides
+    fun provideSaveThemeCommandHandler(
+        commandGateway: SettingsCommandGateway
+    ): SaveThemeCommandHandler {
+        return SaveThemeCommandHandler(commandGateway)
+    }
+
+    /**
+     * Provides LoadThemeQueryHandler.
+     */
+    @Provides
+    fun provideLoadThemeQueryHandler(
+        queryGateway: SettingsQueryGateway
+    ): LoadThemeQueryHandler {
+        return LoadThemeQueryHandler(queryGateway)
+    }
+
+    /**
+     * Provides SaveLanguageCommandHandler.
+     */
+    @Provides
+    fun provideSaveLanguageCommandHandler(
+        commandGateway: SettingsCommandGateway
+    ): SaveLanguageCommandHandler {
+        return SaveLanguageCommandHandler(commandGateway)
+    }
+
+    /**
+     * Provides LoadLanguageQueryHandler.
+     */
+    @Provides
+    fun provideLoadLanguageQueryHandler(
+        queryGateway: SettingsQueryGateway
+    ): LoadLanguageQueryHandler {
+        return LoadLanguageQueryHandler(queryGateway)
+    }
+
+    /**
+     * Provides MainPresenter.
+     */
+    @Provides
+    fun provideMainPresenter(
+        saveThemeHandler: SaveThemeCommandHandler,
+        loadThemeHandler: LoadThemeQueryHandler,
+        saveLanguageHandler: SaveLanguageCommandHandler,
+        loadLanguageHandler: LoadLanguageQueryHandler
+    ): MainPresenter {
+        return MainPresenter(
+            saveThemeHandler = saveThemeHandler,
+            loadThemeHandler = loadThemeHandler,
+            saveLanguageHandler = saveLanguageHandler,
+            loadLanguageHandler = loadLanguageHandler
+        )
     }
 }
 
