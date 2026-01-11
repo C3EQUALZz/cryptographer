@@ -98,6 +98,6 @@ fun loadKeys() {
 ## Learn More
 
 - [Encryption & Decryption](encryption.md) - Using generated keys
-- [Architecture - Domain Layer](architecture/layers/domain.md) - Key generation logic
-- [Architecture - Application Layer](architecture/layers/application.md) - Command handlers
+- [Architecture - Domain Layer](../architecture/layers/domain.md) - Key generation logic
+- [Architecture - Application Layer](../architecture/layers/application.md) - Command handlers
 

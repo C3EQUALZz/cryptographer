@@ -123,6 +123,6 @@ Common errors:
 ## Learn More
 
 - [Key Generation](key-generation.md) - Generate encryption keys
-- [Architecture - Domain Layer](architecture/layers/domain.md) - Encryption services
-- [Architecture - Application Layer](architecture/layers/application.md) - Command handlers
+- [Architecture - Domain Layer](../architecture/layers/domain.md) - Encryption services
+- [Architecture - Application Layer](../architecture/layers/application.md) - Command handlers
 
