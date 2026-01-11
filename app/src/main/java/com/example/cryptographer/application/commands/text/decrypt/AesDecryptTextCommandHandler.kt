@@ -28,7 +28,9 @@ class AesDecryptTextCommandHandler(
     operator fun invoke(command: AesDecryptTextCommand): Result<DecryptedTextView> {
         return try {
             logger.debug {
-                "Handling AES DecryptTextCommand: algorithm=${command.key.algorithm}, encryptedSize=${command.encryptedText.encryptedData.size} bytes"
+                "Handling AES DecryptTextCommand: " +
+                    "algorithm=${command.key.algorithm}, " +
+                    "encryptedSize=${command.encryptedText.encryptedData.size} bytes"
             }
 
             // Decrypt using AES service
@@ -41,7 +43,9 @@ class AesDecryptTextCommandHandler(
             val decryptedContent = String(decryptedBytes, Charsets.UTF_8)
 
             logger.info {
-                "AES text decryption successful: algorithm=${command.key.algorithm}, decryptedLength=${decryptedContent.length}"
+                "AES text decryption successful: " +
+                    "algorithm=${command.key.algorithm}, " +
+                    "decryptedLength=${decryptedContent.length}"
             }
             Result.success(DecryptedTextView(decryptedContent))
         } catch (e: AppError) {

@@ -1,6 +1,7 @@
 package com.example.cryptographer.application.commands.language.update
 
 import com.example.cryptographer.application.common.ports.settings.SettingsCommandGateway
+import com.example.cryptographer.application.errors.SettingsSaveError
 import com.example.cryptographer.domain.common.errors.AppError
 import io.github.oshai.kotlinlogging.KotlinLogging
 
@@ -32,7 +33,7 @@ class SaveLanguageCommandHandler(
                 Result.success(Unit)
             } else {
                 logger.warn { "Failed to save language: ${command.languageCode}" }
-                Result.failure(Exception("Failed to save language"))
+                Result.failure(SettingsSaveError("language"))
             }
         } catch (e: AppError) {
             logger.error(e) { "Error handling SaveLanguageCommand: ${e.message}" }

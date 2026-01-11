@@ -177,7 +177,7 @@ class EncodingPresenterTest {
         // Given
         val rawText = "Test text"
         val targetEncoding = TextEncoding.BASE64
-        val exception = RuntimeException("Unexpected error")
+        val exception = com.example.cryptographer.domain.common.errors.AppError("Unexpected error")
 
         coEvery { convertTextEncodingHandler(ConvertTextEncodingCommand(rawText, targetEncoding)) } throws exception
 

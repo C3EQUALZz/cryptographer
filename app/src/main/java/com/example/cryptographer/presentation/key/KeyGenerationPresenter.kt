@@ -8,6 +8,7 @@ import com.example.cryptographer.application.commands.key.delete.DeleteKeyComman
 import com.example.cryptographer.application.commands.key.delete.DeleteKeyCommandHandler
 import com.example.cryptographer.application.commands.key.deleteall.DeleteAllKeysCommand
 import com.example.cryptographer.application.commands.key.deleteall.DeleteAllKeysCommandHandler
+import com.example.cryptographer.application.common.views.KeyIdView
 import com.example.cryptographer.application.queries.key.readall.LoadAllKeysQuery
 import com.example.cryptographer.application.queries.key.readall.LoadAllKeysQueryHandler
 import com.example.cryptographer.application.queries.key.readbyid.LoadKeyQuery
@@ -45,60 +46,73 @@ class KeyGenerationPresenter(
         return try {
             logger.debug { "Presenter: Generating and saving key: algorithm=$algorithm" }
 
-            // Select handler and create command based on algorithm
-            val keyIdViewResult = when (algorithm) {
-                EncryptionAlgorithm.AES_128,
-                EncryptionAlgorithm.AES_192,
-                EncryptionAlgorithm.AES_256,
-                -> {
-                    val command = AesGenerateAndSaveKeyCommand(algorithm)
-                    aesGenerateAndSaveKeyHandler(command)
-                }
-                EncryptionAlgorithm.CHACHA20_256 -> {
-                    val command = ChaCha20GenerateAndSaveKeyCommand(algorithm)
-                    chaCha20GenerateAndSaveKeyHandler(command)
-                }
-            }
-
-            if (keyIdViewResult.isFailure) {
-                return Result.failure(
-                    keyIdViewResult.exceptionOrNull() ?: Exception("Key generation and saving failed"),
-                )
-            }
-
-            val keyIdView = keyIdViewResult.getOrThrow()
-            val keyId = keyIdView.keyId
-
-            // Load the saved key to get full key info via QueryHandler
-            val query = LoadKeyQuery(keyId)
-            val keyViewResult = loadKeyHandler(query)
-
-            if (keyViewResult.isFailure) {
-                val loadError = keyViewResult.exceptionOrNull() ?: Exception("Key was saved but could not be loaded")
-                logger.warn(loadError) { "Key was saved but could not be loaded: keyId=$keyId" }
-                return Result.failure(Exception("Key was saved but could not be loaded: ${loadError.message}"))
-            }
-
-            val keyView = keyViewResult.getOrThrow()
-
-            // Convert View to domain entity for presentation
-            val key = EncryptionKey(
-                value = Base64.getDecoder().decode(keyView.keyBase64),
-                algorithm = keyView.algorithm,
+            val keyIdViewResult = generateKey(algorithm)
+            val keyId = keyIdViewResult.fold(
+                onSuccess = { it.keyId },
+                onFailure = { error ->
+                    return Result.failure(
+                        error,
+                    )
+                },
             )
 
-            logger.info { "Presenter: Key generated and saved successfully: keyId=$keyId, algorithm=$algorithm" }
-            Result.success(
-                GeneratedKeyInfo(
-                    key = key,
-                    keyId = keyId,
-                    keyBase64 = keyView.keyBase64,
-                ),
-            )
+            loadAndConvertKey(keyId, algorithm)
         } catch (e: AppError) {
             logger.error(e) { "Presenter: Error generating and saving key: algorithm=$algorithm" }
             Result.failure(e)
         }
+    }
+
+    private suspend fun generateKey(algorithm: EncryptionAlgorithm): Result<KeyIdView> {
+        // Select handler and create command based on algorithm
+        return when (algorithm) {
+            EncryptionAlgorithm.AES_128,
+            EncryptionAlgorithm.AES_192,
+            EncryptionAlgorithm.AES_256,
+            -> {
+                val command = AesGenerateAndSaveKeyCommand(algorithm)
+                aesGenerateAndSaveKeyHandler(command)
+            }
+            EncryptionAlgorithm.CHACHA20_256 -> {
+                val command = ChaCha20GenerateAndSaveKeyCommand(algorithm)
+                chaCha20GenerateAndSaveKeyHandler(command)
+            }
+        }
+    }
+
+    private suspend fun loadAndConvertKey(keyId: String, algorithm: EncryptionAlgorithm): Result<GeneratedKeyInfo> {
+        // Load the saved key to get full key info via QueryHandler
+        val query = LoadKeyQuery(keyId)
+        val keyViewResult = loadKeyHandler(query)
+
+        return keyViewResult.fold(
+            onSuccess = { keyView ->
+                // Convert View to domain entity for presentation
+                val key = EncryptionKey(
+                    value = Base64.getDecoder().decode(keyView.keyBase64),
+                    algorithm = keyView.algorithm,
+                )
+
+                logger.info {
+                    "Presenter: Key generated and saved successfully: " +
+                        "keyId=$keyId, " +
+                        "algorithm=$algorithm"
+                }
+                Result.success(
+                    GeneratedKeyInfo(
+                        key = key,
+                        keyId = keyId,
+                        keyBase64 = keyView.keyBase64,
+                    ),
+                )
+            },
+            onFailure = { loadError ->
+                logger.warn(loadError) { "Key was saved but could not be loaded: keyId=$keyId" }
+                Result.failure(
+                    Exception("Key was saved but could not be loaded: ${loadError.message}"),
+                )
+            },
+        )
     }
 
     /**

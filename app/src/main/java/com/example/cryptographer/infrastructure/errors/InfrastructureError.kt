@@ -19,4 +19,3 @@ open class InfrastructureError(
     message: String,
     cause: Throwable? = null,
 ) : AppError(message, cause)
-

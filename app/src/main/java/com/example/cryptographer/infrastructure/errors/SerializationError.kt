@@ -16,7 +16,9 @@ class SerializationError(
     details: String? = null,
     cause: Throwable? = null,
 ) : InfrastructureError(
-    message = "Serialization operation failed: operation=$operation, dataType=$dataType${if (details != null) ", details=$details" else ""}",
+    message = "Serialization operation failed: " +
+        "operation=$operation, " +
+        "dataType=$dataType" +
+        "${if (details != null) ", details=$details" else ""}",
     cause = cause,
 )
-

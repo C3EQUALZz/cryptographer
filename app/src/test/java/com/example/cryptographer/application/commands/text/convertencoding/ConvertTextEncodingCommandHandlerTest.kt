@@ -1,6 +1,9 @@
 package com.example.cryptographer.application.commands.text.convertencoding
 
+import com.example.cryptographer.domain.text.ports.TextIdGeneratorPort
+import com.example.cryptographer.domain.text.services.TextService
 import com.example.cryptographer.domain.text.valueobjects.TextEncoding
+import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -13,10 +16,13 @@ import java.util.Base64
 class ConvertTextEncodingCommandHandlerTest {
 
     private lateinit var handler: ConvertTextEncodingCommandHandler
+    private lateinit var service: TextService
 
     @Before
     fun setUp() {
-        handler = ConvertTextEncodingCommandHandler()
+        val textIdGenerator: TextIdGeneratorPort = mockk()
+        service = TextService(textIdGenerator)
+        handler = ConvertTextEncodingCommandHandler(service)
     }
 
     @Test

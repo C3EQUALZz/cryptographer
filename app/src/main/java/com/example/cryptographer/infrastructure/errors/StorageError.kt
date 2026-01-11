@@ -17,4 +17,3 @@ class StorageError(
     message = "Storage operation failed: operation=$operation${if (details != null) ", details=$details" else ""}",
     cause = cause,
 )
-

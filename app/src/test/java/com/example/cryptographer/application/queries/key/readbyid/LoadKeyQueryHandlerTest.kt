@@ -1,5 +1,6 @@
 package com.example.cryptographer.application.queries.key.readbyid
 
+import com.example.cryptographer.application.errors.KeyNotFoundError
 import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import com.example.cryptographer.test.factories.KeyFactory
 import com.example.cryptographer.test.stubs.StubKeyQueryGateway
@@ -43,15 +44,19 @@ class LoadKeyQueryHandlerTest {
     }
 
     @Test
-    fun `invoke should fail when key does not exist`() {
+    fun `invoke should fail with KeyNotFoundError when key does not exist`() {
         // Given
-        val query = LoadKeyQuery("non-existent-key")
+        val keyId = "non-existent-key"
+        val query = LoadKeyQuery(keyId)
 
         // When
         val result = handler(query)
 
         // Then
         assertTrue(result.isFailure)
+        val error = result.exceptionOrNull()
+        assertTrue(error is KeyNotFoundError)
+        assertEquals(keyId, (error as KeyNotFoundError).keyId)
     }
 
     @Test

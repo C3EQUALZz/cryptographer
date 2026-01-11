@@ -27,3 +27,4 @@ interface SettingsCommandGateway {
      */
     suspend fun saveLanguage(languageCode: String): Boolean
 }
+

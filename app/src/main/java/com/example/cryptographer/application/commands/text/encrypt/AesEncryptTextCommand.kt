@@ -12,3 +12,4 @@ data class AesEncryptTextCommand(
     val rawText: String,
     val key: EncryptionKey,
 )
+

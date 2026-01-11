@@ -11,3 +11,4 @@ import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 data class AesGenerateAndSaveKeyCommand(
     val algorithm: EncryptionAlgorithm,
 )
+

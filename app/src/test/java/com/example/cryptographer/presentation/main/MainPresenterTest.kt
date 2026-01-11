@@ -221,7 +221,7 @@ class MainPresenterTest {
     @Test
     fun `loadThemeMode should handle exception during loading`() = runTest {
         // Given
-        val exception = RuntimeException("Unexpected error")
+        val exception = com.example.cryptographer.application.errors.SettingsLoadError("theme")
 
         coEvery { loadThemeHandler(LoadThemeQuery) } throws exception
 
@@ -230,7 +230,9 @@ class MainPresenterTest {
 
         // Then
         assertTrue(result.isFailure)
-        assertEquals(exception, result.exceptionOrNull())
+        val error = result.exceptionOrNull()
+        assertTrue(error is com.example.cryptographer.application.errors.SettingsLoadError)
+        assertEquals("theme", (error as com.example.cryptographer.application.errors.SettingsLoadError).settingType)
 
         coVerify(exactly = 1) { loadThemeHandler(LoadThemeQuery) }
     }
@@ -239,7 +241,7 @@ class MainPresenterTest {
     fun `saveThemeMode should handle exception during saving`() = runTest {
         // Given
         val themeMode = "system"
-        val exception = RuntimeException("Unexpected error")
+        val exception = com.example.cryptographer.application.errors.SettingsSaveError("theme")
 
         coEvery { saveThemeHandler(SaveThemeCommand(themeMode)) } throws exception
 
@@ -248,7 +250,9 @@ class MainPresenterTest {
 
         // Then
         assertTrue(result.isFailure)
-        assertEquals(exception, result.exceptionOrNull())
+        val error = result.exceptionOrNull()
+        assertTrue(error is com.example.cryptographer.application.errors.SettingsSaveError)
+        assertEquals("theme", (error as com.example.cryptographer.application.errors.SettingsSaveError).settingType)
 
         coVerify(exactly = 1) { saveThemeHandler(SaveThemeCommand(themeMode)) }
     }
@@ -256,7 +260,7 @@ class MainPresenterTest {
     @Test
     fun `loadLanguage should handle exception during loading`() = runTest {
         // Given
-        val exception = RuntimeException("Unexpected error")
+        val exception = com.example.cryptographer.application.errors.SettingsLoadError("language")
 
         coEvery { loadLanguageHandler(LoadLanguageQuery) } throws exception
 
@@ -265,7 +269,9 @@ class MainPresenterTest {
 
         // Then
         assertTrue(result.isFailure)
-        assertEquals(exception, result.exceptionOrNull())
+        val error = result.exceptionOrNull()
+        assertTrue(error is com.example.cryptographer.application.errors.SettingsLoadError)
+        assertEquals("language", (error as com.example.cryptographer.application.errors.SettingsLoadError).settingType)
 
         coVerify(exactly = 1) { loadLanguageHandler(LoadLanguageQuery) }
     }
@@ -274,7 +280,7 @@ class MainPresenterTest {
     fun `saveLanguage should handle exception during saving`() = runTest {
         // Given
         val languageCode = "en"
-        val exception = RuntimeException("Unexpected error")
+        val exception = com.example.cryptographer.application.errors.SettingsSaveError("language")
 
         coEvery { saveLanguageHandler(SaveLanguageCommand(languageCode)) } throws exception
 
@@ -283,7 +289,9 @@ class MainPresenterTest {
 
         // Then
         assertTrue(result.isFailure)
-        assertEquals(exception, result.exceptionOrNull())
+        val error = result.exceptionOrNull()
+        assertTrue(error is com.example.cryptographer.application.errors.SettingsSaveError)
+        assertEquals("language", (error as com.example.cryptographer.application.errors.SettingsSaveError).settingType)
 
         coVerify(exactly = 1) { saveLanguageHandler(SaveLanguageCommand(languageCode)) }
     }

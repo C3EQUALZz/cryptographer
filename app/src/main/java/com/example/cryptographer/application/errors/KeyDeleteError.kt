@@ -12,4 +12,3 @@ class KeyDeleteError(
     val keyId: String,
     cause: Throwable? = null,
 ) : ApplicationError("Failed to delete key: keyId=$keyId", cause)
-

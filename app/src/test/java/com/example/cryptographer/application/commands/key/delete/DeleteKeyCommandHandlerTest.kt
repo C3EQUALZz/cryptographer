@@ -1,8 +1,10 @@
 package com.example.cryptographer.application.commands.key.delete
 
+import com.example.cryptographer.application.errors.KeyDeleteError
 import com.example.cryptographer.test.factories.KeyFactory
 import com.example.cryptographer.test.stubs.StubKeyCommandGateway
 import com.example.cryptographer.test.stubs.StubKeyQueryGateway
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -43,16 +45,20 @@ class DeleteKeyCommandHandlerTest {
     }
 
     @Test
-    fun `invoke should fail when delete fails`() {
+    fun `invoke should fail with KeyDeleteError when delete fails`() {
         // Given
         commandGateway.setShouldFailDelete(true)
-        val command = DeleteKeyCommand("test-key")
+        val keyId = "test-key"
+        val command = DeleteKeyCommand(keyId)
 
         // When
         val result = handler(command)
 
         // Then
         assertTrue(result.isFailure)
+        val error = result.exceptionOrNull()
+        assertTrue(error is KeyDeleteError)
+        assertEquals(keyId, (error as KeyDeleteError).keyId)
     }
 
     @Test

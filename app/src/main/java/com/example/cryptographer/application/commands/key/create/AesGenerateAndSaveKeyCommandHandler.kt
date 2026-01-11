@@ -1,8 +1,9 @@
 package com.example.cryptographer.application.commands.key.create
 
-import com.example.cryptographer.application.errors.KeySaveError
 import com.example.cryptographer.application.common.ports.key.KeyCommandGateway
 import com.example.cryptographer.application.common.views.KeyIdView
+import com.example.cryptographer.application.errors.KeyGenerationError
+import com.example.cryptographer.application.errors.KeySaveError
 import com.example.cryptographer.domain.common.errors.AppError
 import com.example.cryptographer.domain.text.services.AesEncryptionService
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -37,9 +38,11 @@ class AesGenerateAndSaveKeyCommandHandler(
             // Generate key using AES domain service
             val keyResult = aesEncryptionService.generateKey(command.algorithm)
             if (keyResult.isFailure) {
-                val error = keyResult.exceptionOrNull() ?: Exception("AES key generation failed")
+                val error = keyResult.exceptionOrNull() ?: KeyGenerationError(command.algorithm)
                 logger.error(error) { "AES key generation failed: ${error.message}" }
-                return Result.failure(error)
+                return Result.failure(
+                    error as? AppError ?: KeyGenerationError(command.algorithm, error),
+                )
             }
 
             val key = keyResult.getOrThrow()

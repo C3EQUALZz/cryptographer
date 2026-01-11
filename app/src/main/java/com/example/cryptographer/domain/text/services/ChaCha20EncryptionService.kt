@@ -210,8 +210,10 @@ class ChaCha20EncryptionService : DomainService() {
         }
 
         // Check key length for ChaCha20-256 (must be 32 bytes = 256 bits)
-        require(key.value.size == KEY_LENGTH) {
-            "Invalid ChaCha20 key length. Expected $KEY_LENGTH bytes (256 bits), got ${key.value.size} bytes"
+        if (key.value.size != KEY_LENGTH) {
+            throw DomainError(
+                "Invalid ChaCha20 key length. Expected $KEY_LENGTH bytes (256 bits), got ${key.value.size} bytes",
+            )
         }
     }
 }

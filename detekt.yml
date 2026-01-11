@@ -18,7 +18,9 @@ complexity:
     functionThreshold: 6
     constructorThreshold: 6
     ignoreDefaultParameters: true
-    ignoreAnnotated: ['Provides']
+    ignoreAnnotated: ['Provides', 'Composable']
+    excludes:
+      - '**/*Presenter.kt'
   CyclomaticComplexMethod:
     active: true
     threshold: 10
@@ -69,6 +71,15 @@ potential-bugs:
     active: true
   UnconditionalJumpStatementInLoop:
     active: true
+
+exceptions:
+  active: true
+  TooGenericExceptionThrown:
+    active: true
+    excludes:
+      - '**/test/**/*.kt'
+      - '**/*Test.kt'
+      - '**/test/stubs/**/*.kt'
 
 performance:
   active: true

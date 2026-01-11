@@ -18,4 +18,3 @@ open class ApplicationError(
     message: String,
     cause: Throwable? = null,
 ) : AppError(message, cause)
-

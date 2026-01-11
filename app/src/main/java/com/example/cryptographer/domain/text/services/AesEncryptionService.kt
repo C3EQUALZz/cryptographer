@@ -185,8 +185,10 @@ class AesEncryptionService : DomainService() {
             )
         }
 
-        require(key.value.size == expectedKeyLength) {
-            "Invalid key length. Expected $expectedKeyLength bytes, got ${key.value.size} bytes"
+        if (key.value.size != expectedKeyLength) {
+            throw DomainError(
+                "Invalid key length. Expected $expectedKeyLength bytes, got ${key.value.size} bytes",
+            )
         }
     }
 }

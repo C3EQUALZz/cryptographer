@@ -17,4 +17,3 @@ class ConfigurationError(
     message = "Configuration error: component=$component, reason=$reason",
     cause = cause,
 )
-

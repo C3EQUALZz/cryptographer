@@ -12,4 +12,3 @@ class KeySaveError(
     val keyId: String,
     cause: Throwable? = null,
 ) : ApplicationError("Failed to save key: keyId=$keyId", cause)
-

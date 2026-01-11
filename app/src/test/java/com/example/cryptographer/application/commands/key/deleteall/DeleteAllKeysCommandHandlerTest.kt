@@ -1,5 +1,6 @@
 package com.example.cryptographer.application.commands.key.deleteall
 
+import com.example.cryptographer.application.errors.KeyDeleteAllError
 import com.example.cryptographer.test.factories.KeyFactory
 import com.example.cryptographer.test.stubs.StubKeyCommandGateway
 import com.example.cryptographer.test.stubs.StubKeyQueryGateway
@@ -55,7 +56,7 @@ class DeleteAllKeysCommandHandlerTest {
     }
 
     @Test
-    fun `invoke should fail when deleteAll fails`() {
+    fun `invoke should fail with KeyDeleteAllError when deleteAll fails`() {
         // Given
         commandGateway.setShouldFailDeleteAll(true)
         val command = DeleteAllKeysCommand
@@ -65,5 +66,7 @@ class DeleteAllKeysCommandHandlerTest {
 
         // Then
         assertTrue(result.isFailure)
+        val error = result.exceptionOrNull()
+        assertTrue(error is KeyDeleteAllError)
     }
 }

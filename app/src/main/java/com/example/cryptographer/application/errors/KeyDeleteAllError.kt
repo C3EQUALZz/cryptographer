@@ -9,4 +9,3 @@ package com.example.cryptographer.application.errors
 class KeyDeleteAllError(
     cause: Throwable? = null,
 ) : ApplicationError("Failed to delete all keys", cause)
-

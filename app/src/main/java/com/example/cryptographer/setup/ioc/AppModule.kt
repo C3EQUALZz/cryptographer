@@ -188,10 +188,11 @@ object AppModule {
 
     /**
      * Provides ConvertTextEncodingCommandHandler.
+     * Uses TextService for encoding conversion to ensure consistency.
      */
     @Provides
-    fun provideConvertTextEncodingCommandHandler(): ConvertTextEncodingCommandHandler {
-        return ConvertTextEncodingCommandHandler()
+    fun provideConvertTextEncodingCommandHandler(textService: TextService): ConvertTextEncodingCommandHandler {
+        return ConvertTextEncodingCommandHandler(textService)
     }
 
     /**

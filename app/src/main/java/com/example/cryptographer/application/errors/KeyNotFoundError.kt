@@ -11,4 +11,3 @@ package com.example.cryptographer.application.errors
 class KeyNotFoundError(
     val keyId: String,
 ) : ApplicationError("Key not found: keyId=$keyId")
-

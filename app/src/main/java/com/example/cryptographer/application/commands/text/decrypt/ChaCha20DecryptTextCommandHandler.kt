@@ -28,7 +28,9 @@ class ChaCha20DecryptTextCommandHandler(
     operator fun invoke(command: ChaCha20DecryptTextCommand): Result<DecryptedTextView> {
         return try {
             logger.debug {
-                "Handling ChaCha20 DecryptTextCommand: algorithm=${command.key.algorithm}, encryptedSize=${command.encryptedText.encryptedData.size} bytes"
+                "Handling ChaCha20 DecryptTextCommand: " +
+                    "algorithm=${command.key.algorithm}, " +
+                    "encryptedSize=${command.encryptedText.encryptedData.size} bytes"
             }
 
             // Decrypt using ChaCha20 service

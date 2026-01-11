@@ -15,4 +15,3 @@ class InvalidKeyError(
     val keyId: String,
     val reason: String,
 ) : ApplicationError("Invalid key: keyId=$keyId, reason=$reason")
-

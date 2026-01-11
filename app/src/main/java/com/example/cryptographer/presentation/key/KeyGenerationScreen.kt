@@ -1,37 +1,12 @@
 package com.example.cryptographer.presentation.key
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,14 +15,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.cryptographer.R
 import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
+import com.example.cryptographer.presentation.key.components.AlgorithmSelectionCard
+import com.example.cryptographer.presentation.key.components.DeleteAllKeysDialog
+import com.example.cryptographer.presentation.key.components.GenerateKeyButton
+import com.example.cryptographer.presentation.key.components.GeneratedKeyCard
+import com.example.cryptographer.presentation.key.components.KeyGenerationErrorCard
+import com.example.cryptographer.presentation.key.components.KeyGenerationInfoCard
+import com.example.cryptographer.presentation.key.components.KeyGenerationScreenTitle
+import com.example.cryptographer.presentation.key.components.SavedKeysSection
 
 /**
  * Screen for generating and viewing encryption keys.
@@ -58,7 +37,7 @@ fun KeyGenerationScreen(viewModel: KeyGenerationViewModel) {
     LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val savedKeys by viewModel.savedKeys.collectAsState()
-    val clipboardManager = LocalClipboardManager.current
+    val clipboard = LocalClipboard.current
     var selectedAlgorithm by remember { mutableStateOf(EncryptionAlgorithm.AES_256) }
     var showDeleteAllDialog by remember { mutableStateOf(false) }
 
@@ -70,371 +49,42 @@ fun KeyGenerationScreen(viewModel: KeyGenerationViewModel) {
         verticalArrangement = Arrangement.spacedBy(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        // Title - centered
-        Text(
-            text = stringResource(R.string.key_generation_title),
-            style = MaterialTheme.typography.headlineMedium,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth(),
+        KeyGenerationScreenTitle()
+        KeyGenerationInfoCard()
+        AlgorithmSelectionCard(
+            selectedAlgorithm = selectedAlgorithm,
+            onAlgorithmSelected = { selectedAlgorithm = it },
         )
-
-        // Info card with hint
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
-                    shape = RoundedCornerShape(12.dp),
-                ),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
-            ),
-            shape = RoundedCornerShape(12.dp),
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = "Info",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(24.dp),
-                )
-                Text(
-                    text = stringResource(R.string.key_generation_info),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                )
-            }
-        }
-
-        // Algorithm selection card
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(12.dp),
-                ),
-            shape = RoundedCornerShape(12.dp),
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Text(
-                    text = stringResource(R.string.select_algorithm),
-                    style = MaterialTheme.typography.titleMedium,
-                )
-
-                EncryptionAlgorithm.entries.forEach { algorithm ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        RadioButton(
-                            selected = selectedAlgorithm == algorithm,
-                            onClick = { selectedAlgorithm = algorithm },
-                        )
-                        Text(
-                            text = getAlgorithmDisplayName(algorithm),
-                            modifier = Modifier.padding(start = 8.dp),
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
-                    }
-                }
-            }
-        }
-
-        // Generate button - centered
-        Button(
-            onClick = { viewModel.generateKey(selectedAlgorithm) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
+        GenerateKeyButton(
+            isLoading = uiState.isLoading,
             enabled = !uiState.isLoading,
-            shape = RoundedCornerShape(12.dp),
-        ) {
-            if (uiState.isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(20.dp),
-                    color = MaterialTheme.colorScheme.onPrimary,
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-            }
-            Text(
-                text = stringResource(R.string.generate_key),
-                style = MaterialTheme.typography.titleMedium,
-            )
-        }
-
-        // Generated key display
+            onClick = { viewModel.generateKey(selectedAlgorithm) },
+        )
         uiState.generatedKey?.let { key ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(
-                        width = 2.dp,
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
-                        shape = RoundedCornerShape(16.dp),
-                    ),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                ),
-                shape = RoundedCornerShape(16.dp),
-            ) {
-                Column(
-                    modifier = Modifier.padding(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    Text(
-                        text = stringResource(R.string.generated_key),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-
-                    HorizontalDivider(
-                        modifier = Modifier.padding(vertical = 4.dp),
-                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-                    )
-
-                    Text(
-                        text = stringResource(R.string.algorithm_label, key.algorithm.name),
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-
-                    Text(
-                        text = stringResource(R.string.key_id_label, uiState.keyId?.take(8) ?: ""),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-
-                    // Key value
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surface,
-                        ),
-                        shape = RoundedCornerShape(8.dp),
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(12.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text(
-                                text = uiState.keyBase64 ?: "",
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.weight(1f),
-                                maxLines = 3,
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            OutlinedButton(
-                                onClick = {
-                                    uiState.keyBase64?.let {
-                                        clipboardManager.setText(AnnotatedString(it))
-                                    }
-                                },
-                                shape = RoundedCornerShape(8.dp),
-                            ) {
-                                Text(stringResource(R.string.copy))
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Error message
-        uiState.error?.let { error ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.error.copy(alpha = 0.5f),
-                        shape = RoundedCornerShape(12.dp),
-                    ),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer,
-                ),
-                shape = RoundedCornerShape(12.dp),
-            ) {
-                Text(
-                    text = error,
-                    modifier = Modifier.padding(16.dp),
-                    color = MaterialTheme.colorScheme.onErrorContainer,
-                    textAlign = TextAlign.Center,
+                GeneratedKeyCard(
+                    key = key,
+                    uiState = uiState,
+                    clipboard = clipboard,
                 )
-            }
         }
-
-        // Saved keys section
-        if (savedKeys.isNotEmpty()) {
-            HorizontalDivider(
-                modifier = Modifier.padding(vertical = 8.dp),
-                thickness = 2.dp,
-                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-            )
-
-            Text(
-                text = stringResource(R.string.saved_keys),
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-            )
-
-            savedKeys.forEach { savedKey ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-                            shape = RoundedCornerShape(12.dp),
-                        ),
-                    onClick = { viewModel.loadKey(savedKey.id) },
-                    shape = RoundedCornerShape(12.dp),
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = savedKey.algorithm.name,
-                                style = MaterialTheme.typography.titleMedium,
-                            )
-                            Text(
-                                text = "ID: ${savedKey.id.take(8)}...",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                            Text(
-                                text = savedKey.keyBase64.take(32) + "...",
-                                style = MaterialTheme.typography.bodySmall,
-                                maxLines = 1,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                            )
-                        }
-                        IconButton(
-                            onClick = { viewModel.deleteKey(savedKey.id) },
-                        ) {
-                            Icon(
-                                Icons.Default.Delete,
-                                stringResource(R.string.delete),
-                                tint = MaterialTheme.colorScheme.error,
-                            )
-                        }
-                    }
-                }
-            }
-
-            // Delete all keys button
-            if (savedKeys.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(16.dp))
-
-                OutlinedButton(
-                    onClick = { showDeleteAllDialog = true },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = MaterialTheme.colorScheme.error,
-                    ),
-                    border = BorderStroke(
-                        width = 1.5.dp,
-                        color = MaterialTheme.colorScheme.error.copy(alpha = 0.7f),
-                    ),
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = null,
-                        modifier = Modifier.size(24.dp),
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = stringResource(R.string.delete_all_keys),
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                }
-            }
+        uiState.error?.let { error ->
+            KeyGenerationErrorCard(error = error)
         }
-
-        // Delete all keys confirmation dialog
+        SavedKeysSection(
+            savedKeys = savedKeys,
+            onKeyClick = { viewModel.loadKey(it) },
+            onDeleteKey = { viewModel.deleteKey(it) },
+            onDeleteAllClick = { showDeleteAllDialog = true },
+        )
         if (showDeleteAllDialog) {
-            AlertDialog(
-                onDismissRequest = { showDeleteAllDialog = false },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error,
-                    )
+            DeleteAllKeysDialog(
+                keysCount = savedKeys.size,
+                onConfirm = {
+                    viewModel.deleteAllKeys()
+                    showDeleteAllDialog = false
                 },
-                title = {
-                    Text(
-                        text = stringResource(R.string.delete_all_keys_dialog_title),
-                        style = MaterialTheme.typography.titleLarge,
-                    )
-                },
-                text = {
-                    Text(
-                        text = stringResource(R.string.delete_all_keys_dialog_message, savedKeys.size),
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                },
-                confirmButton = {
-                    Button(
-                        onClick = {
-                            viewModel.deleteAllKeys()
-                            showDeleteAllDialog = false
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.error,
-                        ),
-                        shape = RoundedCornerShape(8.dp),
-                    ) {
-                        Text(stringResource(R.string.delete))
-                    }
-                },
-                dismissButton = {
-                    OutlinedButton(
-                        onClick = { showDeleteAllDialog = false },
-                        shape = RoundedCornerShape(8.dp),
-                    ) {
-                        Text(stringResource(R.string.cancel))
-                    }
-                },
-                shape = RoundedCornerShape(16.dp),
+                onDismiss = { showDeleteAllDialog = false },
             )
         }
     }
-}
-
-/**
- * Returns localized display name for encryption algorithm.
- */
-@Composable
-private fun getAlgorithmDisplayName(algorithm: EncryptionAlgorithm): String {
-    return stringResource(
-        when (algorithm) {
-            EncryptionAlgorithm.AES_128 -> R.string.algorithm_aes_128
-            EncryptionAlgorithm.AES_192 -> R.string.algorithm_aes_192
-            EncryptionAlgorithm.AES_256 -> R.string.algorithm_aes_256
-            EncryptionAlgorithm.CHACHA20_256 -> R.string.algorithm_chacha20_256
-        },
-    )
 }

@@ -26,32 +26,42 @@ class EncodingPresenter(
      */
     suspend fun convertText(rawText: String, targetEncoding: TextEncoding): Result<String> {
         return try {
-            logger.debug { "Presenter: Converting text: length=${rawText.length}, targetEncoding=$targetEncoding" }
+            logger.debug {
+                "Presenter: Converting text: " +
+                    "length=${rawText.length}, " +
+                    "targetEncoding=$targetEncoding"
+            }
 
             if (rawText.isBlank()) {
-                return Result.success("")
+                Result.success("")
+            } else {
+                convertNonEmptyText(rawText, targetEncoding)
             }
-
-            // Execute command via CommandHandler
-            val command = ConvertTextEncodingCommand(rawText, targetEncoding)
-            val convertedEncodingViewResult = convertTextEncodingHandler(command)
-
-            if (convertedEncodingViewResult.isFailure) {
-                val error = convertedEncodingViewResult.exceptionOrNull() ?: Exception("Conversion failed")
-                logger.error(error) { "Presenter: Conversion failed: ${error.message}" }
-                return Result.failure(error)
-            }
-
-            val convertedEncodingView = convertedEncodingViewResult.getOrThrow()
-            val converted = convertedEncodingView.convertedText
-
-            logger.info {
-                "Presenter: Text converted successfully: targetEncoding=$targetEncoding, convertedLength=${converted.length}"
-            }
-            Result.success(converted)
         } catch (e: AppError) {
             logger.error(e) { "Presenter: Error converting text: ${e.message}" }
             Result.failure(e)
         }
+    }
+
+    private suspend fun convertNonEmptyText(rawText: String, targetEncoding: TextEncoding): Result<String> {
+        // Execute command via CommandHandler
+        val command = ConvertTextEncodingCommand(rawText, targetEncoding)
+        val convertedEncodingViewResult = convertTextEncodingHandler(command)
+
+        return convertedEncodingViewResult.fold(
+            onSuccess = { convertedEncodingView ->
+                val converted = convertedEncodingView.convertedText
+                logger.info {
+                    "Presenter: Text converted successfully: " +
+                        "targetEncoding=$targetEncoding, " +
+                        "convertedLength=${converted.length}"
+                }
+                Result.success(converted)
+            },
+            onFailure = { error ->
+                logger.error(error) { "Presenter: Conversion failed: ${error.message}" }
+                Result.failure(error)
+            },
+        )
     }
 }

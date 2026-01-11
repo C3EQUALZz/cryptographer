@@ -7,6 +7,7 @@ import com.example.cryptographer.domain.text.ports.TextIdGeneratorPort
 import com.example.cryptographer.domain.text.valueobjects.TextEncoding
 import com.example.cryptographer.domain.text.valueobjects.ValidatedText
 import io.github.oshai.kotlinlogging.KotlinLogging
+import java.util.Base64
 
 /**
  * Domain service for Text entity.
@@ -58,6 +59,87 @@ class TextService(
         } catch (e: DomainError) {
             logger.error(e) { "Error creating Text entity: ${e.message}" }
             Result.failure(e)
+        }
+    }
+
+    companion object {
+        private const val MAX_ASCII_CODE = 127
+    }
+
+    /**
+     * Converts text to the specified encoding.
+     *
+     * @param rawText Text to convert
+     * @param targetEncoding Target encoding
+     * @return Result with converted text string or error
+     */
+    fun convertEncoding(rawText: String, targetEncoding: TextEncoding): Result<String> {
+        return try {
+            logger.debug {
+                "Converting text encoding: " +
+                    "length=${rawText.length}, " +
+                    "targetEncoding=$targetEncoding"
+            }
+
+            val converted = when (targetEncoding) {
+                TextEncoding.UTF8 -> convertToUtf8(rawText)
+                TextEncoding.ASCII -> convertToAscii(rawText)
+                TextEncoding.BASE64 -> convertToBase64(rawText)
+            }
+
+            logger.info {
+                "Text encoding conversion successful: " +
+                    "targetEncoding=$targetEncoding, " +
+                    "convertedLength=${converted.length}"
+            }
+            Result.success(converted)
+        } catch (e: DomainError) {
+            logger.error(e) { "Error converting text encoding: ${e.message}" }
+            Result.failure(e)
+        }
+    }
+
+    private fun convertToUtf8(rawText: String): String {
+        // If input is BASE64, decode it first
+        if (isBase64(rawText)) {
+            return try {
+                val decoded = Base64.getDecoder().decode(rawText)
+                String(decoded, Charsets.UTF_8)
+            } catch (_: Exception) {
+                // If Base64 decode fails, treat as UTF-8
+                rawText
+            }
+        }
+        return rawText
+    }
+
+    private fun convertToAscii(rawText: String): String {
+        // Convert to ASCII (only characters 0-127)
+        return rawText.map { char ->
+            if (char.code > MAX_ASCII_CODE) {
+                '?' // Replace non-ASCII characters
+            } else {
+                char
+            }
+        }.joinToString("")
+    }
+
+    private fun convertToBase64(rawText: String): String {
+        // Encode to BASE64
+        val bytes = rawText.toByteArray(Charsets.UTF_8)
+        return Base64.getEncoder().encodeToString(bytes)
+    }
+
+    /**
+     * Checks if a string is valid BASE64.
+     */
+    private fun isBase64(text: String): Boolean {
+        if (text.isBlank()) return false
+        return try {
+            Base64.getDecoder().decode(text)
+            text.matches(Regex("^[A-Za-z0-9+/=]*$"))
+        } catch (_: Exception) {
+            false
         }
     }
 }

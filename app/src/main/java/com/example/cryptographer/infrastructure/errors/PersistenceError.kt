@@ -16,7 +16,9 @@ class PersistenceError(
     details: String? = null,
     cause: Throwable? = null,
 ) : InfrastructureError(
-    message = "Persistence operation failed: operation=$operation, resource=$resource${if (details != null) ", details=$details" else ""}",
+    message = "Persistence operation failed: " +
+        "operation=$operation, " +
+        "resource=$resource" +
+        "${if (details != null) ", details=$details" else ""}",
     cause = cause,
 )
-
