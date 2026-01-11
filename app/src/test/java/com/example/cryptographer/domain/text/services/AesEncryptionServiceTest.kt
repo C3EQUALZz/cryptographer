@@ -143,7 +143,7 @@ class AesEncryptionServiceTest {
         assertNotNull("Error should not be null", error)
         assertTrue("Error should be UnsupportedAlgorithmError, but was ${error?.javaClass?.simpleName}", error is UnsupportedAlgorithmError)
         assertEquals(EncryptionAlgorithm.CHACHA20_256, (error as UnsupportedAlgorithmError).algorithm)
-        assertEquals("AesEncryptionService", (error as UnsupportedAlgorithmError).serviceName)
+        assertEquals("AesEncryptionService", error.serviceName)
     }
 
     @Test
@@ -160,7 +160,7 @@ class AesEncryptionServiceTest {
         val error = result.exceptionOrNull()
         assertTrue(error is UnsupportedAlgorithmError)
         assertEquals(EncryptionAlgorithm.CHACHA20_256, (error as UnsupportedAlgorithmError).algorithm)
-        assertEquals("AesEncryptionService", (error as UnsupportedAlgorithmError).serviceName)
+        assertEquals("AesEncryptionService", error.serviceName)
     }
 
     @Test
@@ -179,7 +179,7 @@ class AesEncryptionServiceTest {
         val error = result.exceptionOrNull()
         assertTrue(error is UnsupportedAlgorithmError)
         assertEquals(EncryptionAlgorithm.CHACHA20_256, (error as UnsupportedAlgorithmError).algorithm)
-        assertEquals("AesEncryptionService", (error as UnsupportedAlgorithmError).serviceName)
+        assertEquals("AesEncryptionService", error.serviceName)
     }
 }
 

@@ -29,7 +29,7 @@ class ChaCha20EncryptionServiceTest {
         return try {
             Cipher.getInstance("ChaCha20-Poly1305/None/NoPadding")
             true
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             false
         }
     }
@@ -57,7 +57,7 @@ class ChaCha20EncryptionServiceTest {
         assertNotNull("Error should not be null", error)
         assertTrue("Error should be UnsupportedAlgorithmError, but was ${error?.javaClass?.simpleName}", error is UnsupportedAlgorithmError)
         assertEquals(EncryptionAlgorithm.AES_256, (error as UnsupportedAlgorithmError).algorithm)
-        assertEquals("ChaCha20EncryptionService", (error as UnsupportedAlgorithmError).serviceName)
+        assertEquals("ChaCha20EncryptionService", error.serviceName)
     }
 
     @Test
@@ -77,7 +77,7 @@ class ChaCha20EncryptionServiceTest {
             assertNotNull("Error should not be null for $algorithm", error)
             assertTrue("Error should be UnsupportedAlgorithmError for $algorithm, but was ${error?.javaClass?.simpleName}", error is UnsupportedAlgorithmError)
             assertEquals(algorithm, (error as UnsupportedAlgorithmError).algorithm)
-            assertEquals("ChaCha20EncryptionService", (error as UnsupportedAlgorithmError).serviceName)
+            assertEquals("ChaCha20EncryptionService", error.serviceName)
         }
     }
 
@@ -133,7 +133,7 @@ class ChaCha20EncryptionServiceTest {
         val error = result.exceptionOrNull()
         assertTrue(error is UnsupportedAlgorithmError)
         assertEquals(EncryptionAlgorithm.AES_256, (error as UnsupportedAlgorithmError).algorithm)
-        assertEquals("ChaCha20EncryptionService", (error as UnsupportedAlgorithmError).serviceName)
+        assertEquals("ChaCha20EncryptionService", error.serviceName)
     }
 
     @Test
@@ -153,7 +153,7 @@ class ChaCha20EncryptionServiceTest {
             val error = result.exceptionOrNull()
             assertTrue("Error should be UnsupportedAlgorithmError for ${key.algorithm}", error is UnsupportedAlgorithmError)
             assertEquals(key.algorithm, (error as UnsupportedAlgorithmError).algorithm)
-            assertEquals("ChaCha20EncryptionService", (error as UnsupportedAlgorithmError).serviceName)
+            assertEquals("ChaCha20EncryptionService", error.serviceName)
         }
     }
 
@@ -173,7 +173,7 @@ class ChaCha20EncryptionServiceTest {
         val error = result.exceptionOrNull()
         assertTrue(error is UnsupportedAlgorithmError)
         assertEquals(EncryptionAlgorithm.AES_256, (error as UnsupportedAlgorithmError).algorithm)
-        assertEquals("ChaCha20EncryptionService", (error as UnsupportedAlgorithmError).serviceName)
+        assertEquals("ChaCha20EncryptionService", error.serviceName)
     }
 
     @Test

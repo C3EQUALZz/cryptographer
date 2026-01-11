@@ -118,8 +118,8 @@ class MainViewModel @Inject constructor(
 data class MainUiState(
     val selectedScreen: AppScreen = AppScreen.KeyGeneration,
     val selectedAlgorithm: EncryptionAlgorithm = EncryptionAlgorithm.AES_256,
-    val themeMode: String = "system", // "system", "light", or "dark"
-    val languageCode: String = "en" // "en" or "ru"
+    val themeMode: String = "system",
+    val languageCode: String = "en"
 )
 
 /**

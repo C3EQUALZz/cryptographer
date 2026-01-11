@@ -35,7 +35,7 @@ class ChaCha20DecryptTextCommandHandlerTest {
         return try {
             Cipher.getInstance("ChaCha20-Poly1305/None/NoPadding")
             true
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             false
         }
     }

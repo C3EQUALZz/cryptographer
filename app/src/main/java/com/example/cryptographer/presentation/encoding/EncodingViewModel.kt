@@ -46,17 +46,6 @@ class EncodingViewModel @Inject constructor(
     }
 
     /**
-     * Updates the selected encoding (for manual conversion trigger).
-     */
-    fun selectEncoding(encoding: TextEncoding) {
-        _uiState.value = _uiState.value.copy(
-            selectedEncoding = encoding,
-            error = null
-        )
-        convertText()
-    }
-
-    /**
      * Converts text to all encodings.
      */
     fun convertText() {
