@@ -14,3 +14,4 @@ data class ChaCha20DecryptTextCommand(
     val key: EncryptionKey
 )
 
+

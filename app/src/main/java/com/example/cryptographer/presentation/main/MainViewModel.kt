@@ -1,12 +1,10 @@
 package com.example.cryptographer.presentation.main
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
-import io.github.oshai.kotlinlogging.KotlinLogging
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,7 +22,6 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val presenter: MainPresenter,
-    @param:ApplicationContext private val context: Context
 ) : ViewModel() {
     private val logger = KotlinLogging.logger {}
 

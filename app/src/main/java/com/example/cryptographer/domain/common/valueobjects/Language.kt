@@ -1,4 +1,4 @@
-package com.example.cryptographer.domain.common.value_objects
+package com.example.cryptographer.domain.common.valueobjects
 
 /**
  * Language enumeration for application localization.

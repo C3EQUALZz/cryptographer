@@ -12,3 +12,4 @@ data class AesGenerateAndSaveKeyCommand(
     val algorithm: EncryptionAlgorithm // AES_128, AES_192, or AES_256
 )
 
+

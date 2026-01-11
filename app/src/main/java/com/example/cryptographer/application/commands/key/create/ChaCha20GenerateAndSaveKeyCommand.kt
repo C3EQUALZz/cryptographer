@@ -12,3 +12,4 @@ data class ChaCha20GenerateAndSaveKeyCommand(
     val algorithm: EncryptionAlgorithm // CHACHA20_256
 )
 
+

@@ -17,8 +17,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cryptographer.R
-import com.example.cryptographer.domain.common.value_objects.Language
-import com.example.cryptographer.domain.common.value_objects.ThemeMode
+import com.example.cryptographer.domain.common.valueobjects.Language
+import com.example.cryptographer.domain.common.valueobjects.ThemeMode
 import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
 import com.example.cryptographer.presentation.encoding.EncodingScreen
 import com.example.cryptographer.presentation.encoding.EncodingViewModel

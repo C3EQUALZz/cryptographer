@@ -180,3 +180,4 @@ class EncodingPresenterTest {
         coVerify(exactly = 1) { convertTextEncodingHandler(ConvertTextEncodingCommand(rawText, targetEncoding)) }
     }
 }
+

@@ -64,13 +64,6 @@ kapt {
         // Additional options for better compatibility
         option("-parameters")
     }
-    arguments {
-        arg("dagger.formatGeneratedSource", "disabled")
-        arg("dagger.fastInit", "enabled")
-        // Fix for metadata issues with Kotlin 2.0+
-        arg("dagger.strictMultibindingValidation", "disabled")
-        arg("dagger.ignoreProvisionKeyWildcards", "enabled")
-    }
     // Map diagnostic locations for better error reporting
     mapDiagnosticLocations = true
 }

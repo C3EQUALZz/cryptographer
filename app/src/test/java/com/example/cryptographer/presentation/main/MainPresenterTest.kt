@@ -287,3 +287,4 @@ class MainPresenterTest {
         coVerify(exactly = 1) { saveLanguageHandler(SaveLanguageCommand(languageCode)) }
     }
 }
+

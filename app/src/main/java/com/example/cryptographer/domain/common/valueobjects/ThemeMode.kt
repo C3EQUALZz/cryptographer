@@ -1,4 +1,4 @@
-package com.example.cryptographer.domain.common.value_objects
+package com.example.cryptographer.domain.common.valueobjects
 
 /**
  * Theme mode enumeration for application theming.

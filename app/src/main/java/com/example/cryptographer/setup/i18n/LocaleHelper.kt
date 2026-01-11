@@ -1,11 +1,9 @@
 package com.example.cryptographer.setup.i18n
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.content.res.Resources
-import androidx.core.content.edit
-import com.example.cryptographer.domain.common.value_objects.Language
+import com.example.cryptographer.domain.common.valueobjects.Language
 import java.util.Locale
 
 /**
@@ -35,7 +33,7 @@ object LocaleHelper {
     /**
      * Updates the context with the saved locale.
      * Should be called in Application.onCreate() and Activity.attachBaseContext().
-     * 
+     *
      * Note: For attachBaseContext, languageCode should be passed directly
      * to avoid async operations during Activity lifecycle.
      */
