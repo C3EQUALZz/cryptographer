@@ -88,95 +88,129 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
         ThemeMode.fromValue(uiState.themeMode)
     }
 
+    val drawerActions = remember(viewModel, scope, drawerState, context) {
+        DrawerActions(
+            onScreenSelected = { screen ->
+                viewModel.selectScreen(screen)
+                scope.launch { drawerState.close() }
+            },
+            onAlgorithmSelected = { algorithm ->
+                viewModel.selectAlgorithm(algorithm)
+                scope.launch { drawerState.close() }
+            },
+            onLanguageSelected = { language ->
+                viewModel.updateLanguage(language.code)
+                scope.launch {
+                    drawerState.close()
+                    (context as? Activity)?.recreate()
+                }
+            },
+            onThemeModeChanged = { themeMode ->
+                viewModel.updateThemeMode(themeMode.value)
+                scope.launch {
+                    drawerState.close()
+                    (context as? Activity)?.recreate()
+                }
+            },
+        )
+    }
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             NavigationDrawerContent(
+                drawerState = drawerState,
+                scope = scope,
+                context = context,
                 selectedScreen = uiState.selectedScreen,
                 selectedAlgorithm = uiState.selectedAlgorithm,
                 currentLanguage = currentLanguage,
                 currentThemeMode = currentThemeMode,
-                drawerState = drawerState,
-                scope = scope,
-                context = context,
-                onScreenSelected = { screen ->
-                    viewModel.selectScreen(screen)
-                    scope.launch {
-                        drawerState.close()
-                    }
-                },
-                onAlgorithmSelected = { algorithm ->
-                    viewModel.selectAlgorithm(algorithm)
-                    scope.launch {
-                        drawerState.close()
-                    }
-                },
-                onLanguageSelected = { language ->
-                    viewModel.updateLanguage(language.code)
-                    // Restart activity to apply locale change
-                    scope.launch {
-                        drawerState.close()
-                        (context as? Activity)?.recreate()
-                    }
-                },
-                onThemeModeChanged = { themeMode ->
-                    viewModel.updateThemeMode(themeMode.value)
-                    // Restart activity to apply theme change
-                    scope.launch {
-                        drawerState.close()
-                        (context as? Activity)?.recreate()
-                    }
-                },
+                actions = drawerActions,
             )
         },
     ) {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text(getScreenTitle(uiState.selectedScreen)) },
-                    navigationIcon = {
-                        IconButton(onClick = {
-                            scope.launch {
-                                drawerState.open()
-                            }
-                        }) {
-                            Icon(
-                                imageVector = Icons.Default.Menu,
-                                contentDescription = stringResource(R.string.menu),
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    ),
-                )
-            },
-        ) { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-            ) {
-                when (uiState.selectedScreen) {
-                    AppScreen.KeyGeneration -> {
-                        val keyViewModel: KeyGenerationViewModel = viewModel()
-                        KeyGenerationScreen(viewModel = keyViewModel)
-                    }
-                    AppScreen.Encryption -> {
-                        val encryptionViewModel: EncryptionViewModel = viewModel()
-                        EncryptionScreen(viewModel = encryptionViewModel)
-                    }
-                    AppScreen.Encoding -> {
-                        val encodingViewModel: EncodingViewModel = viewModel()
-                        EncodingScreen(viewModel = encodingViewModel)
-                    }
-                }
-            }
+        MainScreenContent(
+            selectedScreen = uiState.selectedScreen,
+            drawerState = drawerState,
+            scope = scope,
+        )
+    }
+}
+
+@Composable
+private fun MainScreenContent(
+    selectedScreen: AppScreen,
+    drawerState: DrawerState,
+    scope: CoroutineScope,
+) {
+    Scaffold(
+        topBar = {
+            MainScreenTopBar(
+                screen = selectedScreen,
+                onMenuClick = {
+                    scope.launch { drawerState.open() }
+                },
+            )
+        },
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+        ) {
+            ScreenContent(selectedScreen = selectedScreen)
         }
     }
 }
+
+@Composable
+private fun MainScreenTopBar(
+    screen: AppScreen,
+    onMenuClick: () -> Unit,
+) {
+    TopAppBar(
+        title = { Text(getScreenTitle(screen)) },
+        navigationIcon = {
+            IconButton(onClick = onMenuClick) {
+                Icon(
+                    imageVector = Icons.Default.Menu,
+                    contentDescription = stringResource(R.string.menu),
+                )
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        ),
+    )
+}
+
+@Composable
+private fun ScreenContent(selectedScreen: AppScreen) {
+    when (selectedScreen) {
+        AppScreen.KeyGeneration -> {
+            val keyViewModel: KeyGenerationViewModel = viewModel()
+            KeyGenerationScreen(viewModel = keyViewModel)
+        }
+        AppScreen.Encryption -> {
+            val encryptionViewModel: EncryptionViewModel = viewModel()
+            EncryptionScreen(viewModel = encryptionViewModel)
+        }
+        AppScreen.Encoding -> {
+            val encodingViewModel: EncodingViewModel = viewModel()
+            EncodingScreen(viewModel = encodingViewModel)
+        }
+    }
+}
+
+private data class DrawerActions(
+    val onScreenSelected: (AppScreen) -> Unit,
+    val onAlgorithmSelected: (EncryptionAlgorithm) -> Unit,
+    val onLanguageSelected: (Language) -> Unit,
+    val onThemeModeChanged: (ThemeMode) -> Unit,
+)
 
 /**
  * Navigation drawer content with screen and algorithm selection.
@@ -184,40 +218,25 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NavigationDrawerContent(
+    drawerState: DrawerState,
+    scope: CoroutineScope,
+    context: Context,
     selectedScreen: AppScreen,
     selectedAlgorithm: EncryptionAlgorithm,
     currentLanguage: Language,
     currentThemeMode: ThemeMode,
-    drawerState: DrawerState,
-    scope: CoroutineScope,
-    context: Context,
-    onScreenSelected: (AppScreen) -> Unit,
-    onAlgorithmSelected: (EncryptionAlgorithm) -> Unit,
-    onLanguageSelected: (Language) -> Unit,
-    onThemeModeChanged: (ThemeMode) -> Unit,
+    actions: DrawerActions,
 ) {
-    var expandedLanguageDropdown by remember { mutableStateOf(false) }
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.surface,
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            // Close button in top-right corner
-            IconButton(
-                onClick = {
-                    scope.launch {
-                        drawerState.close()
-                    }
+            DrawerCloseButton(
+                onClose = {
+                    scope.launch { drawerState.close() }
                 },
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(8.dp),
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = stringResource(R.string.close_menu),
-                )
-            }
+            )
 
             Column(
                 modifier = Modifier
@@ -225,162 +244,212 @@ private fun NavigationDrawerContent(
                     .padding(16.dp)
                     .padding(top = 48.dp),
             ) {
-                Text(
-                    text = stringResource(R.string.menu),
-                    style = MaterialTheme.typography.headlineMedium,
-                    modifier = Modifier.padding(bottom = 24.dp),
-                    color = MaterialTheme.colorScheme.primary,
+                DrawerTitle()
+                LanguageSelectionSection(
+                    currentLanguage = currentLanguage,
+                    onLanguageSelected = actions.onLanguageSelected,
                 )
-
-                // Language selection section
-                Text(
-                    text = stringResource(R.string.language_selection),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(bottom = 8.dp),
-                    color = MaterialTheme.colorScheme.primary,
+                DividerSpacer()
+                ThemeSelectionSection(
+                    currentThemeMode = currentThemeMode,
+                    context = context,
+                    onThemeModeChanged = actions.onThemeModeChanged,
                 )
-
-                ExposedDropdownMenuBox(
-                    expanded = expandedLanguageDropdown,
-                    onExpandedChange = { expandedLanguageDropdown = !expandedLanguageDropdown },
-                ) {
-                    OutlinedTextField(
-                        value = currentLanguage.displayName,
-                        onValueChange = {},
-                        readOnly = true,
-                        trailingIcon = {
-                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedLanguageDropdown)
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryEditable, enabled = true),
-                        shape = RoundedCornerShape(8.dp),
-                    )
-                    ExposedDropdownMenu(
-                        expanded = expandedLanguageDropdown,
-                        onDismissRequest = { expandedLanguageDropdown = false },
-                    ) {
-                        Language.entries.forEach { language ->
-                            DropdownMenuItem(
-                                text = { Text(language.displayName) },
-                                onClick = {
-                                    onLanguageSelected(language)
-                                    expandedLanguageDropdown = false
-                                },
-                                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                            )
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                HorizontalDivider(modifier = Modifier.padding(bottom = 16.dp))
-
-                // Theme selection section
-                Text(
-                    text = stringResource(R.string.theme_selection),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(bottom = 8.dp),
-                    color = MaterialTheme.colorScheme.primary,
+                DividerSpacer()
+                ScreenSelectionSection(
+                    selectedScreen = selectedScreen,
+                    onScreenSelected = actions.onScreenSelected,
                 )
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = stringResource(R.string.dark_theme),
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.weight(1f),
-                    )
-                    Switch(
-                        checked = when (currentThemeMode) {
-                            ThemeMode.SYSTEM -> {
-                                // If system mode, check actual system theme
-                                (
-                                    context.resources.configuration.uiMode and
-                                        Configuration.UI_MODE_NIGHT_MASK
-                                    ) ==
-                                    Configuration.UI_MODE_NIGHT_YES
-                            }
-                            ThemeMode.DARK -> true
-                            ThemeMode.LIGHT -> false
-                        },
-                        onCheckedChange = { isDark ->
-                            val newTheme = if (isDark) {
-                                ThemeMode.DARK
-                            } else {
-                                ThemeMode.LIGHT
-                            }
-                            onThemeModeChanged(newTheme)
-                        },
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                HorizontalDivider(modifier = Modifier.padding(bottom = 16.dp))
-
-                // Screen selection section
-                Text(
-                    text = stringResource(R.string.screens),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(bottom = 8.dp),
-                    color = MaterialTheme.colorScheme.primary,
+                DividerSpacer()
+                AlgorithmSelectionSection(
+                    selectedAlgorithm = selectedAlgorithm,
+                    onAlgorithmSelected = actions.onAlgorithmSelected,
                 )
-
-                NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.Settings, contentDescription = null) },
-                    label = { Text(stringResource(R.string.key_generation)) },
-                    selected = selectedScreen == AppScreen.KeyGeneration,
-                    onClick = { onScreenSelected(AppScreen.KeyGeneration) },
-                    modifier = Modifier.fillMaxWidth(),
-                )
-
-                NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.Lock, contentDescription = null) },
-                    label = { Text(stringResource(R.string.encryption_decryption)) },
-                    selected = selectedScreen == AppScreen.Encryption,
-                    onClick = { onScreenSelected(AppScreen.Encryption) },
-                    modifier = Modifier.fillMaxWidth(),
-                )
-
-                NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.ArrowDropDown, contentDescription = null) },
-                    label = { Text(stringResource(R.string.encoding)) },
-                    selected = selectedScreen == AppScreen.Encoding,
-                    onClick = { onScreenSelected(AppScreen.Encoding) },
-                    modifier = Modifier.fillMaxWidth(),
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                HorizontalDivider(modifier = Modifier.padding(bottom = 16.dp))
-
-                // Algorithm selection section
-                Text(
-                    text = stringResource(R.string.encryption_algorithms),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(bottom = 8.dp),
-                    color = MaterialTheme.colorScheme.primary,
-                )
-
-                EncryptionAlgorithm.entries.forEach { algorithm ->
-                    NavigationDrawerItem(
-                        icon = { Icon(Icons.Default.Info, contentDescription = null) },
-                        label = { Text(algorithm.name) },
-                        selected = selectedAlgorithm == algorithm,
-                        onClick = { onAlgorithmSelected(algorithm) },
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
             }
         }
     }
+}
+
+@Composable
+private fun DrawerCloseButton(onClose: () -> Unit) {
+    IconButton(
+        onClick = onClose,
+        modifier = Modifier
+            .align(Alignment.TopEnd)
+            .padding(8.dp),
+    ) {
+        Icon(
+            imageVector = Icons.Default.Close,
+            contentDescription = stringResource(R.string.close_menu),
+        )
+    }
+}
+
+@Composable
+private fun DrawerTitle() {
+    Text(
+        text = stringResource(R.string.menu),
+        style = MaterialTheme.typography.headlineMedium,
+        modifier = Modifier.padding(bottom = 24.dp),
+        color = MaterialTheme.colorScheme.primary,
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun LanguageSelectionSection(
+    currentLanguage: Language,
+    onLanguageSelected: (Language) -> Unit,
+) {
+    var expandedLanguageDropdown by remember { mutableStateOf(false) }
+
+    Text(
+        text = stringResource(R.string.language_selection),
+        style = MaterialTheme.typography.titleMedium,
+        modifier = Modifier.padding(bottom = 8.dp),
+        color = MaterialTheme.colorScheme.primary,
+    )
+
+    ExposedDropdownMenuBox(
+        expanded = expandedLanguageDropdown,
+        onExpandedChange = { expandedLanguageDropdown = !expandedLanguageDropdown },
+    ) {
+        OutlinedTextField(
+            value = currentLanguage.displayName,
+            onValueChange = {},
+            readOnly = true,
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedLanguageDropdown)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryEditable, enabled = true),
+            shape = RoundedCornerShape(8.dp),
+        )
+        ExposedDropdownMenu(
+            expanded = expandedLanguageDropdown,
+            onDismissRequest = { expandedLanguageDropdown = false },
+        ) {
+            Language.entries.forEach { language ->
+                DropdownMenuItem(
+                    text = { Text(language.displayName) },
+                    onClick = {
+                        onLanguageSelected(language)
+                        expandedLanguageDropdown = false
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ThemeSelectionSection(
+    currentThemeMode: ThemeMode,
+    context: Context,
+    onThemeModeChanged: (ThemeMode) -> Unit,
+) {
+    Text(
+        text = stringResource(R.string.theme_selection),
+        style = MaterialTheme.typography.titleMedium,
+        modifier = Modifier.padding(bottom = 8.dp),
+        color = MaterialTheme.colorScheme.primary,
+    )
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = stringResource(R.string.dark_theme),
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.weight(1f),
+        )
+        Switch(
+            checked = when (currentThemeMode) {
+                ThemeMode.SYSTEM -> {
+                    (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+                        Configuration.UI_MODE_NIGHT_YES
+                }
+                ThemeMode.DARK -> true
+                ThemeMode.LIGHT -> false
+            },
+            onCheckedChange = { isDark ->
+                val newTheme = if (isDark) ThemeMode.DARK else ThemeMode.LIGHT
+                onThemeModeChanged(newTheme)
+            },
+        )
+    }
+}
+
+@Composable
+private fun ScreenSelectionSection(
+    selectedScreen: AppScreen,
+    onScreenSelected: (AppScreen) -> Unit,
+) {
+    Text(
+        text = stringResource(R.string.screens),
+        style = MaterialTheme.typography.titleMedium,
+        modifier = Modifier.padding(bottom = 8.dp),
+        color = MaterialTheme.colorScheme.primary,
+    )
+
+    NavigationDrawerItem(
+        icon = { Icon(Icons.Default.Settings, contentDescription = null) },
+        label = { Text(stringResource(R.string.key_generation)) },
+        selected = selectedScreen == AppScreen.KeyGeneration,
+        onClick = { onScreenSelected(AppScreen.KeyGeneration) },
+        modifier = Modifier.fillMaxWidth(),
+    )
+
+    NavigationDrawerItem(
+        icon = { Icon(Icons.Default.Lock, contentDescription = null) },
+        label = { Text(stringResource(R.string.encryption_decryption)) },
+        selected = selectedScreen == AppScreen.Encryption,
+        onClick = { onScreenSelected(AppScreen.Encryption) },
+        modifier = Modifier.fillMaxWidth(),
+    )
+
+    NavigationDrawerItem(
+        icon = { Icon(Icons.Default.ArrowDropDown, contentDescription = null) },
+        label = { Text(stringResource(R.string.encoding)) },
+        selected = selectedScreen == AppScreen.Encoding,
+        onClick = { onScreenSelected(AppScreen.Encoding) },
+        modifier = Modifier.fillMaxWidth(),
+    )
+}
+
+@Composable
+private fun AlgorithmSelectionSection(
+    selectedAlgorithm: EncryptionAlgorithm,
+    onAlgorithmSelected: (EncryptionAlgorithm) -> Unit,
+) {
+    Text(
+        text = stringResource(R.string.encryption_algorithms),
+        style = MaterialTheme.typography.titleMedium,
+        modifier = Modifier.padding(bottom = 8.dp),
+        color = MaterialTheme.colorScheme.primary,
+    )
+
+    EncryptionAlgorithm.entries.forEach { algorithm ->
+        NavigationDrawerItem(
+            icon = { Icon(Icons.Default.Info, contentDescription = null) },
+            label = { Text(algorithm.name) },
+            selected = selectedAlgorithm == algorithm,
+            onClick = { onAlgorithmSelected(algorithm) },
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+}
+
+@Composable
+private fun DividerSpacer() {
+    Spacer(modifier = Modifier.height(24.dp))
+    HorizontalDivider(modifier = Modifier.padding(bottom = 16.dp))
 }
 
 /**

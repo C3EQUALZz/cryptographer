@@ -167,11 +167,6 @@ class AesEncryptionService : DomainService() {
         } catch (e: DomainError) {
             logger.error(e) { "Key generation failed: algorithm=$algorithm, error=${e.message}" }
             Result.failure(e)
-        } catch (e: Exception) {
-            logger.error(e) { "Key generation failed: algorithm=$algorithm, error=${e.message}" }
-            Result.failure(
-                DomainError("Key generation error: ${e.message}", e),
-            )
         }
     }
 
@@ -190,10 +185,8 @@ class AesEncryptionService : DomainService() {
             )
         }
 
-        if (key.value.size != expectedKeyLength) {
-            throw IllegalArgumentException(
-                "Invalid key length. Expected $expectedKeyLength bytes, got ${key.value.size} bytes",
-            )
+        require(key.value.size == expectedKeyLength) {
+            "Invalid key length. Expected $expectedKeyLength bytes, got ${key.value.size} bytes"
         }
     }
 }

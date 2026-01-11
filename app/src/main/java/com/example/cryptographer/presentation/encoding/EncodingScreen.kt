@@ -53,159 +53,190 @@ fun EncodingScreen(viewModel: EncodingViewModel) {
         verticalArrangement = Arrangement.spacedBy(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        // Title
-        Text(
-            text = "Кодирование текста",
-            style = MaterialTheme.typography.headlineMedium,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth(),
+        EncodingScreenTitle()
+        EncodingInfoCard()
+        EncodingInputCard(
+            inputText = uiState.inputText,
+            isLoading = uiState.isLoading,
+            onInputChange = { viewModel.updateInputText(it) },
         )
+        EncodingResultsSection(
+            uiState = uiState,
+            clipboardManager = clipboardManager,
+        )
+        uiState.error?.let { error ->
+            EncodingErrorCard(error = error)
+        }
+        EncodingClearButton(onClearClick = { viewModel.clearAll() })
+    }
+}
 
-        // Info card
-        Card(
+@Composable
+private fun EncodingScreenTitle() {
+    Text(
+        text = "Кодирование текста",
+        style = MaterialTheme.typography.headlineMedium,
+        textAlign = TextAlign.Center,
+        modifier = Modifier.fillMaxWidth(),
+    )
+}
+
+@Composable
+private fun EncodingInfoCard() {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                shape = RoundedCornerShape(12.dp),
+            ),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
+        ),
+        shape = RoundedCornerShape(12.dp),
+    ) {
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
-                    shape = RoundedCornerShape(12.dp),
-                ),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Default.Info,
+                contentDescription = "Info",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(24.dp),
+            )
+            Text(
+                text = "Введите текст для просмотра в разных кодировках: UTF-8, ASCII и BASE64.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
+        }
+    }
+}
+
+@Composable
+private fun EncodingInputCard(
+    inputText: String,
+    isLoading: Boolean,
+    onInputChange: (String) -> Unit,
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                shape = RoundedCornerShape(12.dp),
             ),
-            shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(12.dp),
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Icon(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = "Info",
+                    imageVector = Icons.Default.ArrowDropDown,
+                    contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(24.dp),
                 )
                 Text(
-                    text = "Введите текст для просмотра в разных кодировках: UTF-8, ASCII и BASE64.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    text = "Исходный текст",
+                    style = MaterialTheme.typography.titleMedium,
                 )
             }
-        }
 
-        // Input field
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(12.dp),
-                ),
-            shape = RoundedCornerShape(12.dp),
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowDropDown,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                    )
-                    Text(
-                        text = "Исходный текст",
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                }
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 4.dp),
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+            )
 
-                HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 4.dp),
-                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-                )
-
-                OutlinedTextField(
-                    value = uiState.inputText,
-                    onValueChange = { viewModel.updateInputText(it) },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Введите текст") },
-                    placeholder = { Text("Введите текст для кодирования...") },
-                    minLines = 3,
-                    maxLines = 5,
-                    enabled = !uiState.isLoading,
-                    shape = RoundedCornerShape(8.dp),
-                )
-            }
-        }
-
-        // UTF-8 Result
-        if (uiState.utf8Result.isNotEmpty() || uiState.inputText.isNotBlank()) {
-            EncodingResultCard(
-                title = "UTF-8",
-                content = uiState.utf8Result.ifEmpty { uiState.inputText },
-                clipboardManager = clipboardManager,
+            OutlinedTextField(
+                value = inputText,
+                onValueChange = onInputChange,
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Введите текст") },
+                placeholder = { Text("Введите текст для кодирования...") },
+                minLines = 3,
+                maxLines = 5,
+                enabled = !isLoading,
+                shape = RoundedCornerShape(8.dp),
             )
         }
+    }
+}
 
-        // ASCII Result
-        if (uiState.asciiResult.isNotEmpty() || uiState.inputText.isNotBlank()) {
-            EncodingResultCard(
-                title = "ASCII",
-                content = uiState.asciiResult.ifEmpty { "..." },
-                clipboardManager = clipboardManager,
-            )
-        }
+@Composable
+private fun EncodingResultsSection(
+    uiState: EncodingUiState,
+    clipboardManager: ClipboardManager,
+) {
+    if (uiState.utf8Result.isNotEmpty() || uiState.inputText.isNotBlank()) {
+        EncodingResultCard(
+            title = "UTF-8",
+            content = uiState.utf8Result.ifEmpty { uiState.inputText },
+            clipboardManager = clipboardManager,
+        )
+    }
 
-        // BASE64 Result
-        if (uiState.base64Result.isNotEmpty() || uiState.inputText.isNotBlank()) {
-            EncodingResultCard(
-                title = "BASE64",
-                content = uiState.base64Result.ifEmpty { "..." },
-                clipboardManager = clipboardManager,
-            )
-        }
+    if (uiState.asciiResult.isNotEmpty() || uiState.inputText.isNotBlank()) {
+        EncodingResultCard(
+            title = "ASCII",
+            content = uiState.asciiResult.ifEmpty { "..." },
+            clipboardManager = clipboardManager,
+        )
+    }
 
-        // Error message
-        uiState.error?.let { error ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.error.copy(alpha = 0.5f),
-                        shape = RoundedCornerShape(12.dp),
-                    ),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer,
-                ),
+    if (uiState.base64Result.isNotEmpty() || uiState.inputText.isNotBlank()) {
+        EncodingResultCard(
+            title = "BASE64",
+            content = uiState.base64Result.ifEmpty { "..." },
+            clipboardManager = clipboardManager,
+        )
+    }
+}
+
+@Composable
+private fun EncodingErrorCard(error: String) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.error.copy(alpha = 0.5f),
                 shape = RoundedCornerShape(12.dp),
-            ) {
-                Text(
-                    text = error,
-                    modifier = Modifier.padding(16.dp),
-                    color = MaterialTheme.colorScheme.onErrorContainer,
-                    textAlign = TextAlign.Center,
-                )
-            }
-        }
+            ),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer,
+        ),
+        shape = RoundedCornerShape(12.dp),
+    ) {
+        Text(
+            text = error,
+            modifier = Modifier.padding(16.dp),
+            color = MaterialTheme.colorScheme.onErrorContainer,
+            textAlign = TextAlign.Center,
+        )
+    }
+}
 
-        // Clear button
-        OutlinedButton(
-            onClick = { viewModel.clearAll() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-            shape = RoundedCornerShape(12.dp),
-        ) {
-            Text("Очистить всё")
-        }
+@Composable
+private fun EncodingClearButton(onClearClick: () -> Unit) {
+    OutlinedButton(
+        onClick = onClearClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp),
+        shape = RoundedCornerShape(12.dp),
+    ) {
+        Text("Очистить всё")
     }
 }
 
