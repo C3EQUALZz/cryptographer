@@ -13,12 +13,14 @@
 
     <!-- Screen titles -->
     <string name="screen_key_generation">Key Generation</string>
-    <string name="screen_encryption">Encryption</string>
+    <string name="screen_aes_encryption">AES Encryption</string>
+    <string name="screen_chacha20_encryption">ChaCha20 Encryption</string>
     <string name="screen_encoding">Encoding</string>
 
     <!-- Screen names -->
     <string name="key_generation">Key Generation</string>
-    <string name="encryption_decryption">Encryption/Decryption</string>
+    <string name="aes_encryption">AES Encryption</string>
+    <string name="chacha20_encryption">ChaCha20 Encryption</string>
     <string name="encoding">Encoding</string>
 
     <!-- Key Generation Screen -->
@@ -48,9 +50,9 @@
     <string name="failed_to_generate_key">Failed to generate key</string>
     <string name="key_not_found">Key not found</string>
 
-    <!-- Encryption Screen -->
-    <string name="encryption_title">Encryption and Decryption</string>
-    <string name="encryption_info">Use this tool to encrypt and decrypt text using AES keys. Select a key and enter text to encrypt or decrypt.</string>
+    <!-- AES Encryption Screen -->
+    <string name="aes_encryption_title">AES Encryption and Decryption</string>
+    <string name="aes_encryption_info">Use this tool to encrypt and decrypt text using AES keys (AES-128, AES-192, AES-256). Select key length and a key, then enter text to encrypt or decrypt.</string>
     <string name="encryption_section">Encryption</string>
     <string name="decryption_section">Decryption</string>
     <string name="select_key">Select Key</string>
@@ -69,6 +71,13 @@
     <string name="copy_iv">Copy IV</string>
     <string name="key_id_prefix">ID: %1$s...</string>
     <string name="encryption_info_text">Use saved keys to encrypt and decrypt text. Encrypted text will be displayed in Base64 format.</string>
+
+    <!-- ChaCha20 Encryption Screen -->
+    <string name="chacha20_encryption_title">ChaCha20 Encryption and Decryption</string>
+    <string name="chacha20_encryption_info">Use this tool to encrypt and decrypt text using ChaCha20-256 keys. Select a key and enter text to encrypt or decrypt.</string>
+    <string name="nonce_label">Nonce:</string>
+    <string name="copy_nonce">Copy Nonce</string>
+    <string name="enter_nonce_placeholder">Enter nonce (optional)…</string>
 
     <!-- Encoding Screen -->
     <string name="encoding_title">Text Encoding</string>

@@ -13,12 +13,14 @@
 
     <!-- Screen titles -->
     <string name="screen_key_generation">Генерация ключей</string>
-    <string name="screen_encryption">Шифрование</string>
+    <string name="screen_aes_encryption">AES Шифрование</string>
+    <string name="screen_chacha20_encryption">ChaCha20 Шифрование</string>
     <string name="screen_encoding">Кодирование</string>
 
     <!-- Screen names -->
     <string name="key_generation">Генерация ключей</string>
-    <string name="encryption_decryption">Шифрование/Дешифрование</string>
+    <string name="aes_encryption">AES Шифрование</string>
+    <string name="chacha20_encryption">ChaCha20 Шифрование</string>
     <string name="encoding">Кодирование</string>
 
     <!-- Key Generation Screen -->
@@ -48,9 +50,9 @@
     <string name="failed_to_generate_key">Не удалось сгенерировать ключ</string>
     <string name="key_not_found">Ключ не найден</string>
 
-    <!-- Encryption Screen -->
-    <string name="encryption_title">Шифрование и дешифрование</string>
-    <string name="encryption_info">Используйте этот инструмент для шифрования и дешифрования текста с помощью AES ключей. Выберите ключ и введите текст для шифрования или дешифрования.</string>
+    <!-- AES Encryption Screen -->
+    <string name="aes_encryption_title">AES Шифрование и дешифрование</string>
+    <string name="aes_encryption_info">Используйте этот инструмент для шифрования и дешифрования текста с помощью AES ключей (AES-128, AES-192, AES-256). Выберите длину ключа и ключ, затем введите текст для шифрования или дешифрования.</string>
     <string name="encryption_section">Шифрование</string>
     <string name="decryption_section">Дешифрование</string>
     <string name="select_key">Выберите ключ</string>
@@ -69,6 +71,13 @@
     <string name="copy_iv">Копировать IV</string>
     <string name="key_id_prefix">ID: %1$s...</string>
     <string name="encryption_info_text">Используйте сохранённые ключи для шифрования и дешифрования текста. Зашифрованный текст будет представлен в формате Base64.</string>
+
+    <!-- ChaCha20 Encryption Screen -->
+    <string name="chacha20_encryption_title">ChaCha20 Шифрование и дешифрование</string>
+    <string name="chacha20_encryption_info">Используйте этот инструмент для шифрования и дешифрования текста с помощью ChaCha20-256 ключей. Выберите ключ и введите текст для шифрования или дешифрования.</string>
+    <string name="nonce_label">Nonce:</string>
+    <string name="copy_nonce">Копировать Nonce</string>
+    <string name="enter_nonce_placeholder">Введите nonce (опционально)…</string>
 
     <!-- Encoding Screen -->
     <string name="encoding_title">Кодирование текста</string>

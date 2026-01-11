@@ -8,10 +8,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.cryptographer.presentation.aes.AesScreen
+import com.example.cryptographer.presentation.aes.AesViewModel
+import com.example.cryptographer.presentation.chacha20.ChaCha20Screen
+import com.example.cryptographer.presentation.chacha20.ChaCha20ViewModel
 import com.example.cryptographer.presentation.encoding.EncodingScreen
 import com.example.cryptographer.presentation.encoding.EncodingViewModel
-import com.example.cryptographer.presentation.encryption.EncryptionScreen
-import com.example.cryptographer.presentation.encryption.EncryptionViewModel
 import com.example.cryptographer.presentation.key.KeyGenerationScreen
 import com.example.cryptographer.presentation.key.KeyGenerationViewModel
 import com.example.cryptographer.presentation.main.AppScreen
@@ -47,9 +49,13 @@ private fun ScreenContent(selectedScreen: AppScreen) {
             val keyViewModel: KeyGenerationViewModel = viewModel()
             KeyGenerationScreen(viewModel = keyViewModel)
         }
-        AppScreen.Encryption -> {
-            val encryptionViewModel: EncryptionViewModel = viewModel()
-            EncryptionScreen(viewModel = encryptionViewModel)
+        AppScreen.AesEncryption -> {
+            val aesViewModel: AesViewModel = viewModel()
+            AesScreen(viewModel = aesViewModel)
+        }
+        AppScreen.ChaCha20Encryption -> {
+            val chaCha20ViewModel: ChaCha20ViewModel = viewModel()
+            ChaCha20Screen(viewModel = chaCha20ViewModel)
         }
         AppScreen.Encoding -> {
             val encodingViewModel: EncodingViewModel = viewModel()

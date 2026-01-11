@@ -127,6 +127,7 @@ data class MainUiState(
  */
 enum class AppScreen {
     KeyGeneration,
-    Encryption,
+    AesEncryption,
+    ChaCha20Encryption,
     Encoding,
 }

@@ -28,6 +28,8 @@ import com.example.cryptographer.infrastructure.key.KeyQueryGatewayAdapter
 import com.example.cryptographer.infrastructure.settings.SettingsCommandGatewayAdapter
 import com.example.cryptographer.infrastructure.settings.SettingsQueryGatewayAdapter
 import com.example.cryptographer.infrastructure.text.UuidTextIdGenerator
+import com.example.cryptographer.presentation.aes.AesPresenter
+import com.example.cryptographer.presentation.chacha20.ChaCha20Presenter
 import com.example.cryptographer.presentation.encoding.EncodingPresenter
 import com.example.cryptographer.presentation.encryption.EncryptionPresenter
 import com.example.cryptographer.presentation.key.KeyGenerationPresenter
@@ -249,6 +251,34 @@ object AppModule {
             aesEncryptHandler = aesEncryptHandler,
             chaCha20EncryptHandler = chaCha20EncryptHandler,
             aesDecryptHandler = aesDecryptHandler,
+            chaCha20DecryptHandler = chaCha20DecryptHandler,
+        )
+    }
+
+    /**
+     * Provides AesPresenter.
+     */
+    @Provides
+    fun provideAesPresenter(
+        aesEncryptHandler: AesEncryptTextCommandHandler,
+        aesDecryptHandler: AesDecryptTextCommandHandler,
+    ): AesPresenter {
+        return AesPresenter(
+            aesEncryptHandler = aesEncryptHandler,
+            aesDecryptHandler = aesDecryptHandler,
+        )
+    }
+
+    /**
+     * Provides ChaCha20Presenter.
+     */
+    @Provides
+    fun provideChaCha20Presenter(
+        chaCha20EncryptHandler: ChaCha20EncryptTextCommandHandler,
+        chaCha20DecryptHandler: ChaCha20DecryptTextCommandHandler,
+    ): ChaCha20Presenter {
+        return ChaCha20Presenter(
+            chaCha20EncryptHandler = chaCha20EncryptHandler,
             chaCha20DecryptHandler = chaCha20DecryptHandler,
         )
     }

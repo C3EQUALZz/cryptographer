@@ -20,7 +20,8 @@ fun DividerSpacer() {
 fun getScreenTitle(screen: AppScreen): String {
     return when (screen) {
         AppScreen.KeyGeneration -> stringResource(R.string.screen_key_generation)
-        AppScreen.Encryption -> stringResource(R.string.screen_encryption)
+        AppScreen.AesEncryption -> stringResource(R.string.screen_aes_encryption)
+        AppScreen.ChaCha20Encryption -> stringResource(R.string.screen_chacha20_encryption)
         AppScreen.Encoding -> stringResource(R.string.screen_encoding)
     }
 }

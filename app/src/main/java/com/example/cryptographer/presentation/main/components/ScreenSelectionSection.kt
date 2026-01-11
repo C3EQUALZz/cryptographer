@@ -36,9 +36,17 @@ fun ScreenSelectionSection(selectedScreen: AppScreen, onScreenSelected: (AppScre
 
     NavigationDrawerItem(
         icon = { Icon(Icons.Default.Lock, contentDescription = null) },
-        label = { Text(stringResource(R.string.encryption_decryption)) },
-        selected = selectedScreen == AppScreen.Encryption,
-        onClick = { onScreenSelected(AppScreen.Encryption) },
+        label = { Text(stringResource(R.string.aes_encryption)) },
+        selected = selectedScreen == AppScreen.AesEncryption,
+        onClick = { onScreenSelected(AppScreen.AesEncryption) },
+        modifier = Modifier.fillMaxWidth(),
+    )
+
+    NavigationDrawerItem(
+        icon = { Icon(Icons.Default.Lock, contentDescription = null) },
+        label = { Text(stringResource(R.string.chacha20_encryption)) },
+        selected = selectedScreen == AppScreen.ChaCha20Encryption,
+        onClick = { onScreenSelected(AppScreen.ChaCha20Encryption) },
         modifier = Modifier.fillMaxWidth(),
     )
 
