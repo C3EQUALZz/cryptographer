@@ -93,6 +93,6 @@ fun convertEncoding(text: String) {
 
 ## Learn More
 
-- [Architecture - Domain Layer](../architecture/layers/domain.md) - Encoding conversion logic
-- [Architecture - Application Layer](../architecture/layers/application.md) - Command handlers
+- [Architecture - Domain Layer](architecture/layers/domain.md) - Encoding conversion logic
+- [Architecture - Application Layer](architecture/layers/application.md) - Command handlers
 

@@ -253,6 +253,6 @@ Encrypting text:
 
 - [CQRS Pattern](cqrs.md) - Command/Query separation
 - [Dependency Injection](dependency-injection.md) - Hilt setup
-- [Domain Layer](../layers/domain.md) - Domain layer details
-- [Application Layer](../layers/application.md) - Application layer details
+- [Domain Layer](layers/domain.md) - Domain layer details
+- [Application Layer](layers/application.md) - Application layer details
 

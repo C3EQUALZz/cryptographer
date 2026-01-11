@@ -234,6 +234,6 @@ class KeyGenerationViewModelTest {
 ## Learn More
 
 - [Clean Architecture](clean-architecture.md) - Overall architecture
-- [Application Layer](../layers/application.md) - How DI is used in application layer
+- [Application Layer](layers/application.md) - How DI is used in application layer
 - [Hilt Documentation](https://dagger.dev/hilt/) - Official Hilt documentation
 

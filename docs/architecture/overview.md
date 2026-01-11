@@ -130,5 +130,5 @@ Using Hilt for dependency injection:
 - [Clean Architecture](clean-architecture.md) - Detailed layer explanation
 - [CQRS Pattern](cqrs.md) - Command/Query separation
 - [Dependency Injection](dependency-injection.md) - Hilt configuration
-- [Layers](../architecture/layers/domain.md) - Detailed layer documentation
+- [Layers](layers/domain.md) - Detailed layer documentation
 

@@ -218,6 +218,6 @@ result.fold(
 ## Learn More
 
 - [Clean Architecture](clean-architecture.md) - Overall architecture
-- [Application Layer](../layers/application.md) - Application layer details
+- [Application Layer](layers/application.md) - Application layer details
 - [Dependency Injection](dependency-injection.md) - How handlers are injected
 

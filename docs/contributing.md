@@ -157,6 +157,6 @@ When proposing new features:
 ## Questions?
 
 - **Author**: Danil Kovalev ([GitHub](https://github.com/C3EQUALZz))
-- Check [Documentation](../index.md) for more information
+- Check [Documentation](index.md) for more information
 
 Thank you for contributing! 🎉
