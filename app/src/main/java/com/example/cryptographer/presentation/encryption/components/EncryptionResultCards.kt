@@ -18,14 +18,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.Clipboard
 import androidx.compose.ui.platform.toClipEntry
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.cryptographer.R
 import kotlinx.coroutines.launch
 
 @Composable
 fun EncryptedResultCard(encryptedText: String, ivText: String, clipboard: Clipboard) {
     val scope = rememberCoroutineScope()
     ResultCard(
-        title = "Зашифрованный текст:",
+        title = stringResource(R.string.encrypted_text),
         content = encryptedText,
         onCopyClick = {
             scope.launch {
@@ -34,12 +36,12 @@ fun EncryptedResultCard(encryptedText: String, ivText: String, clipboard: Clipbo
                 )
             }
         },
-        copyButtonText = "Копировать",
+        copyButtonText = stringResource(R.string.copy),
     )
 
     if (ivText.isNotEmpty()) {
         ResultCard(
-            title = "IV (Initialization Vector):",
+            title = stringResource(R.string.iv_label),
             content = ivText,
             onCopyClick = {
                 scope.launch {
@@ -48,7 +50,7 @@ fun EncryptedResultCard(encryptedText: String, ivText: String, clipboard: Clipbo
                     )
                 }
             },
-            copyButtonText = "Копировать IV",
+            copyButtonText = stringResource(R.string.copy_iv),
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
         )
     }
@@ -58,7 +60,7 @@ fun EncryptedResultCard(encryptedText: String, ivText: String, clipboard: Clipbo
 fun DecryptedResultCard(decryptedText: String, clipboard: Clipboard) {
     val scope = rememberCoroutineScope()
     ResultCard(
-        title = "Расшифрованный текст:",
+        title = stringResource(R.string.decrypted_text),
         content = decryptedText,
         onCopyClick = {
             scope.launch {
@@ -67,7 +69,7 @@ fun DecryptedResultCard(decryptedText: String, clipboard: Clipboard) {
                 )
             }
         },
-        copyButtonText = "Копировать",
+        copyButtonText = stringResource(R.string.copy),
     )
 }
 

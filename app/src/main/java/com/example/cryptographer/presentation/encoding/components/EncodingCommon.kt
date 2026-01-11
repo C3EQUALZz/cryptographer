@@ -8,13 +8,15 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.cryptographer.R
 
 @Composable
 fun EncodingScreenTitle() {
     Text(
-        text = "Кодирование текста",
+        text = stringResource(R.string.encoding_title),
         style = MaterialTheme.typography.headlineMedium,
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth(),
@@ -30,6 +32,6 @@ fun EncodingClearButton(onClearClick: () -> Unit) {
             .height(48.dp),
         shape = RoundedCornerShape(12.dp),
     ) {
-        Text("Очистить всё")
+        Text(stringResource(R.string.clear_all))
     }
 }

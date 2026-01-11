@@ -61,9 +61,14 @@
     <string name="encrypted_text">Зашифрованный текст:</string>
     <string name="enter_encrypted_text">Введите зашифрованный текст (Base64)</string>
     <string name="enter_encrypted_text_placeholder">Введите зашифрованный текст…</string>
+    <string name="enter_iv_placeholder">Введите IV (опционально)…</string>
     <string name="decrypt">Расшифровать</string>
     <string name="decrypted_text">Расшифрованный текст:</string>
     <string name="clear_all">Очистить всё</string>
+    <string name="iv_label">IV (Initialization Vector):</string>
+    <string name="copy_iv">Копировать IV</string>
+    <string name="key_id_prefix">ID: %1$s...</string>
+    <string name="encryption_info_text">Используйте сохранённые ключи для шифрования и дешифрования текста. Зашифрованный текст будет представлен в формате Base64.</string>
 
     <!-- Encoding Screen -->
     <string name="encoding_title">Кодирование текста</string>

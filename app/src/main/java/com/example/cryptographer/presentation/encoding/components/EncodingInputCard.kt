@@ -17,7 +17,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.cryptographer.R
 
 @Composable
 fun EncodingInputCard(inputText: String, isLoading: Boolean, onInputChange: (String) -> Unit) {
@@ -45,7 +47,7 @@ fun EncodingInputCard(inputText: String, isLoading: Boolean, onInputChange: (Str
                     tint = MaterialTheme.colorScheme.primary,
                 )
                 Text(
-                    text = "Исходный текст",
+                    text = stringResource(R.string.source_text),
                     style = MaterialTheme.typography.titleMedium,
                 )
             }
@@ -59,8 +61,8 @@ fun EncodingInputCard(inputText: String, isLoading: Boolean, onInputChange: (Str
                 value = inputText,
                 onValueChange = onInputChange,
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Введите текст") },
-                placeholder = { Text("Введите текст для кодирования...") },
+                label = { Text(stringResource(R.string.enter_text_for_encoding)) },
+                placeholder = { Text(stringResource(R.string.enter_text_for_encoding_placeholder)) },
                 minLines = 3,
                 maxLines = 5,
                 enabled = !isLoading,

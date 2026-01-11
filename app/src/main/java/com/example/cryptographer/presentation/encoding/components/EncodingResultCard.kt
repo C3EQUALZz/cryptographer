@@ -19,7 +19,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.Clipboard
 import androidx.compose.ui.platform.toClipEntry
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.cryptographer.R
 import kotlinx.coroutines.launch
 
 @Composable
@@ -80,7 +82,7 @@ fun EncodingResultCard(title: String, content: String, clipboard: Clipboard) {
                             },
                             shape = RoundedCornerShape(8.dp),
                         ) {
-                            Text("Копировать")
+                            Text(stringResource(R.string.copy))
                         }
                     }
                 }

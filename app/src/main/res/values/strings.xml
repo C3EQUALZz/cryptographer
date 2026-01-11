@@ -61,9 +61,14 @@
     <string name="encrypted_text">Encrypted text:</string>
     <string name="enter_encrypted_text">Enter encrypted text (Base64)</string>
     <string name="enter_encrypted_text_placeholder">Enter encrypted text…</string>
+    <string name="enter_iv_placeholder">Enter IV (optional)…</string>
     <string name="decrypt">Decrypt</string>
     <string name="decrypted_text">Decrypted text:</string>
     <string name="clear_all">Clear All</string>
+    <string name="iv_label">IV (Initialization Vector):</string>
+    <string name="copy_iv">Copy IV</string>
+    <string name="key_id_prefix">ID: %1$s...</string>
+    <string name="encryption_info_text">Use saved keys to encrypt and decrypt text. Encrypted text will be displayed in Base64 format.</string>
 
     <!-- Encoding Screen -->
     <string name="encoding_title">Text Encoding</string>

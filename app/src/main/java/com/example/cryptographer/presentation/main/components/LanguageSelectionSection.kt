@@ -36,7 +36,7 @@ fun LanguageSelectionSection(currentLanguage: Language, onLanguageSelected: (Lan
 
     ExposedDropdownMenuBox(
         expanded = expandedLanguageDropdown,
-        onExpandedChange = { !expandedLanguageDropdown },
+        onExpandedChange = { expandedLanguageDropdown = it },
     ) {
         OutlinedTextField(
             value = currentLanguage.displayName,

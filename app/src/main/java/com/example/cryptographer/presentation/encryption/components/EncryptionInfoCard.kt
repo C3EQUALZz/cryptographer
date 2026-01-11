@@ -17,7 +17,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.cryptographer.R
 
 @Composable
 fun EncryptionInfoCard() {
@@ -48,8 +50,7 @@ fun EncryptionInfoCard() {
                 modifier = Modifier.size(24.dp),
             )
             Text(
-                text = "Используйте сохранённые ключи для шифрования и дешифрования текста. " +
-                    "Зашифрованный текст будет представлен в формате Base64.",
+                text = stringResource(R.string.encryption_info_text),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
             )

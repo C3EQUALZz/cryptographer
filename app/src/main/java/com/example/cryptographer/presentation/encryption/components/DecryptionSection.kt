@@ -22,7 +22,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.Clipboard
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.cryptographer.R
 import com.example.cryptographer.presentation.encryption.EncryptionUiState
 
 @Composable
@@ -49,7 +51,7 @@ fun DecryptionSection(
         ) {
             SectionHeader(
                 icon = Icons.Default.CheckCircle,
-                title = "Дешифрование",
+                title = stringResource(R.string.decryption_section),
                 color = MaterialTheme.colorScheme.secondary,
             )
 
@@ -57,8 +59,8 @@ fun DecryptionSection(
                 value = uiState.encryptedTextInput,
                 onValueChange = onEncryptedTextChange,
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Введите зашифрованный текст (Base64)") },
-                placeholder = { Text("Введите зашифрованный текст...") },
+                label = { Text(stringResource(R.string.enter_encrypted_text)) },
+                placeholder = { Text(stringResource(R.string.enter_encrypted_text_placeholder)) },
                 minLines = 3,
                 maxLines = 5,
                 enabled = !uiState.isLoading && uiState.selectedKey != null,
@@ -69,8 +71,8 @@ fun DecryptionSection(
                 value = uiState.ivInput,
                 onValueChange = onIvChange,
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("IV (Initialization Vector) - Base64") },
-                placeholder = { Text("Введите IV (опционально)...") },
+                label = { Text(stringResource(R.string.iv_label)) },
+                placeholder = { Text(stringResource(R.string.enter_iv_placeholder)) },
                 enabled = !uiState.isLoading && uiState.selectedKey != null,
                 shape = RoundedCornerShape(8.dp),
             )
@@ -114,7 +116,7 @@ private fun DecryptionButton(isLoading: Boolean, enabled: Boolean, onClick: () -
             Spacer(modifier = Modifier.width(8.dp))
         }
         Text(
-            text = "Дешифровать",
+            text = stringResource(R.string.decrypt),
             style = MaterialTheme.typography.titleMedium,
         )
     }

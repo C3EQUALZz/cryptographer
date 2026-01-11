@@ -14,7 +14,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.cryptographer.R
 import com.example.cryptographer.application.common.views.KeyView
 
 private const val KEY_ID_PREVIEW_LENGTH = 8
@@ -36,13 +38,13 @@ fun KeySelectionSection(availableKeys: List<KeyView>, selectedKeyId: String?, on
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                text = "Выберите ключ:",
+                text = stringResource(R.string.select_key),
                 style = MaterialTheme.typography.titleMedium,
             )
 
             if (availableKeys.isEmpty()) {
                 Text(
-                    text = "Нет сохранённых ключей. Сначала создайте ключ на экране генерации.",
+                    text = stringResource(R.string.no_keys_available),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -75,7 +77,7 @@ private fun KeySelectionItem(keyItem: KeyView, isSelected: Boolean, onSelected: 
                 style = MaterialTheme.typography.bodyLarge,
             )
             Text(
-                text = "ID: ${keyItem.id.take(KEY_ID_PREVIEW_LENGTH)}...",
+                text = stringResource(R.string.key_id_prefix, keyItem.id.take(KEY_ID_PREVIEW_LENGTH)),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

@@ -21,7 +21,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.Clipboard
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.cryptographer.R
 import com.example.cryptographer.presentation.encryption.EncryptionUiState
 
 @Composable
@@ -47,7 +49,7 @@ fun EncryptionSection(
         ) {
             SectionHeader(
                 icon = Icons.Default.Lock,
-                title = "Шифрование",
+                title = stringResource(R.string.encryption_section),
                 color = MaterialTheme.colorScheme.primary,
             )
 
@@ -55,8 +57,8 @@ fun EncryptionSection(
                 value = uiState.inputText,
                 onValueChange = onInputChange,
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Введите текст для шифрования") },
-                placeholder = { Text("Введите текст...") },
+                label = { Text(stringResource(R.string.enter_text_to_encrypt)) },
+                placeholder = { Text(stringResource(R.string.enter_text_placeholder)) },
                 minLines = 3,
                 maxLines = 5,
                 enabled = !uiState.isLoading && uiState.selectedKey != null,
@@ -98,7 +100,7 @@ private fun EncryptionButton(isLoading: Boolean, enabled: Boolean, onClick: () -
             Spacer(modifier = Modifier.width(8.dp))
         }
         Text(
-            text = "Зашифровать",
+            text = stringResource(R.string.encrypt),
             style = MaterialTheme.typography.titleMedium,
         )
     }

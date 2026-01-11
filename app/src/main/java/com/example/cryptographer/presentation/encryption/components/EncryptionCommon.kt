@@ -16,13 +16,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.cryptographer.R
 
 @Composable
 fun EncryptionScreenTitle() {
     Text(
-        text = "Шифрование и дешифрование",
+        text = stringResource(R.string.encryption_title),
         style = MaterialTheme.typography.headlineMedium,
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth(),
@@ -62,6 +64,6 @@ fun EncryptionClearButton(onClearClick: () -> Unit) {
             .height(48.dp),
         shape = RoundedCornerShape(12.dp),
     ) {
-        Text("Очистить всё")
+        Text(stringResource(R.string.clear_all))
     }
 }
