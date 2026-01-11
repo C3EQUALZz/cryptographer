@@ -39,7 +39,7 @@ class MainPresenterTest {
             saveThemeHandler = saveThemeHandler,
             loadThemeHandler = loadThemeHandler,
             saveLanguageHandler = saveLanguageHandler,
-            loadLanguageHandler = loadLanguageHandler
+            loadLanguageHandler = loadLanguageHandler,
         )
     }
 
@@ -287,4 +287,3 @@ class MainPresenterTest {
         coVerify(exactly = 1) { saveLanguageHandler(SaveLanguageCommand(languageCode)) }
     }
 }
-

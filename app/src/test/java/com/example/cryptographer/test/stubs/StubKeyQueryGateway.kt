@@ -46,4 +46,3 @@ class StubKeyQueryGateway : KeyQueryGateway {
         return keys.toMap()
     }
 }
-

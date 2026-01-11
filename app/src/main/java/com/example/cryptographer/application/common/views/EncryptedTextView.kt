@@ -9,6 +9,5 @@ import com.example.cryptographer.domain.text.entities.EncryptedText
  * the result of an encryption command.
  */
 data class EncryptedTextView(
-    val encryptedText: EncryptedText
+    val encryptedText: EncryptedText,
 )
-

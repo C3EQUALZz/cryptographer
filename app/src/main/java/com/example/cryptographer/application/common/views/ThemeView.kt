@@ -7,6 +7,5 @@ package com.example.cryptographer.application.common.views
  * the result of a theme query.
  */
 data class ThemeView(
-    val themeMode: String
+    val themeMode: String,
 )
-

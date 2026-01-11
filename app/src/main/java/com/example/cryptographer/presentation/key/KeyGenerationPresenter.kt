@@ -12,8 +12,8 @@ import com.example.cryptographer.application.queries.key.readall.LoadAllKeysQuer
 import com.example.cryptographer.application.queries.key.readall.LoadAllKeysQueryHandler
 import com.example.cryptographer.application.queries.key.readbyid.LoadKeyQuery
 import com.example.cryptographer.application.queries.key.readbyid.LoadKeyQueryHandler
-import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import com.example.cryptographer.domain.text.entities.EncryptionKey
+import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.Base64
 
@@ -30,7 +30,7 @@ class KeyGenerationPresenter(
     private val loadKeyHandler: LoadKeyQueryHandler,
     private val deleteKeyHandler: DeleteKeyCommandHandler,
     private val deleteAllKeysHandler: DeleteAllKeysCommandHandler,
-    private val loadAllKeysHandler: LoadAllKeysQueryHandler
+    private val loadAllKeysHandler: LoadAllKeysQueryHandler,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -48,7 +48,8 @@ class KeyGenerationPresenter(
             val keyIdViewResult = when (algorithm) {
                 EncryptionAlgorithm.AES_128,
                 EncryptionAlgorithm.AES_192,
-                EncryptionAlgorithm.AES_256 -> {
+                EncryptionAlgorithm.AES_256,
+                -> {
                     val command = AesGenerateAndSaveKeyCommand(algorithm)
                     aesGenerateAndSaveKeyHandler(command)
                 }
@@ -59,7 +60,9 @@ class KeyGenerationPresenter(
             }
 
             if (keyIdViewResult.isFailure) {
-                return Result.failure(keyIdViewResult.exceptionOrNull() ?: Exception("Key generation and saving failed"))
+                return Result.failure(
+                    keyIdViewResult.exceptionOrNull() ?: Exception("Key generation and saving failed"),
+                )
             }
 
             val keyIdView = keyIdViewResult.getOrThrow()
@@ -80,7 +83,7 @@ class KeyGenerationPresenter(
             // Convert View to domain entity for presentation
             val key = EncryptionKey(
                 value = Base64.getDecoder().decode(keyView.keyBase64),
-                algorithm = keyView.algorithm
+                algorithm = keyView.algorithm,
             )
 
             logger.info { "Presenter: Key generated and saved successfully: keyId=$keyId, algorithm=$algorithm" }
@@ -88,8 +91,8 @@ class KeyGenerationPresenter(
                 GeneratedKeyInfo(
                     key = key,
                     keyId = keyId,
-                    keyBase64 = keyView.keyBase64
-                )
+                    keyBase64 = keyView.keyBase64,
+                ),
             )
         } catch (e: Exception) {
             logger.error(e) { "Presenter: Error generating and saving key: algorithm=$algorithm" }
@@ -118,15 +121,15 @@ class KeyGenerationPresenter(
             // Convert View to domain entity for presentation
             val key = EncryptionKey(
                 value = Base64.getDecoder().decode(keyView.keyBase64),
-                algorithm = keyView.algorithm
+                algorithm = keyView.algorithm,
             )
 
             Result.success(
                 GeneratedKeyInfo(
                     key = key,
                     keyId = keyId,
-                    keyBase64 = keyView.keyBase64
-                )
+                    keyBase64 = keyView.keyBase64,
+                ),
             )
         } catch (e: Exception) {
             logger.error(e) { "Error loading key: keyId=$keyId" }
@@ -175,7 +178,7 @@ class KeyGenerationPresenter(
                 KeyItem(
                     id = keyView.id,
                     algorithm = keyView.algorithm,
-                    keyBase64 = keyView.keyBase64
+                    keyBase64 = keyView.keyBase64,
                 )
             }
 
@@ -193,7 +196,7 @@ class KeyGenerationPresenter(
 data class GeneratedKeyInfo(
     val key: EncryptionKey,
     val keyId: String,
-    val keyBase64: String
+    val keyBase64: String,
 )
 
 /**
@@ -202,5 +205,5 @@ data class GeneratedKeyInfo(
 data class KeyItem(
     val id: String,
     val algorithm: EncryptionAlgorithm,
-    val keyBase64: String
+    val keyBase64: String,
 )

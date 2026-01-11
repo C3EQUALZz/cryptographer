@@ -46,9 +46,7 @@ import androidx.compose.ui.unit.dp
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EncryptionScreen(
-    viewModel: EncryptionViewModel
-) {
+fun EncryptionScreen(viewModel: EncryptionViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val availableKeys by viewModel.availableKeys.collectAsState()
     val clipboardManager = LocalClipboardManager.current
@@ -59,14 +57,14 @@ fun EncryptionScreen(
             .padding(16.dp)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         // Title
         Text(
             text = "Шифрование и дешифрование",
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         // Info card
@@ -76,31 +74,31 @@ fun EncryptionScreen(
                 .border(
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
                 ),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
             ),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Icon(
                     imageVector = Icons.Default.Info,
                     contentDescription = "Info",
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
                 )
                 Text(
                     text = "Используйте сохранённые ключи для шифрования и дешифрования текста. " +
-                            "Зашифрованный текст будет представлен в формате Base64.",
+                        "Зашифрованный текст будет представлен в формате Base64.",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             }
         }
@@ -112,44 +110,44 @@ fun EncryptionScreen(
                 .border(
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
                 ),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Text(
                     text = "Выберите ключ:",
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
                 )
 
                 if (availableKeys.isEmpty()) {
                     Text(
                         text = "Нет сохранённых ключей. Сначала создайте ключ на экране генерации.",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 } else {
                     availableKeys.forEach { keyItem ->
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             RadioButton(
                                 selected = uiState.selectedKeyId == keyItem.id,
-                                onClick = { viewModel.selectKey(keyItem.id) }
+                                onClick = { viewModel.selectKey(keyItem.id) },
                             )
                             Column(modifier = Modifier.padding(start = 8.dp)) {
                                 Text(
                                     text = keyItem.algorithm.name,
-                                    style = MaterialTheme.typography.bodyLarge
+                                    style = MaterialTheme.typography.bodyLarge,
                                 )
                                 Text(
                                     text = "ID: ${keyItem.id.take(8)}...",
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
                         }
@@ -165,33 +163,33 @@ fun EncryptionScreen(
                 .border(
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
                 ),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Lock,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = MaterialTheme.colorScheme.primary,
                     )
                     Text(
                         text = "Шифрование",
                         style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
                     )
                 }
 
                 HorizontalDivider(
                     modifier = Modifier.padding(vertical = 4.dp),
-                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
                 )
 
                 OutlinedTextField(
@@ -203,7 +201,7 @@ fun EncryptionScreen(
                     minLines = 3,
                     maxLines = 5,
                     enabled = !uiState.isLoading && uiState.selectedKey != null,
-                    shape = RoundedCornerShape(8.dp)
+                    shape = RoundedCornerShape(8.dp),
                 )
 
                 Button(
@@ -212,18 +210,18 @@ fun EncryptionScreen(
                         .fillMaxWidth()
                         .height(56.dp),
                     enabled = !uiState.isLoading && uiState.inputText.isNotBlank() && uiState.selectedKey != null,
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
                 ) {
                     if (uiState.isLoading) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(20.dp),
-                            color = MaterialTheme.colorScheme.onPrimary
+                            color = MaterialTheme.colorScheme.onPrimary,
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                     }
                     Text(
                         text = "Зашифровать",
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
                     )
                 }
 
@@ -232,32 +230,32 @@ fun EncryptionScreen(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surface
+                            containerColor = MaterialTheme.colorScheme.surface,
                         ),
-                        shape = RoundedCornerShape(8.dp)
+                        shape = RoundedCornerShape(8.dp),
                     ) {
                         Column(
                             modifier = Modifier.padding(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             Text(
                                 text = "Зашифрованный текст:",
-                                style = MaterialTheme.typography.labelMedium
+                                style = MaterialTheme.typography.labelMedium,
                             )
                             Text(
                                 text = uiState.encryptedText,
                                 style = MaterialTheme.typography.bodySmall,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
                             )
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.End
+                                horizontalArrangement = Arrangement.End,
                             ) {
                                 OutlinedButton(
                                     onClick = {
                                         clipboardManager.setText(AnnotatedString(uiState.encryptedText))
                                     },
-                                    shape = RoundedCornerShape(8.dp)
+                                    shape = RoundedCornerShape(8.dp),
                                 ) {
                                     Text("Копировать")
                                 }
@@ -270,32 +268,32 @@ fun EncryptionScreen(
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant,
                             ),
-                            shape = RoundedCornerShape(8.dp)
+                            shape = RoundedCornerShape(8.dp),
                         ) {
                             Column(
                                 modifier = Modifier.padding(12.dp),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
                                 Text(
                                     text = "IV (Initialization Vector):",
-                                    style = MaterialTheme.typography.labelMedium
+                                    style = MaterialTheme.typography.labelMedium,
                                 )
                                 Text(
                                     text = uiState.ivText,
                                     style = MaterialTheme.typography.bodySmall,
-                                    modifier = Modifier.fillMaxWidth()
+                                    modifier = Modifier.fillMaxWidth(),
                                 )
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.End
+                                    horizontalArrangement = Arrangement.End,
                                 ) {
                                     OutlinedButton(
                                         onClick = {
                                             clipboardManager.setText(AnnotatedString(uiState.ivText))
                                         },
-                                        shape = RoundedCornerShape(8.dp)
+                                        shape = RoundedCornerShape(8.dp),
                                     ) {
                                         Text("Копировать IV")
                                     }
@@ -314,33 +312,33 @@ fun EncryptionScreen(
                 .border(
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
                 ),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Default.CheckCircle,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.secondary
+                        tint = MaterialTheme.colorScheme.secondary,
                     )
                     Text(
                         text = "Дешифрование",
                         style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.secondary
+                        color = MaterialTheme.colorScheme.secondary,
                     )
                 }
 
                 HorizontalDivider(
                     modifier = Modifier.padding(vertical = 4.dp),
-                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
                 )
 
                 OutlinedTextField(
@@ -352,7 +350,7 @@ fun EncryptionScreen(
                     minLines = 3,
                     maxLines = 5,
                     enabled = !uiState.isLoading && uiState.selectedKey != null,
-                    shape = RoundedCornerShape(8.dp)
+                    shape = RoundedCornerShape(8.dp),
                 )
 
                 OutlinedTextField(
@@ -362,7 +360,7 @@ fun EncryptionScreen(
                     label = { Text("IV (Initialization Vector) - Base64") },
                     placeholder = { Text("Введите IV (опционально)...") },
                     enabled = !uiState.isLoading && uiState.selectedKey != null,
-                    shape = RoundedCornerShape(8.dp)
+                    shape = RoundedCornerShape(8.dp),
                 )
 
                 Button(
@@ -371,25 +369,25 @@ fun EncryptionScreen(
                         .fillMaxWidth()
                         .height(56.dp),
                     enabled = (
-                        !uiState.isLoading
-                            && uiState.encryptedTextInput.isNotBlank()
-                            && uiState.selectedKey != null
+                        !uiState.isLoading &&
+                            uiState.encryptedTextInput.isNotBlank() &&
+                            uiState.selectedKey != null
                         ),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondary
+                        containerColor = MaterialTheme.colorScheme.secondary,
                     ),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
                 ) {
                     if (uiState.isLoading) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(20.dp),
-                            color = MaterialTheme.colorScheme.onSecondary
+                            color = MaterialTheme.colorScheme.onSecondary,
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                     }
                     Text(
                         text = "Дешифровать",
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
                     )
                 }
 
@@ -398,32 +396,32 @@ fun EncryptionScreen(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surface
+                            containerColor = MaterialTheme.colorScheme.surface,
                         ),
-                        shape = RoundedCornerShape(8.dp)
+                        shape = RoundedCornerShape(8.dp),
                     ) {
                         Column(
                             modifier = Modifier.padding(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             Text(
                                 text = "Расшифрованный текст:",
-                                style = MaterialTheme.typography.labelMedium
+                                style = MaterialTheme.typography.labelMedium,
                             )
                             Text(
                                 text = uiState.decryptedText,
                                 style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
                             )
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.End
+                                horizontalArrangement = Arrangement.End,
                             ) {
                                 OutlinedButton(
                                     onClick = {
                                         clipboardManager.setText(AnnotatedString(uiState.decryptedText))
                                     },
-                                    shape = RoundedCornerShape(8.dp)
+                                    shape = RoundedCornerShape(8.dp),
                                 ) {
                                     Text("Копировать")
                                 }
@@ -442,18 +440,18 @@ fun EncryptionScreen(
                     .border(
                         width = 1.dp,
                         color = MaterialTheme.colorScheme.error.copy(alpha = 0.5f),
-                        shape = RoundedCornerShape(12.dp)
+                        shape = RoundedCornerShape(12.dp),
                     ),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
                 ),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
             ) {
                 Text(
                     text = error,
                     modifier = Modifier.padding(16.dp),
                     color = MaterialTheme.colorScheme.onErrorContainer,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             }
         }
@@ -464,10 +462,9 @@ fun EncryptionScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
         ) {
             Text("Очистить всё")
         }
     }
 }
-

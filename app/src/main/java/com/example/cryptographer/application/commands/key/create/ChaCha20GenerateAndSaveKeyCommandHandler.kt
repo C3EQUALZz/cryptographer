@@ -18,7 +18,7 @@ import java.util.UUID
  */
 class ChaCha20GenerateAndSaveKeyCommandHandler(
     private val chaCha20EncryptionService: ChaCha20EncryptionService,
-    private val commandGateway: KeyCommandGateway
+    private val commandGateway: KeyCommandGateway,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -51,7 +51,7 @@ class ChaCha20GenerateAndSaveKeyCommandHandler(
             if (saved) {
                 logger.info {
                     "ChaCha20 key generated and saved successfully: " +
-                    "keyId=$keyId, algorithm=${command.algorithm}"
+                        "keyId=$keyId, algorithm=${command.algorithm}"
                 }
                 Result.success(KeyIdView(keyId))
             } else {
@@ -66,4 +66,3 @@ class ChaCha20GenerateAndSaveKeyCommandHandler(
         }
     }
 }
-

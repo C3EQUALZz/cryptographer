@@ -14,5 +14,5 @@ class EncryptionKey(
     val value: ByteArray,
     val algorithm: EncryptionAlgorithm,
     createdAt: Instant = Instant.now(),
-    updatedAt: Instant = Instant.now()
+    updatedAt: Instant = Instant.now(),
 ) : BaseEntity<String>(id, createdAt, updatedAt)

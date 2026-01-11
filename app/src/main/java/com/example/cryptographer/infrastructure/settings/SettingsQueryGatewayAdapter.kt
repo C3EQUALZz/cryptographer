@@ -3,8 +3,8 @@ package com.example.cryptographer.infrastructure.settings
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.cryptographer.application.common.ports.settings.SettingsQueryGateway
-import io.github.oshai.kotlinlogging.KotlinLogging
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -18,7 +18,7 @@ import javax.inject.Inject
  * - Uses coroutines for async operations
  */
 class SettingsQueryGatewayAdapter @Inject constructor(
-    @param:ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context,
 ) : SettingsQueryGateway {
     private val logger = KotlinLogging.logger {}
 

@@ -9,13 +9,10 @@ import java.time.Instant
  */
 class InconsistentTimeError(
     message: String,
-    cause: Throwable? = null
+    cause: Throwable? = null,
 ) : DomainError(message, cause) {
     companion object {
-        fun create(
-            updatedAt: Instant,
-            createdAt: Instant
-        ): InconsistentTimeError {
+        fun create(updatedAt: Instant, createdAt: Instant): InconsistentTimeError {
             val message = buildString {
                 append("$updatedAt cannot be earlier than $createdAt")
             }

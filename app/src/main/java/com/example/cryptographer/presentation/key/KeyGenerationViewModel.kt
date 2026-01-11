@@ -4,11 +4,11 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cryptographer.R
-import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import com.example.cryptographer.domain.text.entities.EncryptionKey
-import io.github.oshai.kotlinlogging.KotlinLogging
+import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,7 +26,7 @@ import javax.inject.Inject
 @HiltViewModel
 class KeyGenerationViewModel @Inject constructor(
     private val presenter: KeyGenerationPresenter,
-    @param:ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context,
 ) : ViewModel() {
     private val logger = KotlinLogging.logger {}
 
@@ -48,7 +48,7 @@ class KeyGenerationViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
                 isLoading = true,
-                error = null
+                error = null,
             )
 
             presenter.generateAndSaveKey(algorithm)
@@ -57,7 +57,7 @@ class KeyGenerationViewModel @Inject constructor(
                         isLoading = false,
                         generatedKey = keyInfo.key,
                         keyId = keyInfo.keyId,
-                        keyBase64 = keyInfo.keyBase64
+                        keyBase64 = keyInfo.keyBase64,
                     )
                     loadSavedKeys()
                 }
@@ -65,7 +65,7 @@ class KeyGenerationViewModel @Inject constructor(
                     logger.error(error) { "Key generation failed: algorithm=$algorithm, error=${error.message}" }
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = error.message ?: context.getString(R.string.failed_to_generate_key)
+                        error = error.message ?: context.getString(R.string.failed_to_generate_key),
                     )
                 }
         }
@@ -83,13 +83,13 @@ class KeyGenerationViewModel @Inject constructor(
                         generatedKey = keyInfo.key,
                         keyId = keyInfo.keyId,
                         keyBase64 = keyInfo.keyBase64,
-                        error = null
+                        error = null,
                     )
                 }
                 .onFailure { error ->
                     logger.warn { "Key not found: keyId=$keyId" }
                     _uiState.value = _uiState.value.copy(
-                        error = error.message ?: context.getString(R.string.key_not_found)
+                        error = error.message ?: context.getString(R.string.key_not_found),
                     )
                 }
         }
@@ -108,7 +108,7 @@ class KeyGenerationViewModel @Inject constructor(
                         _uiState.value = _uiState.value.copy(
                             generatedKey = null,
                             keyId = null,
-                            keyBase64 = null
+                            keyBase64 = null,
                         )
                     }
                 }
@@ -131,13 +131,13 @@ class KeyGenerationViewModel @Inject constructor(
                         generatedKey = null,
                         keyId = null,
                         keyBase64 = null,
-                        error = null
+                        error = null,
                     )
                 }
                 .onFailure { error ->
                     logger.error(error) { "Failed to delete all keys: ${error.message}" }
                     _uiState.value = _uiState.value.copy(
-                        error = context.getString(R.string.failed_to_delete_all_keys, error.message ?: "")
+                        error = context.getString(R.string.failed_to_delete_all_keys, error.message ?: ""),
                     )
                 }
         }
@@ -154,7 +154,7 @@ class KeyGenerationViewModel @Inject constructor(
                         SavedKeyItem(
                             id = keyItem.id,
                             algorithm = keyItem.algorithm,
-                            keyBase64 = keyItem.keyBase64
+                            keyBase64 = keyItem.keyBase64,
                         )
                     }
                 }
@@ -173,7 +173,7 @@ data class KeyGenerationUiState(
     val generatedKey: EncryptionKey? = null,
     val keyId: String? = null,
     val keyBase64: String? = null,
-    val error: String? = null
+    val error: String? = null,
 )
 
 /**
@@ -182,6 +182,5 @@ data class KeyGenerationUiState(
 data class SavedKeyItem(
     val id: String,
     val algorithm: EncryptionAlgorithm,
-    val keyBase64: String
+    val keyBase64: String,
 )
-

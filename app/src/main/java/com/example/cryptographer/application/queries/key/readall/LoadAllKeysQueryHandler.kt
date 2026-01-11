@@ -15,7 +15,7 @@ import java.util.Base64
  * - Returns View (DTO) for presentation layer
  */
 class LoadAllKeysQueryHandler(
-    private val queryGateway: KeyQueryGateway
+    private val queryGateway: KeyQueryGateway,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -36,7 +36,7 @@ class LoadAllKeysQueryHandler(
                     KeyView(
                         id = keyId,
                         algorithm = key.algorithm,
-                        keyBase64 = Base64.getEncoder().encodeToString(key.value)
+                        keyBase64 = Base64.getEncoder().encodeToString(key.value),
                     )
                 }
             }

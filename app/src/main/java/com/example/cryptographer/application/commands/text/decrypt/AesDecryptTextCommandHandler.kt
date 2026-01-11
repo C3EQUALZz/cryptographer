@@ -14,7 +14,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
  * - Returns View (DTO) for presentation layer
  */
 class AesDecryptTextCommandHandler(
-    private val aesEncryptionService: AesEncryptionService
+    private val aesEncryptionService: AesEncryptionService,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -26,7 +26,9 @@ class AesDecryptTextCommandHandler(
      */
     operator fun invoke(command: AesDecryptTextCommand): Result<DecryptedTextView> {
         return try {
-            logger.debug { "Handling AES DecryptTextCommand: algorithm=${command.key.algorithm}, encryptedSize=${command.encryptedText.encryptedData.size} bytes" }
+            logger.debug {
+                "Handling AES DecryptTextCommand: algorithm=${command.key.algorithm}, encryptedSize=${command.encryptedText.encryptedData.size} bytes"
+            }
 
             // Decrypt using AES service
             val decryptedBytes = aesEncryptionService.decrypt(command.encryptedText, command.key).getOrElse { error ->
@@ -37,14 +39,15 @@ class AesDecryptTextCommandHandler(
             // Convert bytes back to text string
             val decryptedContent = String(decryptedBytes, Charsets.UTF_8)
 
-            logger.info { "AES text decryption successful: algorithm=${command.key.algorithm}, decryptedLength=${decryptedContent.length}" }
+            logger.info {
+                "AES text decryption successful: algorithm=${command.key.algorithm}, decryptedLength=${decryptedContent.length}"
+            }
             Result.success(DecryptedTextView(decryptedContent))
         } catch (e: Exception) {
             logger.error(e) { "Error handling AES DecryptTextCommand: ${e.message}" }
             Result.failure(
-                Exception("AES text decryption error: ${e.message}", e)
+                Exception("AES text decryption error: ${e.message}", e),
             )
         }
     }
 }
-

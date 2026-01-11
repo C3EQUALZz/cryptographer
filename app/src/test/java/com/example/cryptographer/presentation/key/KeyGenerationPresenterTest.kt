@@ -52,7 +52,7 @@ class KeyGenerationPresenterTest {
             loadKeyHandler = loadKeyHandler,
             deleteKeyHandler = deleteKeyHandler,
             deleteAllKeysHandler = deleteAllKeysHandler,
-            loadAllKeysHandler = loadAllKeysHandler
+            loadAllKeysHandler = loadAllKeysHandler,
         )
     }
 
@@ -68,10 +68,14 @@ class KeyGenerationPresenterTest {
         val keyView = KeyView(
             id = keyId,
             algorithm = algorithm,
-            keyBase64 = keyBase64
+            keyBase64 = keyBase64,
         )
 
-        coEvery { aesGenerateAndSaveKeyHandler(AesGenerateAndSaveKeyCommand(algorithm)) } returns Result.success(keyIdView)
+        coEvery {
+            aesGenerateAndSaveKeyHandler(
+                AesGenerateAndSaveKeyCommand(algorithm),
+            )
+        } returns Result.success(keyIdView)
         coEvery { loadKeyHandler(LoadKeyQuery(keyId)) } returns Result.success(keyView)
 
         // When
@@ -116,7 +120,11 @@ class KeyGenerationPresenterTest {
         val keyIdView = KeyIdView(keyId = keyId)
         val loadError = Exception("Key not found")
 
-        coEvery { aesGenerateAndSaveKeyHandler(AesGenerateAndSaveKeyCommand(algorithm)) } returns Result.success(keyIdView)
+        coEvery {
+            aesGenerateAndSaveKeyHandler(
+                AesGenerateAndSaveKeyCommand(algorithm),
+            )
+        } returns Result.success(keyIdView)
         coEvery { loadKeyHandler(LoadKeyQuery(keyId)) } returns Result.failure(loadError)
 
         // When
@@ -142,7 +150,7 @@ class KeyGenerationPresenterTest {
         val keyView = KeyView(
             id = keyId,
             algorithm = algorithm,
-            keyBase64 = keyBase64
+            keyBase64 = keyBase64,
         )
 
         coEvery { loadKeyHandler(LoadKeyQuery(keyId)) } returns Result.success(keyView)
@@ -246,12 +254,12 @@ class KeyGenerationPresenterTest {
         val key1 = KeyView(
             id = "key-1",
             algorithm = EncryptionAlgorithm.AES_128,
-            keyBase64 = Base64.getEncoder().encodeToString(ByteArray(16))
+            keyBase64 = Base64.getEncoder().encodeToString(ByteArray(16)),
         )
         val key2 = KeyView(
             id = "key-2",
             algorithm = EncryptionAlgorithm.AES_256,
-            keyBase64 = Base64.getEncoder().encodeToString(ByteArray(32))
+            keyBase64 = Base64.getEncoder().encodeToString(ByteArray(32)),
         )
         val keyViews = listOf(key1, key2)
 
@@ -308,7 +316,7 @@ class KeyGenerationPresenterTest {
     fun `generateAndSaveKey should work with ChaCha20 algorithm`() = runTest {
         // Given
         val algorithm = EncryptionAlgorithm.CHACHA20_256
-        val key = KeyFactory.createChaCha20_256(id = "test-key-id")
+        val key = KeyFactory.createChaCha256(id = "test-key-id")
         val keyId = "test-key-id"
         val keyBase64 = Base64.getEncoder().encodeToString(key.value)
 
@@ -316,10 +324,12 @@ class KeyGenerationPresenterTest {
         val keyView = KeyView(
             id = keyId,
             algorithm = algorithm,
-            keyBase64 = keyBase64
+            keyBase64 = keyBase64,
         )
 
-        coEvery { chaCha20GenerateAndSaveKeyHandler(ChaCha20GenerateAndSaveKeyCommand(algorithm)) } returns Result.success(keyIdView)
+        coEvery {
+            chaCha20GenerateAndSaveKeyHandler(ChaCha20GenerateAndSaveKeyCommand(algorithm))
+        } returns Result.success(keyIdView)
         coEvery { loadKeyHandler(LoadKeyQuery(keyId)) } returns Result.success(keyView)
 
         // When

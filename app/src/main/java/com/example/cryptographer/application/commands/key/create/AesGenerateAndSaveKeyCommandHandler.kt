@@ -18,7 +18,7 @@ import java.util.UUID
  */
 class AesGenerateAndSaveKeyCommandHandler(
     private val aesEncryptionService: AesEncryptionService,
-    private val commandGateway: KeyCommandGateway
+    private val commandGateway: KeyCommandGateway,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -61,4 +61,3 @@ class AesGenerateAndSaveKeyCommandHandler(
         }
     }
 }
-

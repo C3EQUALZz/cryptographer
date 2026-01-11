@@ -3,8 +3,8 @@ package com.example.cryptographer.infrastructure.settings
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.cryptographer.application.common.ports.settings.SettingsCommandGateway
-import io.github.oshai.kotlinlogging.KotlinLogging
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -18,7 +18,7 @@ import javax.inject.Inject
  * - Uses coroutines for async operations
  */
 class SettingsCommandGatewayAdapter @Inject constructor(
-    @param:ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context,
 ) : SettingsCommandGateway {
     private val logger = KotlinLogging.logger {}
 
@@ -35,8 +35,6 @@ class SettingsCommandGatewayAdapter @Inject constructor(
         private const val LOCALE_PREFS_NAME = "locale_prefs"
         private const val KEY_THEME_MODE = "theme_mode"
         private const val KEY_SELECTED_LANGUAGE = "selected_language"
-        private const val DEFAULT_THEME = "system"
-        private const val DEFAULT_LANGUAGE = "en"
     }
 
     override suspend fun saveThemeMode(themeMode: String): Boolean {

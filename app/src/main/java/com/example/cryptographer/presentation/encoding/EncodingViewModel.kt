@@ -20,7 +20,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class EncodingViewModel @Inject constructor(
-    private val presenter: EncodingPresenter
+    private val presenter: EncodingPresenter,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(EncodingUiState())
     val uiState: StateFlow<EncodingUiState> = _uiState.asStateFlow()
@@ -31,7 +31,7 @@ class EncodingViewModel @Inject constructor(
     fun updateInputText(text: String) {
         _uiState.value = _uiState.value.copy(
             inputText = text,
-            error = null
+            error = null,
         )
         // Auto-convert when text changes
         if (text.isNotBlank()) {
@@ -40,7 +40,7 @@ class EncodingViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(
                 utf8Result = "",
                 asciiResult = "",
-                base64Result = ""
+                base64Result = "",
             )
         }
     }
@@ -54,7 +54,7 @@ class EncodingViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(
                 utf8Result = "",
                 asciiResult = "",
-                base64Result = ""
+                base64Result = "",
             )
             return
         }
@@ -74,7 +74,7 @@ class EncodingViewModel @Inject constructor(
                 base64Result = base64Result.getOrNull() ?: "",
                 error = utf8Result.exceptionOrNull()?.message
                     ?: asciiResult.exceptionOrNull()?.message
-                    ?: base64Result.exceptionOrNull()?.message
+                    ?: base64Result.exceptionOrNull()?.message,
             )
         }
     }
@@ -97,6 +97,5 @@ data class EncodingUiState(
     val asciiResult: String = "",
     val base64Result: String = "",
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
 )
-

@@ -2,8 +2,8 @@ package com.example.cryptographer.domain.text.services
 
 import com.example.cryptographer.domain.common.services.DomainService
 import com.example.cryptographer.domain.text.entities.Text
-import com.example.cryptographer.domain.text.valueobjects.TextEncoding
 import com.example.cryptographer.domain.text.ports.TextIdGeneratorPort
+import com.example.cryptographer.domain.text.valueobjects.TextEncoding
 import com.example.cryptographer.domain.text.valueobjects.ValidatedText
 import io.github.oshai.kotlinlogging.KotlinLogging
 
@@ -15,7 +15,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
  *
  */
 class TextService(
-    private val textIdGenerator: TextIdGeneratorPort
+    private val textIdGenerator: TextIdGeneratorPort,
 ) : DomainService() {
     private val logger = KotlinLogging.logger {}
 
@@ -49,7 +49,7 @@ class TextService(
             val text = Text(
                 id = textId,
                 content = validatedText,
-                encoding = encoding
+                encoding = encoding,
             )
 
             logger.info { "Text entity created successfully: id=$textId, length=${text.length}" }

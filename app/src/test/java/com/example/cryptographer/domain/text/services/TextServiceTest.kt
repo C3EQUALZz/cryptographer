@@ -100,4 +100,3 @@ class TextServiceTest {
         assertEquals("Hello World", text.rawContent)
     }
 }
-

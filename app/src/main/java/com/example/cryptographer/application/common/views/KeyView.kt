@@ -11,6 +11,5 @@ import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 data class KeyView(
     val id: String,
     val algorithm: EncryptionAlgorithm,
-    val keyBase64: String
+    val keyBase64: String,
 )
-

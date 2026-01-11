@@ -9,8 +9,8 @@ import com.example.cryptographer.application.commands.text.encrypt.AesEncryptTex
 import com.example.cryptographer.application.commands.text.encrypt.ChaCha20EncryptTextCommand
 import com.example.cryptographer.application.commands.text.encrypt.ChaCha20EncryptTextCommandHandler
 import com.example.cryptographer.domain.text.entities.EncryptedText
-import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import com.example.cryptographer.domain.text.entities.EncryptionKey
+import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.Base64
 
@@ -27,7 +27,7 @@ class EncryptionPresenter(
     private val aesEncryptHandler: AesEncryptTextCommandHandler,
     private val chaCha20EncryptHandler: ChaCha20EncryptTextCommandHandler,
     private val aesDecryptHandler: AesDecryptTextCommandHandler,
-    private val chaCha20DecryptHandler: ChaCha20DecryptTextCommandHandler
+    private val chaCha20DecryptHandler: ChaCha20DecryptTextCommandHandler,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -46,7 +46,8 @@ class EncryptionPresenter(
             val encryptedTextViewResult = when (key.algorithm) {
                 EncryptionAlgorithm.AES_128,
                 EncryptionAlgorithm.AES_192,
-                EncryptionAlgorithm.AES_256 -> {
+                EncryptionAlgorithm.AES_256,
+                -> {
                     val command = AesEncryptTextCommand(rawText, key)
                     aesEncryptHandler(command)
                 }
@@ -71,13 +72,15 @@ class EncryptionPresenter(
                 Base64.getEncoder().encodeToString(it)
             }
 
-            logger.info { "Presenter: Text encrypted successfully: algorithm=${key.algorithm}, size=${encryptedText.encryptedData.size} bytes" }
+            logger.info {
+                "Presenter: Text encrypted successfully: algorithm=${key.algorithm}, size=${encryptedText.encryptedData.size} bytes"
+            }
             Result.success(
                 EncryptedTextInfo(
                     encryptedBase64 = encryptedBase64,
                     ivBase64 = ivBase64,
-                    algorithm = key.algorithm
-                )
+                    algorithm = key.algorithm,
+                ),
             )
         } catch (e: Exception) {
             logger.error(e) { "Presenter: Error encrypting text: ${e.message}" }
@@ -93,11 +96,7 @@ class EncryptionPresenter(
      * @param key Encryption key
      * @return Result with decrypted text string (DTO for presentation layer) or error
      */
-    fun decryptText(
-        encryptedBase64: String,
-        ivBase64: String?,
-        key: EncryptionKey
-    ): Result<String> {
+    fun decryptText(encryptedBase64: String, ivBase64: String?, key: EncryptionKey): Result<String> {
         return try {
             logger.debug { "Presenter: Decrypting text: algorithm=${key.algorithm}" }
 
@@ -110,14 +109,15 @@ class EncryptionPresenter(
             val encryptedText = EncryptedText(
                 encryptedData = encryptedData,
                 algorithm = key.algorithm,
-                initializationVector = iv
+                initializationVector = iv,
             )
 
             // Select handler and create command based on algorithm
             val decryptedTextViewResult = when (key.algorithm) {
                 EncryptionAlgorithm.AES_128,
                 EncryptionAlgorithm.AES_192,
-                EncryptionAlgorithm.AES_256 -> {
+                EncryptionAlgorithm.AES_256,
+                -> {
                     val command = AesDecryptTextCommand(encryptedText, key)
                     aesDecryptHandler(command)
                 }
@@ -154,5 +154,5 @@ class EncryptionPresenter(
 data class EncryptedTextInfo(
     val encryptedBase64: String,
     val ivBase64: String?,
-    val algorithm: EncryptionAlgorithm
+    val algorithm: EncryptionAlgorithm,
 )

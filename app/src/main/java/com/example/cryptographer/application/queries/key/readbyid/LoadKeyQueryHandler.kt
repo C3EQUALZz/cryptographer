@@ -15,7 +15,7 @@ import java.util.Base64
  * - Returns View (DTO) for presentation layer
  */
 class LoadKeyQueryHandler(
-    private val queryGateway: KeyQueryGateway
+    private val queryGateway: KeyQueryGateway,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -36,8 +36,8 @@ class LoadKeyQueryHandler(
                     KeyView(
                         id = query.keyId,
                         algorithm = key.algorithm,
-                        keyBase64 = Base64.getEncoder().encodeToString(key.value)
-                    )
+                        keyBase64 = Base64.getEncoder().encodeToString(key.value),
+                    ),
                 )
             } else {
                 logger.warn { "Key not found: keyId=${query.keyId}" }

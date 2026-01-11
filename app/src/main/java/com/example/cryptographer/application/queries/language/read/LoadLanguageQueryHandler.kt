@@ -14,7 +14,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
  * - Returns View (DTO) for presentation layer
  */
 class LoadLanguageQueryHandler(
-    private val settingsQueryGateway: SettingsQueryGateway
+    private val settingsQueryGateway: SettingsQueryGateway,
 ) {
     private val logger = KotlinLogging.logger {}
 

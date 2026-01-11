@@ -56,4 +56,3 @@ object LocaleHelper {
         return context.createConfigurationContext(configuration)
     }
 }
-

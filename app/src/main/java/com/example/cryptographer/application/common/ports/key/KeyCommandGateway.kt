@@ -38,4 +38,3 @@ interface KeyCommandGateway {
      */
     fun deleteAllKeys(): Boolean
 }
-

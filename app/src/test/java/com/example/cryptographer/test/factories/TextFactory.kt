@@ -19,7 +19,7 @@ object TextFactory {
         content: String = "Test text content",
         encoding: TextEncoding = TextEncoding.UTF8,
         createdAt: Instant = Instant.now(),
-        updatedAt: Instant = Instant.now()
+        updatedAt: Instant = Instant.now(),
     ): Text {
         // ValidatedText.create() will handle validation.
         // Note: In Kotlin, String is non-nullable, so null cannot be passed at compile time.
@@ -33,10 +33,7 @@ object TextFactory {
             content = validatedText,
             encoding = encoding,
             createdAt = createdAt,
-            updatedAt = updatedAt
+            updatedAt = updatedAt,
         )
     }
-
-
 }
-

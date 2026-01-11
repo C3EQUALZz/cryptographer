@@ -15,5 +15,5 @@ class EncryptedText(
     val algorithm: EncryptionAlgorithm,
     val initializationVector: ByteArray? = null,
     createdAt: Instant = Instant.now(),
-    updatedAt: Instant = Instant.now()
+    updatedAt: Instant = Instant.now(),
 ) : BaseEntity<String>(id, createdAt, updatedAt)

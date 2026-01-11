@@ -26,7 +26,7 @@ import java.util.UUID
  */
 abstract class BaseDomainEvent(
     val eventId: UUID = UUID.randomUUID(),
-    val eventTimestamp: Instant = Instant.now()
+    val eventTimestamp: Instant = Instant.now(),
 ) {
     /**
      * Creates a dictionary representation of the event.
@@ -37,10 +37,7 @@ abstract class BaseDomainEvent(
      * @param include Additional fields to include in the dictionary
      * @return Dictionary representation of the event
      */
-    fun toDict(
-        exclude: Set<String> = emptySet(),
-        include: Map<String, Any> = emptyMap()
-    ): Map<String, Any> {
+    fun toDict(exclude: Set<String> = emptySet(), include: Map<String, Any> = emptyMap()): Map<String, Any> {
         val data = mutableMapOf<String, Any>()
 
         // Add standard fields
@@ -64,4 +61,3 @@ abstract class BaseDomainEvent(
         return this::class.simpleName ?: "Unknown"
     }
 }
-

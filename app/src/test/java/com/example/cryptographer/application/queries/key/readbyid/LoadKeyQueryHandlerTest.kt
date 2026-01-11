@@ -70,4 +70,3 @@ class LoadKeyQueryHandlerTest {
         assertEquals(EncryptionAlgorithm.AES_128, result.getOrThrow().algorithm)
     }
 }
-

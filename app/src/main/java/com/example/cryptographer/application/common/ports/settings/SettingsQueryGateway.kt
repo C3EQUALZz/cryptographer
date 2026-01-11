@@ -25,4 +25,3 @@ interface SettingsQueryGateway {
      */
     suspend fun loadLanguage(): String
 }
-

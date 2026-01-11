@@ -8,5 +8,5 @@ package com.example.cryptographer.domain.common.errors
  */
 open class DomainError(
     message: String,
-    cause: Throwable? = null
+    cause: Throwable? = null,
 ) : Exception(message, cause)

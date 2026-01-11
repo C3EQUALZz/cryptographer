@@ -29,4 +29,3 @@ interface KeyQueryGateway {
      */
     fun getAllKeyIds(): List<String>
 }
-

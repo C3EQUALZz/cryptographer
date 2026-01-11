@@ -3,8 +3,8 @@ package com.example.cryptographer.domain.text.services
 import com.example.cryptographer.domain.common.errors.UnsupportedAlgorithmError
 import com.example.cryptographer.domain.common.services.DomainService
 import com.example.cryptographer.domain.text.entities.EncryptedText
-import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import com.example.cryptographer.domain.text.entities.EncryptionKey
+import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.security.SecureRandom
 import javax.crypto.Cipher
@@ -63,8 +63,8 @@ class AesEncryptionService : DomainService() {
                 EncryptedText(
                     encryptedData = encryptedData,
                     algorithm = key.algorithm,
-                    initializationVector = iv
-                )
+                    initializationVector = iv,
+                ),
             )
         } catch (e: UnsupportedAlgorithmError) {
             logger.error(e) { "Encryption failed: unsupported algorithm=${key.algorithm}" }
@@ -72,7 +72,7 @@ class AesEncryptionService : DomainService() {
         } catch (e: Exception) {
             logger.error(e) { "Encryption failed: algorithm=${key.algorithm}, error=${e.message}" }
             Result.failure(
-                Exception("Encryption error: ${e.message}", e)
+                Exception("Encryption error: ${e.message}", e),
             )
         }
     }
@@ -91,7 +91,7 @@ class AesEncryptionService : DomainService() {
             if (encryptedText.initializationVector == null) {
                 logger.warn { "Decryption failed: IV is missing" }
                 return Result.failure(
-                    IllegalArgumentException("IV (Initialization Vector) is missing for decryption")
+                    IllegalArgumentException("IV (Initialization Vector) is missing for decryption"),
                 )
             }
 
@@ -117,7 +117,7 @@ class AesEncryptionService : DomainService() {
         } catch (e: Exception) {
             logger.error(e) { "Decryption failed: algorithm=${key.algorithm}, error=${e.message}" }
             Result.failure(
-                Exception("Decryption error: ${e.message}", e)
+                Exception("Decryption error: ${e.message}", e),
             )
         }
     }
@@ -136,7 +136,7 @@ class AesEncryptionService : DomainService() {
                 EncryptionAlgorithm.AES_256 -> 256
                 EncryptionAlgorithm.CHACHA20_256 -> throw UnsupportedAlgorithmError(
                     algorithm,
-                    "AesEncryptionService"
+                    "AesEncryptionService",
                 )
             }
 
@@ -151,8 +151,8 @@ class AesEncryptionService : DomainService() {
             Result.success(
                 EncryptionKey(
                     value = secretKey.encoded,
-                    algorithm = algorithm
-                )
+                    algorithm = algorithm,
+                ),
             )
         } catch (e: UnsupportedAlgorithmError) {
             logger.error(e) { "Key generation failed: unsupported algorithm=$algorithm" }
@@ -160,7 +160,7 @@ class AesEncryptionService : DomainService() {
         } catch (e: Exception) {
             logger.error(e) { "Key generation failed: algorithm=$algorithm, error=${e.message}" }
             Result.failure(
-                Exception("Key generation error: ${e.message}", e)
+                Exception("Key generation error: ${e.message}", e),
             )
         }
     }
@@ -176,13 +176,13 @@ class AesEncryptionService : DomainService() {
             EncryptionAlgorithm.AES_256 -> 32 // 256 bits = 32 bytes
             EncryptionAlgorithm.CHACHA20_256 -> throw UnsupportedAlgorithmError(
                 key.algorithm,
-                "AesEncryptionService"
+                "AesEncryptionService",
             )
         }
 
         if (key.value.size != expectedKeyLength) {
             throw IllegalArgumentException(
-                "Invalid key length. Expected $expectedKeyLength bytes, got ${key.value.size} bytes"
+                "Invalid key length. Expected $expectedKeyLength bytes, got ${key.value.size} bytes",
             )
         }
     }

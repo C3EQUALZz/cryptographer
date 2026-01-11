@@ -31,7 +31,7 @@ class TextTest {
         // Given
         val text = TextFactory.create(
             content = "Test",
-            encoding = TextEncoding.BASE64
+            encoding = TextEncoding.BASE64,
         )
 
         // Then
@@ -80,4 +80,3 @@ class TextTest {
         assertTrue(result.isFailure)
     }
 }
-

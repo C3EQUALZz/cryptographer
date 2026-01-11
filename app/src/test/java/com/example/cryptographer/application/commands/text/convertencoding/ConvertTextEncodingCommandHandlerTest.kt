@@ -82,4 +82,3 @@ class ConvertTextEncodingCommandHandlerTest {
         assertTrue(view.convertedText.contains('?'))
     }
 }
-

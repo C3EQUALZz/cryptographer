@@ -20,4 +20,3 @@ class UuidTextIdGenerator : TextIdGeneratorPort {
         return UUID.randomUUID().toString()
     }
 }
-

@@ -21,7 +21,7 @@ class MainPresenter(
     private val saveThemeHandler: SaveThemeCommandHandler,
     private val loadThemeHandler: LoadThemeQueryHandler,
     private val saveLanguageHandler: SaveLanguageCommandHandler,
-    private val loadLanguageHandler: LoadLanguageQueryHandler
+    private val loadLanguageHandler: LoadLanguageQueryHandler,
 ) {
     private val logger = KotlinLogging.logger {}
 

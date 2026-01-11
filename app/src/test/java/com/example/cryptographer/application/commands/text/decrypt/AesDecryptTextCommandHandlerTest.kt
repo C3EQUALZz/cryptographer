@@ -79,4 +79,3 @@ class AesDecryptTextCommandHandlerTest {
         assertTrue(result.isFailure)
     }
 }
-

@@ -12,7 +12,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
  * - Uses gateway for persistence operations
  */
 class SaveLanguageCommandHandler(
-    private val settingsCommandGateway: SettingsCommandGateway
+    private val settingsCommandGateway: SettingsCommandGateway,
 ) {
     private val logger = KotlinLogging.logger {}
 

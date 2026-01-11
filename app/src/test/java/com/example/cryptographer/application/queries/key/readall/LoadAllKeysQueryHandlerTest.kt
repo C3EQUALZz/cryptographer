@@ -74,4 +74,3 @@ class LoadAllKeysQueryHandlerTest {
         assertNotNull(keyViews[0].keyBase64)
     }
 }
-

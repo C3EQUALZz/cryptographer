@@ -2,7 +2,6 @@ package com.example.cryptographer.domain.common.entities
 
 import com.example.cryptographer.domain.common.errors.InconsistentTimeError
 import java.time.Instant
-import java.util.Objects
 
 /**
  * Abstract base class for all domain entities.
@@ -38,7 +37,7 @@ import java.util.Objects
 abstract class BaseEntity<OIDType>(
     val id: OIDType,
     val createdAt: Instant = Instant.now(),
-    val updatedAt: Instant = Instant.now()
+    val updatedAt: Instant = Instant.now(),
 ) {
     init {
         // Ensure timestamps are consistent

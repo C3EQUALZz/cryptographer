@@ -19,7 +19,7 @@ object EncryptedTextFactory {
         algorithm: EncryptionAlgorithm = EncryptionAlgorithm.AES_256,
         initializationVector: ByteArray? = ByteArray(12) { it.toByte() },
         createdAt: Instant = Instant.now(),
-        updatedAt: Instant = Instant.now()
+        updatedAt: Instant = Instant.now(),
     ): EncryptedText {
         return EncryptedText(
             id = id,
@@ -27,7 +27,7 @@ object EncryptedTextFactory {
             algorithm = algorithm,
             initializationVector = initializationVector,
             createdAt = createdAt,
-            updatedAt = updatedAt
+            updatedAt = updatedAt,
         )
     }
 
@@ -37,9 +37,8 @@ object EncryptedTextFactory {
     fun createWithoutIv(
         id: String = UUID.randomUUID().toString(),
         encryptedData: ByteArray = ByteArray(16) { it.toByte() },
-        algorithm: EncryptionAlgorithm = EncryptionAlgorithm.AES_256
+        algorithm: EncryptionAlgorithm = EncryptionAlgorithm.AES_256,
     ): EncryptedText {
         return create(id = id, encryptedData = encryptedData, algorithm = algorithm, initializationVector = null)
     }
 }
-

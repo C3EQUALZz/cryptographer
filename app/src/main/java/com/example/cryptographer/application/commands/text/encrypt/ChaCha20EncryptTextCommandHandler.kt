@@ -1,9 +1,9 @@
 package com.example.cryptographer.application.commands.text.encrypt
 
 import com.example.cryptographer.application.common.views.EncryptedTextView
-import com.example.cryptographer.domain.text.valueobjects.TextEncoding
 import com.example.cryptographer.domain.text.services.ChaCha20EncryptionService
 import com.example.cryptographer.domain.text.services.TextService
+import com.example.cryptographer.domain.text.valueobjects.TextEncoding
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**
@@ -17,7 +17,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
  */
 class ChaCha20EncryptTextCommandHandler(
     private val chaCha20EncryptionService: ChaCha20EncryptionService,
-    private val textService: TextService
+    private val textService: TextService,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -58,9 +58,8 @@ class ChaCha20EncryptTextCommandHandler(
         } catch (e: Exception) {
             logger.error(e) { "Error handling ChaCha20 EncryptTextCommand: ${e.message}" }
             Result.failure(
-                Exception("ChaCha20 text encryption error: ${e.message}", e)
+                Exception("ChaCha20 text encryption error: ${e.message}", e),
             )
         }
     }
 }
-

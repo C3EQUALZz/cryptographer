@@ -1,28 +1,28 @@
 package com.example.cryptographer.setup.ioc
 
+import com.example.cryptographer.application.commands.key.create.AesGenerateAndSaveKeyCommandHandler
+import com.example.cryptographer.application.commands.key.create.ChaCha20GenerateAndSaveKeyCommandHandler
+import com.example.cryptographer.application.commands.key.delete.DeleteKeyCommandHandler
+import com.example.cryptographer.application.commands.key.deleteall.DeleteAllKeysCommandHandler
+import com.example.cryptographer.application.commands.language.update.SaveLanguageCommandHandler
 import com.example.cryptographer.application.commands.text.convertencoding.ConvertTextEncodingCommandHandler
 import com.example.cryptographer.application.commands.text.decrypt.AesDecryptTextCommandHandler
 import com.example.cryptographer.application.commands.text.decrypt.ChaCha20DecryptTextCommandHandler
-import com.example.cryptographer.application.commands.key.deleteall.DeleteAllKeysCommandHandler
-import com.example.cryptographer.application.commands.key.delete.DeleteKeyCommandHandler
 import com.example.cryptographer.application.commands.text.encrypt.AesEncryptTextCommandHandler
 import com.example.cryptographer.application.commands.text.encrypt.ChaCha20EncryptTextCommandHandler
-import com.example.cryptographer.application.commands.key.create.AesGenerateAndSaveKeyCommandHandler
-import com.example.cryptographer.application.commands.key.create.ChaCha20GenerateAndSaveKeyCommandHandler
+import com.example.cryptographer.application.commands.theme.update.SaveThemeCommandHandler
 import com.example.cryptographer.application.common.ports.key.KeyCommandGateway
 import com.example.cryptographer.application.common.ports.key.KeyQueryGateway
+import com.example.cryptographer.application.common.ports.settings.SettingsCommandGateway
+import com.example.cryptographer.application.common.ports.settings.SettingsQueryGateway
 import com.example.cryptographer.application.queries.key.readall.LoadAllKeysQueryHandler
 import com.example.cryptographer.application.queries.key.readbyid.LoadKeyQueryHandler
+import com.example.cryptographer.application.queries.language.read.LoadLanguageQueryHandler
+import com.example.cryptographer.application.queries.theme.read.LoadThemeQueryHandler
 import com.example.cryptographer.domain.text.ports.TextIdGeneratorPort
 import com.example.cryptographer.domain.text.services.AesEncryptionService
 import com.example.cryptographer.domain.text.services.ChaCha20EncryptionService
 import com.example.cryptographer.domain.text.services.TextService
-import com.example.cryptographer.application.commands.language.update.SaveLanguageCommandHandler
-import com.example.cryptographer.application.commands.theme.update.SaveThemeCommandHandler
-import com.example.cryptographer.application.common.ports.settings.SettingsCommandGateway
-import com.example.cryptographer.application.common.ports.settings.SettingsQueryGateway
-import com.example.cryptographer.application.queries.language.read.LoadLanguageQueryHandler
-import com.example.cryptographer.application.queries.theme.read.LoadThemeQueryHandler
 import com.example.cryptographer.infrastructure.key.KeyCommandGatewayAdapter
 import com.example.cryptographer.infrastructure.key.KeyQueryGatewayAdapter
 import com.example.cryptographer.infrastructure.settings.SettingsCommandGatewayAdapter
@@ -77,9 +77,7 @@ object AppModule {
      * Uses KeyCommandGatewayAdapter as the implementation.
      */
     @Provides
-    fun provideKeyCommandGateway(
-        adapter: KeyCommandGatewayAdapter
-    ): KeyCommandGateway {
+    fun provideKeyCommandGateway(adapter: KeyCommandGatewayAdapter): KeyCommandGateway {
         return adapter
     }
 
@@ -88,9 +86,7 @@ object AppModule {
      * Uses KeyQueryGatewayAdapter as the implementation.
      */
     @Provides
-    fun provideKeyQueryGateway(
-        adapter: KeyQueryGatewayAdapter
-    ): KeyQueryGateway {
+    fun provideKeyQueryGateway(adapter: KeyQueryGatewayAdapter): KeyQueryGateway {
         return adapter
     }
 
@@ -100,7 +96,7 @@ object AppModule {
     @Provides
     fun provideAesGenerateAndSaveKeyCommandHandler(
         aesEncryptionService: AesEncryptionService,
-        commandGateway: KeyCommandGateway
+        commandGateway: KeyCommandGateway,
     ): AesGenerateAndSaveKeyCommandHandler {
         return AesGenerateAndSaveKeyCommandHandler(aesEncryptionService, commandGateway)
     }
@@ -111,7 +107,7 @@ object AppModule {
     @Provides
     fun provideChaCha20GenerateAndSaveKeyCommandHandler(
         chaCha20EncryptionService: ChaCha20EncryptionService,
-        commandGateway: KeyCommandGateway
+        commandGateway: KeyCommandGateway,
     ): ChaCha20GenerateAndSaveKeyCommandHandler {
         return ChaCha20GenerateAndSaveKeyCommandHandler(chaCha20EncryptionService, commandGateway)
     }
@@ -120,9 +116,7 @@ object AppModule {
      * Provides LoadKeyQueryHandler.
      */
     @Provides
-    fun provideLoadKeyQueryHandler(
-        queryGateway: KeyQueryGateway
-    ): LoadKeyQueryHandler {
+    fun provideLoadKeyQueryHandler(queryGateway: KeyQueryGateway): LoadKeyQueryHandler {
         return LoadKeyQueryHandler(queryGateway)
     }
 
@@ -130,9 +124,7 @@ object AppModule {
      * Provides DeleteKeyCommandHandler.
      */
     @Provides
-    fun provideDeleteKeyCommandHandler(
-        commandGateway: KeyCommandGateway
-    ): DeleteKeyCommandHandler {
+    fun provideDeleteKeyCommandHandler(commandGateway: KeyCommandGateway): DeleteKeyCommandHandler {
         return DeleteKeyCommandHandler(commandGateway)
     }
 
@@ -140,9 +132,7 @@ object AppModule {
      * Provides DeleteAllKeysCommandHandler.
      */
     @Provides
-    fun provideDeleteAllKeysCommandHandler(
-        commandGateway: KeyCommandGateway
-    ): DeleteAllKeysCommandHandler {
+    fun provideDeleteAllKeysCommandHandler(commandGateway: KeyCommandGateway): DeleteAllKeysCommandHandler {
         return DeleteAllKeysCommandHandler(commandGateway)
     }
 
@@ -150,9 +140,7 @@ object AppModule {
      * Provides LoadAllKeysQueryHandler.
      */
     @Provides
-    fun provideLoadAllKeysQueryHandler(
-        queryGateway: KeyQueryGateway
-    ): LoadAllKeysQueryHandler {
+    fun provideLoadAllKeysQueryHandler(queryGateway: KeyQueryGateway): LoadAllKeysQueryHandler {
         return LoadAllKeysQueryHandler(queryGateway)
     }
 
@@ -163,7 +151,7 @@ object AppModule {
     @Provides
     fun provideAesEncryptTextCommandHandler(
         aesEncryptionService: AesEncryptionService,
-        textService: TextService
+        textService: TextService,
     ): AesEncryptTextCommandHandler {
         return AesEncryptTextCommandHandler(aesEncryptionService, textService)
     }
@@ -175,7 +163,7 @@ object AppModule {
     @Provides
     fun provideChaCha20EncryptTextCommandHandler(
         chaCha20EncryptionService: ChaCha20EncryptionService,
-        textService: TextService
+        textService: TextService,
     ): ChaCha20EncryptTextCommandHandler {
         return ChaCha20EncryptTextCommandHandler(chaCha20EncryptionService, textService)
     }
@@ -184,9 +172,7 @@ object AppModule {
      * Provides AesDecryptTextCommandHandler.
      */
     @Provides
-    fun provideAesDecryptTextCommandHandler(
-        aesEncryptionService: AesEncryptionService
-    ): AesDecryptTextCommandHandler {
+    fun provideAesDecryptTextCommandHandler(aesEncryptionService: AesEncryptionService): AesDecryptTextCommandHandler {
         return AesDecryptTextCommandHandler(aesEncryptionService)
     }
 
@@ -195,7 +181,7 @@ object AppModule {
      */
     @Provides
     fun provideChaCha20DecryptTextCommandHandler(
-        chaCha20EncryptionService: ChaCha20EncryptionService
+        chaCha20EncryptionService: ChaCha20EncryptionService,
     ): ChaCha20DecryptTextCommandHandler {
         return ChaCha20DecryptTextCommandHandler(chaCha20EncryptionService)
     }
@@ -222,9 +208,7 @@ object AppModule {
      * Domain service for creating Text entities with ID generation.
      */
     @Provides
-    fun provideTextService(
-        textIdGenerator: TextIdGeneratorPort
-    ): TextService {
+    fun provideTextService(textIdGenerator: TextIdGeneratorPort): TextService {
         return TextService(textIdGenerator)
     }
 
@@ -238,7 +222,7 @@ object AppModule {
         loadKeyHandler: LoadKeyQueryHandler,
         deleteKeyHandler: DeleteKeyCommandHandler,
         deleteAllKeysHandler: DeleteAllKeysCommandHandler,
-        loadAllKeysHandler: LoadAllKeysQueryHandler
+        loadAllKeysHandler: LoadAllKeysQueryHandler,
     ): KeyGenerationPresenter {
         return KeyGenerationPresenter(
             aesGenerateAndSaveKeyHandler = aesGenerateAndSaveKeyHandler,
@@ -246,7 +230,7 @@ object AppModule {
             loadKeyHandler = loadKeyHandler,
             deleteKeyHandler = deleteKeyHandler,
             deleteAllKeysHandler = deleteAllKeysHandler,
-            loadAllKeysHandler = loadAllKeysHandler
+            loadAllKeysHandler = loadAllKeysHandler,
         )
     }
 
@@ -258,13 +242,13 @@ object AppModule {
         aesEncryptHandler: AesEncryptTextCommandHandler,
         chaCha20EncryptHandler: ChaCha20EncryptTextCommandHandler,
         aesDecryptHandler: AesDecryptTextCommandHandler,
-        chaCha20DecryptHandler: ChaCha20DecryptTextCommandHandler
+        chaCha20DecryptHandler: ChaCha20DecryptTextCommandHandler,
     ): EncryptionPresenter {
         return EncryptionPresenter(
             aesEncryptHandler = aesEncryptHandler,
             chaCha20EncryptHandler = chaCha20EncryptHandler,
             aesDecryptHandler = aesDecryptHandler,
-            chaCha20DecryptHandler = chaCha20DecryptHandler
+            chaCha20DecryptHandler = chaCha20DecryptHandler,
         )
     }
 
@@ -272,9 +256,7 @@ object AppModule {
      * Provides EncodingPresenter.
      */
     @Provides
-    fun provideEncodingPresenter(
-        convertTextEncodingHandler: ConvertTextEncodingCommandHandler
-    ): EncodingPresenter {
+    fun provideEncodingPresenter(convertTextEncodingHandler: ConvertTextEncodingCommandHandler): EncodingPresenter {
         return EncodingPresenter(convertTextEncodingHandler)
     }
 
@@ -283,9 +265,7 @@ object AppModule {
      * Uses SettingsCommandGatewayAdapter as the implementation.
      */
     @Provides
-    fun provideSettingsCommandGateway(
-        adapter: SettingsCommandGatewayAdapter
-    ): SettingsCommandGateway {
+    fun provideSettingsCommandGateway(adapter: SettingsCommandGatewayAdapter): SettingsCommandGateway {
         return adapter
     }
 
@@ -294,9 +274,7 @@ object AppModule {
      * Uses SettingsQueryGatewayAdapter as the implementation.
      */
     @Provides
-    fun provideSettingsQueryGateway(
-        adapter: SettingsQueryGatewayAdapter
-    ): SettingsQueryGateway {
+    fun provideSettingsQueryGateway(adapter: SettingsQueryGatewayAdapter): SettingsQueryGateway {
         return adapter
     }
 
@@ -304,9 +282,7 @@ object AppModule {
      * Provides SaveThemeCommandHandler.
      */
     @Provides
-    fun provideSaveThemeCommandHandler(
-        commandGateway: SettingsCommandGateway
-    ): SaveThemeCommandHandler {
+    fun provideSaveThemeCommandHandler(commandGateway: SettingsCommandGateway): SaveThemeCommandHandler {
         return SaveThemeCommandHandler(commandGateway)
     }
 
@@ -314,9 +290,7 @@ object AppModule {
      * Provides LoadThemeQueryHandler.
      */
     @Provides
-    fun provideLoadThemeQueryHandler(
-        queryGateway: SettingsQueryGateway
-    ): LoadThemeQueryHandler {
+    fun provideLoadThemeQueryHandler(queryGateway: SettingsQueryGateway): LoadThemeQueryHandler {
         return LoadThemeQueryHandler(queryGateway)
     }
 
@@ -324,9 +298,7 @@ object AppModule {
      * Provides SaveLanguageCommandHandler.
      */
     @Provides
-    fun provideSaveLanguageCommandHandler(
-        commandGateway: SettingsCommandGateway
-    ): SaveLanguageCommandHandler {
+    fun provideSaveLanguageCommandHandler(commandGateway: SettingsCommandGateway): SaveLanguageCommandHandler {
         return SaveLanguageCommandHandler(commandGateway)
     }
 
@@ -334,9 +306,7 @@ object AppModule {
      * Provides LoadLanguageQueryHandler.
      */
     @Provides
-    fun provideLoadLanguageQueryHandler(
-        queryGateway: SettingsQueryGateway
-    ): LoadLanguageQueryHandler {
+    fun provideLoadLanguageQueryHandler(queryGateway: SettingsQueryGateway): LoadLanguageQueryHandler {
         return LoadLanguageQueryHandler(queryGateway)
     }
 
@@ -348,14 +318,13 @@ object AppModule {
         saveThemeHandler: SaveThemeCommandHandler,
         loadThemeHandler: LoadThemeQueryHandler,
         saveLanguageHandler: SaveLanguageCommandHandler,
-        loadLanguageHandler: LoadLanguageQueryHandler
+        loadLanguageHandler: LoadLanguageQueryHandler,
     ): MainPresenter {
         return MainPresenter(
             saveThemeHandler = saveThemeHandler,
             loadThemeHandler = loadThemeHandler,
             saveLanguageHandler = saveLanguageHandler,
-            loadLanguageHandler = loadLanguageHandler
+            loadLanguageHandler = loadLanguageHandler,
         )
     }
 }
-

@@ -67,4 +67,3 @@ class DeleteKeyCommandHandlerTest {
         assertNotNull(result)
     }
 }
-

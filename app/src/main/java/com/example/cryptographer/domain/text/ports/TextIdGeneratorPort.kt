@@ -17,4 +17,3 @@ interface TextIdGeneratorPort {
      */
     fun generate(): String
 }
-

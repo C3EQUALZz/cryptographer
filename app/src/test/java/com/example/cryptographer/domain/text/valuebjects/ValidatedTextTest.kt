@@ -142,4 +142,3 @@ class ValidatedTextTest {
         assertEquals(text1.hashCode(), text2.hashCode())
     }
 }
-

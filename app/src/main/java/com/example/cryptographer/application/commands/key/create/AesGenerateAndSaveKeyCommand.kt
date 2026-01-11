@@ -9,7 +9,5 @@ import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
  * an intent to perform a write operation (key generation and saving) using AES.
  */
 data class AesGenerateAndSaveKeyCommand(
-    val algorithm: EncryptionAlgorithm
+    val algorithm: EncryptionAlgorithm,
 )
-
-

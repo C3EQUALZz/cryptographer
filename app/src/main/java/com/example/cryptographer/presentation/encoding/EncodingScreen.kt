@@ -41,9 +41,7 @@ import androidx.compose.ui.unit.dp
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EncodingScreen(
-    viewModel: EncodingViewModel
-) {
+fun EncodingScreen(viewModel: EncodingViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val clipboardManager = LocalClipboardManager.current
 
@@ -53,14 +51,14 @@ fun EncodingScreen(
             .padding(16.dp)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         // Title
         Text(
             text = "Кодирование текста",
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         // Info card
@@ -70,30 +68,30 @@ fun EncodingScreen(
                 .border(
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
                 ),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
             ),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Icon(
                     imageVector = Icons.Default.Info,
                     contentDescription = "Info",
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
                 )
                 Text(
                     text = "Введите текст для просмотра в разных кодировках: UTF-8, ASCII и BASE64.",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             }
         }
@@ -105,32 +103,32 @@ fun EncodingScreen(
                 .border(
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
                 ),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowDropDown,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = MaterialTheme.colorScheme.primary,
                     )
                     Text(
                         text = "Исходный текст",
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
                     )
                 }
 
                 HorizontalDivider(
                     modifier = Modifier.padding(vertical = 4.dp),
-                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
                 )
 
                 OutlinedTextField(
@@ -142,7 +140,7 @@ fun EncodingScreen(
                     minLines = 3,
                     maxLines = 5,
                     enabled = !uiState.isLoading,
-                    shape = RoundedCornerShape(8.dp)
+                    shape = RoundedCornerShape(8.dp),
                 )
             }
         }
@@ -152,7 +150,7 @@ fun EncodingScreen(
             EncodingResultCard(
                 title = "UTF-8",
                 content = uiState.utf8Result.ifEmpty { uiState.inputText },
-                clipboardManager = clipboardManager
+                clipboardManager = clipboardManager,
             )
         }
 
@@ -161,7 +159,7 @@ fun EncodingScreen(
             EncodingResultCard(
                 title = "ASCII",
                 content = uiState.asciiResult.ifEmpty { "..." },
-                clipboardManager = clipboardManager
+                clipboardManager = clipboardManager,
             )
         }
 
@@ -170,7 +168,7 @@ fun EncodingScreen(
             EncodingResultCard(
                 title = "BASE64",
                 content = uiState.base64Result.ifEmpty { "..." },
-                clipboardManager = clipboardManager
+                clipboardManager = clipboardManager,
             )
         }
 
@@ -182,18 +180,18 @@ fun EncodingScreen(
                     .border(
                         width = 1.dp,
                         color = MaterialTheme.colorScheme.error.copy(alpha = 0.5f),
-                        shape = RoundedCornerShape(12.dp)
+                        shape = RoundedCornerShape(12.dp),
                     ),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
                 ),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
             ) {
                 Text(
                     text = error,
                     modifier = Modifier.padding(16.dp),
                     color = MaterialTheme.colorScheme.onErrorContainer,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             }
         }
@@ -204,7 +202,7 @@ fun EncodingScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
         ) {
             Text("Очистить всё")
         }
@@ -212,61 +210,57 @@ fun EncodingScreen(
 }
 
 @Composable
-private fun EncodingResultCard(
-    title: String,
-    content: String,
-    clipboardManager: ClipboardManager
-) {
+private fun EncodingResultCard(title: String, content: String, clipboardManager: ClipboardManager) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
             ),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.secondary
+                color = MaterialTheme.colorScheme.secondary,
             )
 
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 4.dp),
-                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
             )
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
+                    containerColor = MaterialTheme.colorScheme.surface,
                 ),
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
             ) {
                 Column(
                     modifier = Modifier.padding(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Text(
                         text = content,
                         style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
+                        horizontalArrangement = Arrangement.End,
                     ) {
                         OutlinedButton(
                             onClick = {
                                 clipboardManager.setText(AnnotatedString(content))
                             },
-                            shape = RoundedCornerShape(8.dp)
+                            shape = RoundedCornerShape(8.dp),
                         ) {
                             Text("Копировать")
                         }
@@ -276,4 +270,3 @@ private fun EncodingResultCard(
         }
     }
 }
-

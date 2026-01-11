@@ -95,4 +95,3 @@ class AesEncryptTextCommandHandlerTest {
         assertTrue(result.isFailure)
     }
 }
-

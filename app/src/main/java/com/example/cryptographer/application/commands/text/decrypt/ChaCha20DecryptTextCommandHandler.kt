@@ -14,7 +14,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
  * - Returns View (DTO) for presentation layer
  */
 class ChaCha20DecryptTextCommandHandler(
-    private val chaCha20EncryptionService: ChaCha20EncryptionService
+    private val chaCha20EncryptionService: ChaCha20EncryptionService,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -26,10 +26,15 @@ class ChaCha20DecryptTextCommandHandler(
      */
     operator fun invoke(command: ChaCha20DecryptTextCommand): Result<DecryptedTextView> {
         return try {
-            logger.debug { "Handling ChaCha20 DecryptTextCommand: algorithm=${command.key.algorithm}, encryptedSize=${command.encryptedText.encryptedData.size} bytes" }
+            logger.debug {
+                "Handling ChaCha20 DecryptTextCommand: algorithm=${command.key.algorithm}, encryptedSize=${command.encryptedText.encryptedData.size} bytes"
+            }
 
             // Decrypt using ChaCha20 service
-            val decryptedBytes = chaCha20EncryptionService.decrypt(command.encryptedText, command.key).getOrElse { error ->
+            val decryptedBytes = chaCha20EncryptionService.decrypt(
+                command.encryptedText,
+                command.key,
+            ).getOrElse { error ->
                 logger.error(error) { "ChaCha20 text decryption failed: ${error.message}" }
                 return Result.failure(error)
             }
@@ -37,14 +42,15 @@ class ChaCha20DecryptTextCommandHandler(
             // Convert bytes back to text string
             val decryptedContent = String(decryptedBytes, Charsets.UTF_8)
 
-            logger.info { "ChaCha20 text decryption successful: algorithm=${command.key.algorithm}, decryptedLength=${decryptedContent.length}" }
+            logger.info {
+                "ChaCha20 text decryption successful: algorithm=${command.key.algorithm}, decryptedLength=${decryptedContent.length}"
+            }
             Result.success(DecryptedTextView(decryptedContent))
         } catch (e: Exception) {
             logger.error(e) { "Error handling ChaCha20 DecryptTextCommand: ${e.message}" }
             Result.failure(
-                Exception("ChaCha20 text decryption error: ${e.message}", e)
+                Exception("ChaCha20 text decryption error: ${e.message}", e),
             )
         }
     }
 }
-

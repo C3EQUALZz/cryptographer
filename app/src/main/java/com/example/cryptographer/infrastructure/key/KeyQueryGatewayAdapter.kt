@@ -5,8 +5,8 @@ import android.content.SharedPreferences
 import com.example.cryptographer.application.common.ports.key.KeyQueryGateway
 import com.example.cryptographer.domain.text.entities.EncryptionKey
 import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
-import io.github.oshai.kotlinlogging.KotlinLogging
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.Base64
 import javax.inject.Inject
 
@@ -24,7 +24,7 @@ import javax.inject.Inject
  * Note: In production, consider using Android Keystore for better security.
  */
 class KeyQueryGatewayAdapter @Inject constructor(
-    @param:ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context,
 ) : KeyQueryGateway {
     private val logger = KotlinLogging.logger {}
 
@@ -48,7 +48,7 @@ class KeyQueryGatewayAdapter @Inject constructor(
             logger.debug { "Key retrieved successfully: keyId=$keyId, algorithm=$algorithmName" }
             EncryptionKey(
                 value = keyBytes,
-                algorithm = algorithm
+                algorithm = algorithm,
             )
         } catch (e: Exception) {
             logger.error(e) { "Failed to retrieve key: keyId=$keyId" }
@@ -69,4 +69,3 @@ class KeyQueryGatewayAdapter @Inject constructor(
         private const val KEY_PREFIX = "encryption_key"
     }
 }
-

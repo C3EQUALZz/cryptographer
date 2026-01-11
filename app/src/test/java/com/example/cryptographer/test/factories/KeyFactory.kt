@@ -18,7 +18,7 @@ object KeyFactory {
         algorithm: EncryptionAlgorithm = EncryptionAlgorithm.AES_256,
         keyBytes: ByteArray = ByteArray(32) { it.toByte() }, // 32 bytes for AES-256
         createdAt: Instant = Instant.now(),
-        updatedAt: Instant = Instant.now()
+        updatedAt: Instant = Instant.now(),
     ): EncryptionKey {
         // Adjust key size based on algorithm
         val adjustedKeyBytes = when (algorithm) {
@@ -33,7 +33,7 @@ object KeyFactory {
             value = adjustedKeyBytes,
             algorithm = algorithm,
             createdAt = createdAt,
-            updatedAt = updatedAt
+            updatedAt = updatedAt,
         )
     }
 
@@ -61,8 +61,7 @@ object KeyFactory {
     /**
      * Creates a ChaCha20-256 key.
      */
-    fun createChaCha20_256(id: String = UUID.randomUUID().toString()): EncryptionKey {
+    fun createChaCha256(id: String = UUID.randomUUID().toString()): EncryptionKey {
         return create(id = id, algorithm = EncryptionAlgorithm.CHACHA20_256, keyBytes = ByteArray(32) { it.toByte() })
     }
 }
-

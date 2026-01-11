@@ -8,5 +8,5 @@ package com.example.cryptographer.application.commands.language.update
  * - Contains only the data needed to execute the command
  */
 data class SaveLanguageCommand(
-    val languageCode: String
+    val languageCode: String,
 )

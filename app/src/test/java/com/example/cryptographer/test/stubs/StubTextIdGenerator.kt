@@ -8,7 +8,7 @@ import java.util.UUID
  * Generates predictable IDs for testing purposes.
  */
 class StubTextIdGenerator(
-    private var nextId: String = "test-id-1"
+    private var nextId: String = "test-id-1",
 ) : TextIdGeneratorPort {
     private val generatedIds = mutableListOf<String>()
 
@@ -32,19 +32,4 @@ class StubTextIdGenerator(
         nextId = id
     }
 
-    /**
-     * Gets all generated IDs.
-     */
-    fun getGeneratedIds(): List<String> {
-        return generatedIds.toList()
-    }
-
-    /**
-     * Resets the generator.
-     */
-    fun reset() {
-        nextId = "test-id-1"
-        generatedIds.clear()
-    }
 }
-

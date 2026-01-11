@@ -7,5 +7,5 @@ package com.example.cryptographer.application.commands.key.delete
  * an intent to perform a write operation.
  */
 data class DeleteKeyCommand(
-    val keyId: String
+    val keyId: String,
 )

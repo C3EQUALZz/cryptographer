@@ -11,7 +11,5 @@ import com.example.cryptographer.domain.text.entities.EncryptionKey
  */
 data class AesDecryptTextCommand(
     val encryptedText: EncryptedText,
-    val key: EncryptionKey
+    val key: EncryptionKey,
 )
-
-

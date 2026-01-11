@@ -1,9 +1,9 @@
 package com.example.cryptographer.application.commands.text.encrypt
 
 import com.example.cryptographer.application.common.views.EncryptedTextView
-import com.example.cryptographer.domain.text.valueobjects.TextEncoding
 import com.example.cryptographer.domain.text.services.AesEncryptionService
 import com.example.cryptographer.domain.text.services.TextService
+import com.example.cryptographer.domain.text.valueobjects.TextEncoding
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**
@@ -17,7 +17,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
  */
 class AesEncryptTextCommandHandler(
     private val aesEncryptionService: AesEncryptionService,
-    private val textService: TextService
+    private val textService: TextService,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -58,9 +58,8 @@ class AesEncryptTextCommandHandler(
         } catch (e: Exception) {
             logger.error(e) { "Error handling AES EncryptTextCommand: ${e.message}" }
             Result.failure(
-                Exception("AES text encryption error: ${e.message}", e)
+                Exception("AES text encryption error: ${e.message}", e),
             )
         }
     }
 }
-

@@ -7,5 +7,5 @@ package com.example.cryptographer.application.queries.key.readbyid
  * an intent to read data without modifying state.
  */
 data class LoadKeyQuery(
-    val keyId: String
+    val keyId: String,
 )

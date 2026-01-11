@@ -35,7 +35,9 @@ class EncodingPresenterTest {
 
         val convertedEncodingView = ConvertedEncodingView(convertedText = convertedText)
 
-        coEvery { convertTextEncodingHandler(ConvertTextEncodingCommand(rawText, targetEncoding)) } returns Result.success(convertedEncodingView)
+        coEvery {
+            convertTextEncodingHandler(ConvertTextEncodingCommand(rawText, targetEncoding))
+        } returns Result.success(convertedEncodingView)
 
         // When
         val result = presenter.convertText(rawText, targetEncoding)
@@ -86,7 +88,9 @@ class EncodingPresenterTest {
         val targetEncoding = TextEncoding.BASE64
         val error = Exception("Conversion failed")
 
-        coEvery { convertTextEncodingHandler(ConvertTextEncodingCommand(rawText, targetEncoding)) } returns Result.failure(error)
+        coEvery {
+            convertTextEncodingHandler(ConvertTextEncodingCommand(rawText, targetEncoding))
+        } returns Result.failure(error)
 
         // When
         val result = presenter.convertText(rawText, targetEncoding)
@@ -107,7 +111,9 @@ class EncodingPresenterTest {
 
         val convertedEncodingView = ConvertedEncodingView(convertedText = convertedText)
 
-        coEvery { convertTextEncodingHandler(ConvertTextEncodingCommand(rawText, targetEncoding)) } returns Result.success(convertedEncodingView)
+        coEvery {
+            convertTextEncodingHandler(ConvertTextEncodingCommand(rawText, targetEncoding))
+        } returns Result.success(convertedEncodingView)
 
         // When
         val result = presenter.convertText(rawText, targetEncoding)
@@ -128,7 +134,9 @@ class EncodingPresenterTest {
 
         val convertedEncodingView = ConvertedEncodingView(convertedText = convertedText)
 
-        coEvery { convertTextEncodingHandler(ConvertTextEncodingCommand(rawText, targetEncoding)) } returns Result.success(convertedEncodingView)
+        coEvery {
+            convertTextEncodingHandler(ConvertTextEncodingCommand(rawText, targetEncoding))
+        } returns Result.success(convertedEncodingView)
 
         // When
         val result = presenter.convertText(rawText, targetEncoding)
@@ -149,7 +157,9 @@ class EncodingPresenterTest {
 
         val convertedEncodingView = ConvertedEncodingView(convertedText = convertedText)
 
-        coEvery { convertTextEncodingHandler(ConvertTextEncodingCommand(rawText, targetEncoding)) } returns Result.success(convertedEncodingView)
+        coEvery {
+            convertTextEncodingHandler(ConvertTextEncodingCommand(rawText, targetEncoding))
+        } returns Result.success(convertedEncodingView)
 
         // When
         val result = presenter.convertText(rawText, targetEncoding)
@@ -180,4 +190,3 @@ class EncodingPresenterTest {
         coVerify(exactly = 1) { convertTextEncodingHandler(ConvertTextEncodingCommand(rawText, targetEncoding)) }
     }
 }
-

@@ -17,7 +17,7 @@ class Text(
     val content: ValidatedText,
     val encoding: TextEncoding = TextEncoding.UTF8,
     createdAt: java.time.Instant = java.time.Instant.now(),
-    updatedAt: java.time.Instant = java.time.Instant.now()
+    updatedAt: java.time.Instant = java.time.Instant.now(),
 ) : BaseEntity<String>(id, createdAt, updatedAt) {
 
     val isEmpty: Boolean
@@ -31,5 +31,4 @@ class Text(
 
     val length: Int
         get() = content.content.length
-
 }

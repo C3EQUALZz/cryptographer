@@ -8,8 +8,8 @@ import com.example.cryptographer.application.queries.key.readall.LoadAllKeysQuer
 import com.example.cryptographer.application.queries.key.readbyid.LoadKeyQuery
 import com.example.cryptographer.application.queries.key.readbyid.LoadKeyQueryHandler
 import com.example.cryptographer.domain.text.entities.EncryptionKey
-import io.github.oshai.kotlinlogging.KotlinLogging
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,7 +29,7 @@ import javax.inject.Inject
 class EncryptionViewModel @Inject constructor(
     private val presenter: EncryptionPresenter,
     private val loadKeyHandler: LoadKeyQueryHandler,
-    private val loadAllKeysHandler: LoadAllKeysQueryHandler
+    private val loadAllKeysHandler: LoadAllKeysQueryHandler,
 ) : ViewModel() {
     private val logger = KotlinLogging.logger {}
 
@@ -49,7 +49,7 @@ class EncryptionViewModel @Inject constructor(
     fun updateInputText(text: String) {
         _uiState.value = _uiState.value.copy(
             inputText = text,
-            error = null
+            error = null,
         )
     }
 
@@ -59,7 +59,7 @@ class EncryptionViewModel @Inject constructor(
     fun updateEncryptedText(text: String) {
         _uiState.value = _uiState.value.copy(
             encryptedTextInput = text,
-            error = null
+            error = null,
         )
     }
 
@@ -69,7 +69,7 @@ class EncryptionViewModel @Inject constructor(
     fun updateIvText(text: String) {
         _uiState.value = _uiState.value.copy(
             ivInput = text,
-            error = null
+            error = null,
         )
     }
 
@@ -85,18 +85,18 @@ class EncryptionViewModel @Inject constructor(
                     // Convert KeyView to EncryptionKey domain entity
                     val key = EncryptionKey(
                         value = Base64.getDecoder().decode(keyView.keyBase64),
-                        algorithm = keyView.algorithm
+                        algorithm = keyView.algorithm,
                     )
                     _uiState.value = _uiState.value.copy(
                         selectedKey = key,
                         selectedKeyId = keyId,
-                        error = null
+                        error = null,
                     )
                 }
                 .onFailure { error ->
                     logger.error(error) { "Failed to load key: keyId=$keyId" }
                     _uiState.value = _uiState.value.copy(
-                        error = "Не удалось загрузить ключ: ${error.message}"
+                        error = "Не удалось загрузить ключ: ${error.message}",
                     )
                 }
         }
@@ -111,14 +111,14 @@ class EncryptionViewModel @Inject constructor(
 
         if (inputText.isBlank()) {
             _uiState.value = _uiState.value.copy(
-                error = "Введите текст для шифрования"
+                error = "Введите текст для шифрования",
             )
             return
         }
 
         if (selectedKey == null) {
             _uiState.value = _uiState.value.copy(
-                error = "Выберите ключ для шифрования"
+                error = "Выберите ключ для шифрования",
             )
             return
         }
@@ -127,7 +127,7 @@ class EncryptionViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
                 isLoading = true,
-                error = null
+                error = null,
             )
 
             presenter.encryptText(inputText, selectedKey)
@@ -136,14 +136,14 @@ class EncryptionViewModel @Inject constructor(
                         isLoading = false,
                         encryptedText = encryptedInfo.encryptedBase64,
                         ivText = encryptedInfo.ivBase64 ?: "",
-                        error = null
+                        error = null,
                     )
                 }
                 .onFailure { error ->
                     logger.error(error) { "Encryption failed: ${error.message}" }
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = "Ошибка шифрования: ${error.message}"
+                        error = "Ошибка шифрования: ${error.message}",
                     )
                 }
         }
@@ -159,14 +159,14 @@ class EncryptionViewModel @Inject constructor(
 
         if (encryptedText.isBlank()) {
             _uiState.value = _uiState.value.copy(
-                error = "Введите зашифрованный текст"
+                error = "Введите зашифрованный текст",
             )
             return
         }
 
         if (selectedKey == null) {
             _uiState.value = _uiState.value.copy(
-                error = "Выберите ключ для дешифрования"
+                error = "Выберите ключ для дешифрования",
             )
             return
         }
@@ -175,26 +175,26 @@ class EncryptionViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
                 isLoading = true,
-                error = null
+                error = null,
             )
 
             presenter.decryptText(
                 encryptedBase64 = encryptedText,
                 ivBase64 = ivText.takeIf { it.isNotBlank() },
-                key = selectedKey
+                key = selectedKey,
             )
                 .onSuccess { decryptedText ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         decryptedText = decryptedText,
-                        error = null
+                        error = null,
                     )
                 }
                 .onFailure { error ->
                     logger.error(error) { "Decryption failed: ${error.message}" }
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = "Ошибка дешифрования: ${error.message}"
+                        error = "Ошибка дешифрования: ${error.message}",
                     )
                 }
         }
@@ -206,7 +206,7 @@ class EncryptionViewModel @Inject constructor(
     fun clearAll() {
         _uiState.value = EncryptionUiState(
             selectedKey = _uiState.value.selectedKey,
-            selectedKeyId = _uiState.value.selectedKeyId
+            selectedKeyId = _uiState.value.selectedKeyId,
         )
     }
 
@@ -240,6 +240,5 @@ data class EncryptionUiState(
     val selectedKey: EncryptionKey? = null,
     val selectedKeyId: String? = null,
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
 )
-

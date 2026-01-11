@@ -41,7 +41,7 @@ class MainViewModel @Inject constructor(
             presenter.loadThemeMode()
                 .onSuccess { themeMode ->
                     _uiState.value = _uiState.value.copy(
-                        themeMode = themeMode
+                        themeMode = themeMode,
                     )
                 }
                 .onFailure { error ->
@@ -52,7 +52,7 @@ class MainViewModel @Inject constructor(
             presenter.loadLanguage()
                 .onSuccess { languageCode ->
                     _uiState.value = _uiState.value.copy(
-                        languageCode = languageCode
+                        languageCode = languageCode,
                     )
                 }
                 .onFailure { error ->
@@ -119,7 +119,7 @@ data class MainUiState(
     val selectedScreen: AppScreen = AppScreen.KeyGeneration,
     val selectedAlgorithm: EncryptionAlgorithm = EncryptionAlgorithm.AES_256,
     val themeMode: String = "system",
-    val languageCode: String = "en"
+    val languageCode: String = "en",
 )
 
 /**
@@ -128,5 +128,5 @@ data class MainUiState(
 enum class AppScreen {
     KeyGeneration,
     Encryption,
-    Encoding
+    Encoding,
 }

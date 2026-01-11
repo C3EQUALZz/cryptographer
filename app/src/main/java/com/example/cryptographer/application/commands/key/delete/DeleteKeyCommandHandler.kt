@@ -13,7 +13,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
  * - Returns Unit (void) for successful deletion
  */
 class DeleteKeyCommandHandler(
-    private val commandGateway: KeyCommandGateway
+    private val commandGateway: KeyCommandGateway,
 ) {
     private val logger = KotlinLogging.logger {}
 

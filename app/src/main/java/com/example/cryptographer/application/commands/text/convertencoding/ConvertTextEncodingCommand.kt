@@ -10,5 +10,5 @@ import com.example.cryptographer.domain.text.valueobjects.TextEncoding
  */
 data class ConvertTextEncodingCommand(
     val rawText: String,
-    val targetEncoding: TextEncoding
+    val targetEncoding: TextEncoding,
 )

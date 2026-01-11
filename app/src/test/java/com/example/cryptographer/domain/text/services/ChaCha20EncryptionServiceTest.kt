@@ -55,7 +55,10 @@ class ChaCha20EncryptionServiceTest {
         assertTrue(result.isFailure)
         val error = result.exceptionOrNull()
         assertNotNull("Error should not be null", error)
-        assertTrue("Error should be UnsupportedAlgorithmError, but was ${error?.javaClass?.simpleName}", error is UnsupportedAlgorithmError)
+        assertTrue(
+            "Error should be UnsupportedAlgorithmError, but was ${error?.javaClass?.simpleName}",
+            error is UnsupportedAlgorithmError,
+        )
         assertEquals(EncryptionAlgorithm.AES_256, (error as UnsupportedAlgorithmError).algorithm)
         assertEquals("ChaCha20EncryptionService", error.serviceName)
     }
@@ -66,7 +69,7 @@ class ChaCha20EncryptionServiceTest {
         val aesAlgorithms = listOf(
             EncryptionAlgorithm.AES_128,
             EncryptionAlgorithm.AES_192,
-            EncryptionAlgorithm.AES_256
+            EncryptionAlgorithm.AES_256,
         )
 
         // When & Then
@@ -75,7 +78,10 @@ class ChaCha20EncryptionServiceTest {
             assertTrue("Should fail for $algorithm", result.isFailure)
             val error = result.exceptionOrNull()
             assertNotNull("Error should not be null for $algorithm", error)
-            assertTrue("Error should be UnsupportedAlgorithmError for $algorithm, but was ${error?.javaClass?.simpleName}", error is UnsupportedAlgorithmError)
+            assertTrue(
+                "Error should be UnsupportedAlgorithmError for $algorithm, but was ${error?.javaClass?.simpleName}",
+                error is UnsupportedAlgorithmError,
+            )
             assertEquals(algorithm, (error as UnsupportedAlgorithmError).algorithm)
             assertEquals("ChaCha20EncryptionService", error.serviceName)
         }
@@ -87,7 +93,7 @@ class ChaCha20EncryptionServiceTest {
         assumeTrue("ChaCha20-Poly1305 is not available in this environment", isChaCha20Available())
 
         // Given
-        val key = KeyFactory.createChaCha20_256()
+        val key = KeyFactory.createChaCha256()
         val originalData = "Hello, ChaCha20!".toByteArray(Charsets.UTF_8)
 
         // When
@@ -108,7 +114,7 @@ class ChaCha20EncryptionServiceTest {
         // Given
         val invalidKey = KeyFactory.create(
             algorithm = EncryptionAlgorithm.CHACHA20_256,
-            keyBytes = ByteArray(16) // Invalid length (should be 32 bytes)
+            keyBytes = ByteArray(16), // Invalid length (should be 32 bytes)
         )
         val data = "Test".toByteArray(Charsets.UTF_8)
 
@@ -142,7 +148,7 @@ class ChaCha20EncryptionServiceTest {
         val aesKeys = listOf(
             KeyFactory.createAes128(),
             KeyFactory.createAes192(),
-            KeyFactory.createAes256()
+            KeyFactory.createAes256(),
         )
         val data = "Test".toByteArray(Charsets.UTF_8)
 
@@ -151,7 +157,10 @@ class ChaCha20EncryptionServiceTest {
             val result = chaCha20Service.encrypt(data, key)
             assertTrue("Should fail for ${key.algorithm}", result.isFailure)
             val error = result.exceptionOrNull()
-            assertTrue("Error should be UnsupportedAlgorithmError for ${key.algorithm}", error is UnsupportedAlgorithmError)
+            assertTrue(
+                "Error should be UnsupportedAlgorithmError for ${key.algorithm}",
+                error is UnsupportedAlgorithmError,
+            )
             assertEquals(key.algorithm, (error as UnsupportedAlgorithmError).algorithm)
             assertEquals("ChaCha20EncryptionService", error.serviceName)
         }
@@ -162,7 +171,7 @@ class ChaCha20EncryptionServiceTest {
         // Given
         val wrongKey = KeyFactory.createAes256() // AES key, not ChaCha20
         val encryptedText = com.example.cryptographer.test.factories.EncryptedTextFactory.create(
-            algorithm = EncryptionAlgorithm.AES_256
+            algorithm = EncryptionAlgorithm.AES_256,
         )
 
         // When
@@ -179,10 +188,10 @@ class ChaCha20EncryptionServiceTest {
     @Test
     fun `decrypt should fail without nonce`() {
         // Given
-        val key = KeyFactory.createChaCha20_256()
+        val key = KeyFactory.createChaCha256()
         val encryptedText = com.example.cryptographer.test.factories.EncryptedTextFactory.createWithoutIv(
             encryptedData = ByteArray(16),
-            algorithm = EncryptionAlgorithm.CHACHA20_256
+            algorithm = EncryptionAlgorithm.CHACHA20_256,
         )
 
         // When
@@ -198,7 +207,7 @@ class ChaCha20EncryptionServiceTest {
         assumeTrue("ChaCha20-Poly1305 is not available in this environment", isChaCha20Available())
 
         // Given
-        val key = KeyFactory.createChaCha20_256()
+        val key = KeyFactory.createChaCha256()
         val data = "Test data".toByteArray(Charsets.UTF_8)
 
         // When
@@ -215,11 +224,10 @@ class ChaCha20EncryptionServiceTest {
         assertNotNull(encrypted1.initializationVector)
         assertNotNull(encrypted2.initializationVector)
         assertFalse(
-            encrypted1.initializationVector!!.contentEquals(encrypted2.initializationVector!!)
+            encrypted1.initializationVector!!.contentEquals(encrypted2.initializationVector!!),
         )
 
         // Encrypted data should be different (due to different nonces)
         assertFalse(encrypted1.encryptedData.contentEquals(encrypted2.encryptedData))
     }
 }
-

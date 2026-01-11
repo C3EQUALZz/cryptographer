@@ -9,7 +9,5 @@ import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
  */
 class UnsupportedAlgorithmError(
     val algorithm: EncryptionAlgorithm,
-    val serviceName: String
+    val serviceName: String,
 ) : DomainError("Algorithm $algorithm is not supported by $serviceName")
-
-

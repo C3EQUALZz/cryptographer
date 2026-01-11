@@ -11,7 +11,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
  * This is a Value Object following DDD principles - it validates on creation and is immutable.
  */
 class ValidatedText private constructor(
-    val content: String
+    val content: String,
 ) : BaseValueObject() {
 
     init {
@@ -37,7 +37,7 @@ class ValidatedText private constructor(
                     rawText.isBlank() -> {
                         logger.warn { "Text validation failed: text is blank" }
                         Result.failure(
-                            DomainFieldError("Text cannot be empty")
+                            DomainFieldError("Text cannot be empty"),
                         )
                     }
                     rawText.length > MAX_TEXT_LENGTH -> {
@@ -47,14 +47,14 @@ class ValidatedText private constructor(
                         }
                         Result.failure(
                             DomainFieldError(
-                                "Text exceeds maximum length: $MAX_TEXT_LENGTH characters"
-                            )
+                                "Text exceeds maximum length: $MAX_TEXT_LENGTH characters",
+                            ),
                         )
                     }
                     !isValidUtf8(rawText) -> {
                         logger.warn { "Text validation failed: invalid UTF-8 encoding" }
                         Result.failure(
-                            DomainFieldError("Text contains invalid UTF-8 characters")
+                            DomainFieldError("Text contains invalid UTF-8 characters"),
                         )
                     }
                     else -> {
@@ -64,7 +64,7 @@ class ValidatedText private constructor(
                         if (normalizedContent.isBlank()) {
                             logger.warn { "Text validation failed: text becomes blank after normalization" }
                             Result.failure(
-                                DomainFieldError("Text cannot be empty")
+                                DomainFieldError("Text cannot be empty"),
                             )
                         } else {
                             logger.debug { "Text validation successful: length=${normalizedContent.length}" }

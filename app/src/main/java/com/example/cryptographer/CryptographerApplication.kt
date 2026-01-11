@@ -36,4 +36,3 @@ class CryptographerApplication : Application() {
         return prefs.getString("selected_language", "en") ?: "en"
     }
 }
-

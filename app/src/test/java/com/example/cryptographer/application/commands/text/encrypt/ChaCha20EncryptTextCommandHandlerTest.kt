@@ -50,7 +50,7 @@ class ChaCha20EncryptTextCommandHandlerTest {
         assumeTrue("ChaCha20-Poly1305 is not available in this environment", isChaCha20Available())
 
         // Given
-        val key = KeyFactory.createChaCha20_256()
+        val key = KeyFactory.createChaCha256()
         val rawText = "Hello, ChaCha20!"
         val command = ChaCha20EncryptTextCommand(rawText, key)
 
@@ -69,7 +69,7 @@ class ChaCha20EncryptTextCommandHandlerTest {
     @Test
     fun `invoke should fail with invalid text`() {
         // Given
-        val key = KeyFactory.createChaCha20_256()
+        val key = KeyFactory.createChaCha256()
         val invalidText = "" // Empty text
         val command = ChaCha20EncryptTextCommand(invalidText, key)
 
@@ -84,10 +84,15 @@ class ChaCha20EncryptTextCommandHandlerTest {
     fun `invoke should fail when encryption fails`() {
         // Given
         val mockChaCha20Service = mockk<ChaCha20EncryptionService>()
-        every { mockChaCha20Service.encrypt(any(), any()) } returns Result.failure(Exception("ChaCha20 encryption failed"))
+        every {
+            mockChaCha20Service.encrypt(
+                any(),
+                any(),
+            )
+        } returns Result.failure(Exception("ChaCha20 encryption failed"))
 
         val handlerWithMock = ChaCha20EncryptTextCommandHandler(mockChaCha20Service, textService)
-        val key = KeyFactory.createChaCha20_256()
+        val key = KeyFactory.createChaCha256()
         val command = ChaCha20EncryptTextCommand("Test text", key)
 
         // When
@@ -97,4 +102,3 @@ class ChaCha20EncryptTextCommandHandlerTest {
         assertTrue(result.isFailure)
     }
 }
-

@@ -1,18 +1,17 @@
 package com.example.cryptographer.test.stubs
 
 import com.example.cryptographer.application.common.ports.key.KeyCommandGateway
-import com.example.cryptographer.application.common.ports.key.KeyQueryGateway
 import com.example.cryptographer.domain.text.entities.EncryptionKey
 
 /**
  * Stub implementation of KeyCommandGateway for testing.
  * Stores keys in memory for testing purposes.
- * 
+ *
  * Note: This stub also implements KeyQueryGateway methods internally
  * to support deleteAllKeys() which needs to query for all key IDs.
  */
 class StubKeyCommandGateway(
-    private val queryGateway: StubKeyQueryGateway? = null
+    private val queryGateway: StubKeyQueryGateway? = null,
 ) : KeyCommandGateway {
     private val keys = mutableMapOf<String, EncryptionKey>()
     private var shouldFailSave = false
@@ -49,27 +48,6 @@ class StubKeyCommandGateway(
     }
 
     /**
-     * Gets all stored keys.
-     */
-    fun getAllKeys(): Map<String, EncryptionKey> {
-        return keys.toMap()
-    }
-
-    /**
-     * Gets a key by ID.
-     */
-    fun getKey(keyId: String): EncryptionKey? {
-        return keys[keyId]
-    }
-
-    /**
-     * Sets whether save operations should fail.
-     */
-    fun setShouldFailSave(shouldFail: Boolean) {
-        shouldFailSave = shouldFail
-    }
-
-    /**
      * Sets whether delete operations should fail.
      */
     fun setShouldFailDelete(shouldFail: Boolean) {
@@ -83,11 +61,4 @@ class StubKeyCommandGateway(
         shouldFailDeleteAll = shouldFail
     }
 
-    /**
-     * Clears all stored keys.
-     */
-    fun clear() {
-        keys.clear()
-    }
 }
-

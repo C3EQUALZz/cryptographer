@@ -24,7 +24,9 @@ class ConvertTextEncodingCommandHandler {
      */
     operator fun invoke(command: ConvertTextEncodingCommand): Result<ConvertedEncodingView> {
         return try {
-            logger.debug { "Handling ConvertTextEncodingCommand: length=${command.rawText.length}, targetEncoding=${command.targetEncoding}" }
+            logger.debug {
+                "Handling ConvertTextEncodingCommand: length=${command.rawText.length}, targetEncoding=${command.targetEncoding}"
+            }
 
             val converted = when (command.targetEncoding) {
                 TextEncoding.UTF8 -> {
@@ -58,12 +60,14 @@ class ConvertTextEncodingCommandHandler {
                 }
             }
 
-            logger.info { "Text conversion successful: targetEncoding=${command.targetEncoding}, convertedLength=${converted.length}" }
+            logger.info {
+                "Text conversion successful: targetEncoding=${command.targetEncoding}, convertedLength=${converted.length}"
+            }
             Result.success(ConvertedEncodingView(converted))
         } catch (e: Exception) {
             logger.error(e) { "Error handling ConvertTextEncodingCommand: ${e.message}" }
             Result.failure(
-                Exception("Ошибка конвертации текста: ${e.message}", e)
+                Exception("Ошибка конвертации текста: ${e.message}", e),
             )
         }
     }

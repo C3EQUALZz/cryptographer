@@ -8,7 +8,8 @@ package com.example.cryptographer.domain.common.valueobjects
  */
 enum class Language(val code: String, val displayName: String) {
     ENGLISH("en", "English"),
-    RUSSIAN("ru", "Русский");
+    RUSSIAN("ru", "Русский"),
+    ;
 
     companion object {
         fun fromCode(code: String): Language {

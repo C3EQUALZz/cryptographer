@@ -7,5 +7,5 @@ package com.example.cryptographer.domain.common.errors
  */
 class DomainFieldError(
     message: String,
-    cause: Throwable? = null
+    cause: Throwable? = null,
 ) : DomainError(message, cause)

@@ -67,4 +67,3 @@ class DeleteAllKeysCommandHandlerTest {
         assertTrue(result.isFailure)
     }
 }
-

@@ -78,7 +78,7 @@ class AesEncryptionServiceTest {
     fun `encrypt should fail with invalid key length`() {
         // Given
         val invalidKey = KeyFactory.create(
-            keyBytes = ByteArray(10) // Invalid length
+            keyBytes = ByteArray(10), // Invalid length
         )
         val data = "Test".toByteArray(Charsets.UTF_8)
 
@@ -95,7 +95,7 @@ class AesEncryptionServiceTest {
         val key = KeyFactory.createAes256()
         val encryptedText = com.example.cryptographer.test.factories.EncryptedTextFactory.createWithoutIv(
             encryptedData = ByteArray(16),
-            algorithm = EncryptionAlgorithm.AES_256
+            algorithm = EncryptionAlgorithm.AES_256,
         )
 
         // When
@@ -125,7 +125,7 @@ class AesEncryptionServiceTest {
         assertNotNull(encrypted1.initializationVector)
         assertNotNull(encrypted2.initializationVector)
         assertFalse(
-            encrypted1.initializationVector!!.contentEquals(encrypted2.initializationVector!!)
+            encrypted1.initializationVector!!.contentEquals(encrypted2.initializationVector!!),
         )
 
         // Encrypted data should be different (due to different IVs)
@@ -141,7 +141,10 @@ class AesEncryptionServiceTest {
         assertTrue(result.isFailure)
         val error = result.exceptionOrNull()
         assertNotNull("Error should not be null", error)
-        assertTrue("Error should be UnsupportedAlgorithmError, but was ${error?.javaClass?.simpleName}", error is UnsupportedAlgorithmError)
+        assertTrue(
+            "Error should be UnsupportedAlgorithmError, but was ${error?.javaClass?.simpleName}",
+            error is UnsupportedAlgorithmError,
+        )
         assertEquals(EncryptionAlgorithm.CHACHA20_256, (error as UnsupportedAlgorithmError).algorithm)
         assertEquals("AesEncryptionService", error.serviceName)
     }
@@ -149,7 +152,7 @@ class AesEncryptionServiceTest {
     @Test
     fun `encrypt should fail with wrong algorithm`() {
         // Given
-        val wrongKey = KeyFactory.createChaCha20_256() // ChaCha20 key, not AES
+        val wrongKey = KeyFactory.createChaCha256() // ChaCha20 key, not AES
         val data = "Test".toByteArray(Charsets.UTF_8)
 
         // When
@@ -166,9 +169,9 @@ class AesEncryptionServiceTest {
     @Test
     fun `decrypt should fail with wrong algorithm`() {
         // Given
-        val wrongKey = KeyFactory.createChaCha20_256() // ChaCha20 key, not AES
+        val wrongKey = KeyFactory.createChaCha256() // ChaCha20 key, not AES
         val encryptedText = com.example.cryptographer.test.factories.EncryptedTextFactory.create(
-            algorithm = EncryptionAlgorithm.CHACHA20_256
+            algorithm = EncryptionAlgorithm.CHACHA20_256,
         )
 
         // When
@@ -182,4 +185,3 @@ class AesEncryptionServiceTest {
         assertEquals("AesEncryptionService", error.serviceName)
     }
 }
-

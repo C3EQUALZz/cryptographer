@@ -46,7 +46,7 @@ class ChaCha20DecryptTextCommandHandlerTest {
         assumeTrue("ChaCha20-Poly1305 is not available in this environment", isChaCha20Available())
 
         // Given
-        val key = KeyFactory.createChaCha20_256()
+        val key = KeyFactory.createChaCha256()
         val originalText = "Hello, ChaCha20!"
         val originalData = originalText.toByteArray(Charsets.UTF_8)
 
@@ -70,12 +70,17 @@ class ChaCha20DecryptTextCommandHandlerTest {
     fun `invoke should fail when decryption fails`() {
         // Given
         val mockChaCha20Service = mockk<ChaCha20EncryptionService>()
-        every { mockChaCha20Service.decrypt(any(), any()) } returns Result.failure(Exception("ChaCha20 decryption failed"))
+        every {
+            mockChaCha20Service.decrypt(
+                any(),
+                any(),
+            )
+        } returns Result.failure(Exception("ChaCha20 decryption failed"))
 
         val handlerWithMock = ChaCha20DecryptTextCommandHandler(mockChaCha20Service)
-        val key = KeyFactory.createChaCha20_256()
+        val key = KeyFactory.createChaCha256()
         val encryptedText = EncryptedTextFactory.create(
-            algorithm = EncryptionAlgorithm.CHACHA20_256
+            algorithm = EncryptionAlgorithm.CHACHA20_256,
         )
         val command = ChaCha20DecryptTextCommand(encryptedText, key)
 
@@ -89,9 +94,9 @@ class ChaCha20DecryptTextCommandHandlerTest {
     @Test
     fun `invoke should fail without nonce`() {
         // Given
-        val key = KeyFactory.createChaCha20_256()
+        val key = KeyFactory.createChaCha256()
         val encryptedText = EncryptedTextFactory.createWithoutIv(
-            algorithm = EncryptionAlgorithm.CHACHA20_256
+            algorithm = EncryptionAlgorithm.CHACHA20_256,
         )
         val command = ChaCha20DecryptTextCommand(encryptedText, key)
 
@@ -102,4 +107,3 @@ class ChaCha20DecryptTextCommandHandlerTest {
         assertTrue(result.isFailure)
     }
 }
-

@@ -6,8 +6,8 @@ import androidx.core.content.edit
 import com.example.cryptographer.application.common.ports.key.KeyCommandGateway
 import com.example.cryptographer.application.common.ports.key.KeyQueryGateway
 import com.example.cryptographer.domain.text.entities.EncryptionKey
-import io.github.oshai.kotlinlogging.KotlinLogging
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.Base64
 import javax.inject.Inject
 
@@ -26,7 +26,7 @@ import javax.inject.Inject
  */
 class KeyCommandGatewayAdapter @Inject constructor(
     @param:ApplicationContext private val context: Context,
-    private val queryGateway: KeyQueryGateway
+    private val queryGateway: KeyQueryGateway,
 ) : KeyCommandGateway {
     private val logger = KotlinLogging.logger {}
 
@@ -89,4 +89,3 @@ class KeyCommandGatewayAdapter @Inject constructor(
         private const val KEY_PREFIX = "encryption_key"
     }
 }
-

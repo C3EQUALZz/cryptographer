@@ -9,7 +9,8 @@ package com.example.cryptographer.domain.common.valueobjects
 enum class ThemeMode(val value: String) {
     SYSTEM("system"), // Use system default
     LIGHT("light"),
-    DARK("dark");
+    DARK("dark"),
+    ;
 
     companion object {
         fun fromValue(value: String): ThemeMode {

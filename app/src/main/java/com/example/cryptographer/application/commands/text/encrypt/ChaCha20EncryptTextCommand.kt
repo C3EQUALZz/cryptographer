@@ -10,7 +10,5 @@ import com.example.cryptographer.domain.text.entities.EncryptionKey
  */
 data class ChaCha20EncryptTextCommand(
     val rawText: String,
-    val key: EncryptionKey
+    val key: EncryptionKey,
 )
-
-

@@ -36,9 +36,7 @@ import kotlinx.coroutines.launch
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(
-    viewModel: MainViewModel = viewModel()
-) {
+fun MainScreen(viewModel: MainViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -90,9 +88,9 @@ fun MainScreen(
                         drawerState.close()
                         (context as? Activity)?.recreate()
                     }
-                }
+                },
             )
-        }
+        },
     ) {
         Scaffold(
             topBar = {
@@ -106,22 +104,22 @@ fun MainScreen(
                         }) {
                             Icon(
                                 imageVector = Icons.Default.Menu,
-                                contentDescription = stringResource(R.string.menu)
+                                contentDescription = stringResource(R.string.menu),
                             )
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
+                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    ),
                 )
-            }
+            },
         ) { paddingValues ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
+                    .padding(paddingValues),
             ) {
                 when (uiState.selectedScreen) {
                     AppScreen.KeyGeneration -> {
@@ -158,12 +156,12 @@ private fun NavigationDrawerContent(
     onScreenSelected: (AppScreen) -> Unit,
     onAlgorithmSelected: (EncryptionAlgorithm) -> Unit,
     onLanguageSelected: (Language) -> Unit,
-    onThemeModeChanged: (ThemeMode) -> Unit
+    onThemeModeChanged: (ThemeMode) -> Unit,
 ) {
     var expandedLanguageDropdown by remember { mutableStateOf(false) }
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.surface
+        color = MaterialTheme.colorScheme.surface,
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             // Close button in top-right corner
@@ -175,11 +173,11 @@ private fun NavigationDrawerContent(
                 },
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(8.dp)
+                    .padding(8.dp),
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = stringResource(R.string.close_menu)
+                    contentDescription = stringResource(R.string.close_menu),
                 )
             }
 
@@ -187,13 +185,13 @@ private fun NavigationDrawerContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)
-                    .padding(top = 48.dp)
+                    .padding(top = 48.dp),
             ) {
                 Text(
                     text = stringResource(R.string.menu),
                     style = MaterialTheme.typography.headlineMedium,
                     modifier = Modifier.padding(bottom = 24.dp),
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
                 )
 
                 // Language selection section
@@ -201,12 +199,12 @@ private fun NavigationDrawerContent(
                     text = stringResource(R.string.language_selection),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(bottom = 8.dp),
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
                 )
 
                 ExposedDropdownMenuBox(
                     expanded = expandedLanguageDropdown,
-                    onExpandedChange = { expandedLanguageDropdown = !expandedLanguageDropdown }
+                    onExpandedChange = { expandedLanguageDropdown = !expandedLanguageDropdown },
                 ) {
                     OutlinedTextField(
                         value = currentLanguage.displayName,
@@ -218,11 +216,11 @@ private fun NavigationDrawerContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryEditable, enabled = true),
-                        shape = RoundedCornerShape(8.dp)
+                        shape = RoundedCornerShape(8.dp),
                     )
                     ExposedDropdownMenu(
                         expanded = expandedLanguageDropdown,
-                        onDismissRequest = { expandedLanguageDropdown = false }
+                        onDismissRequest = { expandedLanguageDropdown = false },
                     ) {
                         Language.entries.forEach { language ->
                             DropdownMenuItem(
@@ -231,7 +229,7 @@ private fun NavigationDrawerContent(
                                     onLanguageSelected(language)
                                     expandedLanguageDropdown = false
                                 },
-                                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                             )
                         }
                     }
@@ -246,7 +244,7 @@ private fun NavigationDrawerContent(
                     text = stringResource(R.string.theme_selection),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(bottom = 8.dp),
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
                 )
 
                 Row(
@@ -254,20 +252,22 @@ private fun NavigationDrawerContent(
                         .fillMaxWidth()
                         .padding(vertical = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = stringResource(R.string.dark_theme),
                         style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
                     )
                     Switch(
                         checked = when (currentThemeMode) {
                             ThemeMode.SYSTEM -> {
                                 // If system mode, check actual system theme
-                                (context.resources.configuration.uiMode and
-                                        Configuration.UI_MODE_NIGHT_MASK) ==
-                                        Configuration.UI_MODE_NIGHT_YES
+                                (
+                                    context.resources.configuration.uiMode and
+                                        Configuration.UI_MODE_NIGHT_MASK
+                                    ) ==
+                                    Configuration.UI_MODE_NIGHT_YES
                             }
                             ThemeMode.DARK -> true
                             ThemeMode.LIGHT -> false
@@ -279,7 +279,7 @@ private fun NavigationDrawerContent(
                                 ThemeMode.LIGHT
                             }
                             onThemeModeChanged(newTheme)
-                        }
+                        },
                     )
                 }
 
@@ -292,7 +292,7 @@ private fun NavigationDrawerContent(
                     text = stringResource(R.string.screens),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(bottom = 8.dp),
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
                 )
 
                 NavigationDrawerItem(
@@ -300,7 +300,7 @@ private fun NavigationDrawerContent(
                     label = { Text(stringResource(R.string.key_generation)) },
                     selected = selectedScreen == AppScreen.KeyGeneration,
                     onClick = { onScreenSelected(AppScreen.KeyGeneration) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
 
                 NavigationDrawerItem(
@@ -308,7 +308,7 @@ private fun NavigationDrawerContent(
                     label = { Text(stringResource(R.string.encryption_decryption)) },
                     selected = selectedScreen == AppScreen.Encryption,
                     onClick = { onScreenSelected(AppScreen.Encryption) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
 
                 NavigationDrawerItem(
@@ -316,7 +316,7 @@ private fun NavigationDrawerContent(
                     label = { Text(stringResource(R.string.encoding)) },
                     selected = selectedScreen == AppScreen.Encoding,
                     onClick = { onScreenSelected(AppScreen.Encoding) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -328,7 +328,7 @@ private fun NavigationDrawerContent(
                     text = stringResource(R.string.encryption_algorithms),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(bottom = 8.dp),
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
                 )
 
                 EncryptionAlgorithm.entries.forEach { algorithm ->
@@ -337,7 +337,7 @@ private fun NavigationDrawerContent(
                         label = { Text(algorithm.name) },
                         selected = selectedAlgorithm == algorithm,
                         onClick = { onAlgorithmSelected(algorithm) },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
             }

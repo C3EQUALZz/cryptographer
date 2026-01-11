@@ -40,7 +40,7 @@ class EncryptionPresenterTest {
             aesEncryptHandler = aesEncryptHandler,
             chaCha20EncryptHandler = chaCha20EncryptHandler,
             aesDecryptHandler = aesDecryptHandler,
-            chaCha20DecryptHandler = chaCha20DecryptHandler
+            chaCha20DecryptHandler = chaCha20DecryptHandler,
         )
     }
 
@@ -54,7 +54,7 @@ class EncryptionPresenterTest {
         val encryptedTextEntity = EncryptedText(
             encryptedData = encryptedData,
             algorithm = EncryptionAlgorithm.AES_256,
-            initializationVector = iv
+            initializationVector = iv,
         )
 
         val encryptedBase64 = Base64.getEncoder().encodeToString(encryptedData)
@@ -105,7 +105,7 @@ class EncryptionPresenterTest {
         val encryptedTextEntity = EncryptedText(
             encryptedData = encryptedData,
             algorithm = EncryptionAlgorithm.AES_128,
-            initializationVector = null
+            initializationVector = null,
         )
 
         val encryptedBase64 = Base64.getEncoder().encodeToString(encryptedData)
@@ -260,20 +260,24 @@ class EncryptionPresenterTest {
     fun `encryptText should work with ChaCha20 algorithm`() {
         // Given
         val rawText = "Hello, ChaCha20!"
-        val key = KeyFactory.createChaCha20_256()
+        val key = KeyFactory.createChaCha256()
         val encryptedData = ByteArray(32)
         val iv = ByteArray(12) // ChaCha20 uses 96-bit (12-byte) nonce
         val encryptedTextEntity = EncryptedText(
             encryptedData = encryptedData,
             algorithm = EncryptionAlgorithm.CHACHA20_256,
-            initializationVector = iv
+            initializationVector = iv,
         )
 
         val encryptedBase64 = Base64.getEncoder().encodeToString(encryptedData)
         val ivBase64 = Base64.getEncoder().encodeToString(iv)
         val encryptedTextView = EncryptedTextView(encryptedText = encryptedTextEntity)
 
-        every { chaCha20EncryptHandler(ChaCha20EncryptTextCommand(rawText, key)) } returns Result.success(encryptedTextView)
+        every {
+            chaCha20EncryptHandler(
+                ChaCha20EncryptTextCommand(rawText, key),
+            )
+        } returns Result.success(encryptedTextView)
 
         // When
         val result = presenter.encryptText(rawText, key)
@@ -292,7 +296,7 @@ class EncryptionPresenterTest {
     fun `decryptText should work with ChaCha20 algorithm`() {
         // Given
         val decryptedText = "Hello, ChaCha20!"
-        val key = KeyFactory.createChaCha20_256()
+        val key = KeyFactory.createChaCha256()
         val encryptedData = ByteArray(32)
         val iv = ByteArray(12) // ChaCha20 uses 96-bit (12-byte) nonce
         val encryptedBase64 = Base64.getEncoder().encodeToString(encryptedData)

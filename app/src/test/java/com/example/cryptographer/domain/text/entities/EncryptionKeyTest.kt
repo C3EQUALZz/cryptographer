@@ -75,4 +75,3 @@ class EncryptionKeyTest {
         assertEquals(EncryptionAlgorithm.AES_256, key.algorithm)
     }
 }
-

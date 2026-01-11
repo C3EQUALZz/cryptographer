@@ -9,6 +9,5 @@ package com.example.cryptographer.domain.text.valueobjects
 enum class TextEncoding {
     UTF8,
     ASCII,
-    BASE64
+    BASE64,
 }
-

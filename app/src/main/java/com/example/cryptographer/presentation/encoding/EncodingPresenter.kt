@@ -12,7 +12,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
  * Following CQRS pattern - uses CommandHandler from Application layer.
  */
 class EncodingPresenter(
-    private val convertTextEncodingHandler: ConvertTextEncodingCommandHandler
+    private val convertTextEncodingHandler: ConvertTextEncodingCommandHandler,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -23,10 +23,7 @@ class EncodingPresenter(
      * @param targetEncoding Target encoding
      * @return Result with converted text string (DTO for presentation layer) or error
      */
-    suspend fun convertText(
-        rawText: String,
-        targetEncoding: TextEncoding
-    ): Result<String> {
+    suspend fun convertText(rawText: String, targetEncoding: TextEncoding): Result<String> {
         return try {
             logger.debug { "Presenter: Converting text: length=${rawText.length}, targetEncoding=$targetEncoding" }
 
@@ -47,7 +44,9 @@ class EncodingPresenter(
             val convertedEncodingView = convertedEncodingViewResult.getOrThrow()
             val converted = convertedEncodingView.convertedText
 
-            logger.info { "Presenter: Text converted successfully: targetEncoding=$targetEncoding, convertedLength=${converted.length}" }
+            logger.info {
+                "Presenter: Text converted successfully: targetEncoding=$targetEncoding, convertedLength=${converted.length}"
+            }
             Result.success(converted)
         } catch (e: Exception) {
             logger.error(e) { "Presenter: Error converting text: ${e.message}" }

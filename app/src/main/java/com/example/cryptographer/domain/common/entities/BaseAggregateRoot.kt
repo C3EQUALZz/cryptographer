@@ -1,6 +1,5 @@
 package com.example.cryptographer.domain.common.entities
 
-import com.example.cryptographer.domain.common.entities.BaseEntity
 import java.time.Instant
 
 /**
@@ -19,5 +18,5 @@ import java.time.Instant
 abstract class BaseAggregateRoot<OIDType>(
     id: OIDType,
     createdAt: Instant = Instant.now(),
-    updatedAt: Instant = Instant.now()
+    updatedAt: Instant = Instant.now(),
 ) : BaseEntity<OIDType>(id, createdAt, updatedAt)
