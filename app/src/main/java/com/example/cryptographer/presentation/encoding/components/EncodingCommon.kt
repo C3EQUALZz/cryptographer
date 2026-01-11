@@ -33,4 +33,3 @@ fun EncodingClearButton(onClearClick: () -> Unit) {
         Text("Очистить всё")
     }
 }
-

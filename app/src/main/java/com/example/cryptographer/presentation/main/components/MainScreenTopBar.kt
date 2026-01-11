@@ -34,4 +34,3 @@ fun MainScreenTopBar(screen: AppScreen, onMenuClick: () -> Unit) {
         ),
     )
 }
-

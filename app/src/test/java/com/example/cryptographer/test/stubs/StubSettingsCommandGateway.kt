@@ -54,6 +54,4 @@ class StubSettingsCommandGateway : SettingsCommandGateway {
     fun setShouldFailSaveLanguage(shouldFail: Boolean) {
         shouldFailSaveLanguage = shouldFail
     }
-
 }
-

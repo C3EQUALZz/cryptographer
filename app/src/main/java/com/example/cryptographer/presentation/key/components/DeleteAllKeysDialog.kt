@@ -60,4 +60,3 @@ fun DeleteAllKeysDialog(keysCount: Int, onConfirm: () -> Unit, onDismiss: () -> 
         shape = RoundedCornerShape(16.dp),
     )
 }
-

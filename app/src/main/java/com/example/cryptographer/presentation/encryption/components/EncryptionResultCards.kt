@@ -1,5 +1,6 @@
 package com.example.cryptographer.presentation.encryption.components
 
+import android.content.ClipData
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,10 +13,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import android.content.ClipData
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.Clipboard
 import androidx.compose.ui.platform.toClipEntry
 import androidx.compose.ui.unit.dp
@@ -30,7 +30,7 @@ fun EncryptedResultCard(encryptedText: String, ivText: String, clipboard: Clipbo
         onCopyClick = {
             scope.launch {
                 clipboard.setClipEntry(
-                    ClipData.newPlainText("", encryptedText).toClipEntry()
+                    ClipData.newPlainText("", encryptedText).toClipEntry(),
                 )
             }
         },
@@ -44,7 +44,7 @@ fun EncryptedResultCard(encryptedText: String, ivText: String, clipboard: Clipbo
             onCopyClick = {
                 scope.launch {
                     clipboard.setClipEntry(
-                        ClipData.newPlainText("", ivText).toClipEntry()
+                        ClipData.newPlainText("", ivText).toClipEntry(),
                     )
                 }
             },
@@ -63,7 +63,7 @@ fun DecryptedResultCard(decryptedText: String, clipboard: Clipboard) {
         onCopyClick = {
             scope.launch {
                 clipboard.setClipEntry(
-                    ClipData.newPlainText("", decryptedText).toClipEntry()
+                    ClipData.newPlainText("", decryptedText).toClipEntry(),
                 )
             }
         },
@@ -113,4 +113,3 @@ private fun ResultCard(
         }
     }
 }
-

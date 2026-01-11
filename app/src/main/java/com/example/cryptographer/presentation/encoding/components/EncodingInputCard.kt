@@ -69,4 +69,3 @@ fun EncodingInputCard(inputText: String, isLoading: Boolean, onInputChange: (Str
         }
     }
 }
-

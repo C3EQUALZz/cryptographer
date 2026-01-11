@@ -36,4 +36,3 @@ class LoadThemeQueryHandlerTest {
         assertEquals(themeMode, result.getOrThrow().themeMode)
     }
 }
-

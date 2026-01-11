@@ -46,10 +46,10 @@ fun EncodingScreen(viewModel: EncodingViewModel) {
             isLoading = uiState.isLoading,
             onInputChange = { viewModel.updateInputText(it) },
         )
-                EncodingResultsSection(
-                    uiState = uiState,
-                    clipboard = clipboard,
-                )
+        EncodingResultsSection(
+            uiState = uiState,
+            clipboard = clipboard,
+        )
         uiState.error?.let { error ->
             EncodingErrorCard(error = error)
         }

@@ -39,4 +39,3 @@ fun GenerateKeyButton(isLoading: Boolean, enabled: Boolean, onClick: () -> Unit)
         )
     }
 }
-

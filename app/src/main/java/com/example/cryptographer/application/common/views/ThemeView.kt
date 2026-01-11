@@ -9,4 +9,3 @@ package com.example.cryptographer.application.common.views
 data class ThemeView(
     val themeMode: String,
 )
-

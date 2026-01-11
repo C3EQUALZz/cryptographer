@@ -53,4 +53,3 @@ class SaveThemeCommandHandlerTest {
         assertEquals("theme", (error as SettingsSaveError).settingType)
     }
 }
-

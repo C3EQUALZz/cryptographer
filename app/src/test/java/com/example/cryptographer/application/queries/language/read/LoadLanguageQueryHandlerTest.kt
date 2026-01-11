@@ -36,4 +36,3 @@ class LoadLanguageQueryHandlerTest {
         assertEquals(languageCode, result.getOrThrow().languageCode)
     }
 }
-

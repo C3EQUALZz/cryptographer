@@ -36,4 +36,3 @@ fun EncodingErrorCard(error: String) {
         )
     }
 }
-

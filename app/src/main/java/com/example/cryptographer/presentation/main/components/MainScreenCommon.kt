@@ -24,4 +24,3 @@ fun getScreenTitle(screen: AppScreen): String {
         AppScreen.Encoding -> stringResource(R.string.screen_encoding)
     }
 }
-

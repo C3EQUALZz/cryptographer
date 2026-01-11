@@ -36,4 +36,3 @@ fun EncryptionErrorCard(error: String) {
         )
     }
 }
-

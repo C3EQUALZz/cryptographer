@@ -137,7 +137,6 @@ spotless {
     }
 }
 
-// Detekt configuration (static code analyzer - like mypy/pylint for Python)
 detekt {
     buildUponDefaultConfig = true
     allRules = false

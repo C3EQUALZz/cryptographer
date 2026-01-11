@@ -31,4 +31,3 @@ fun getAlgorithmDisplayName(algorithm: EncryptionAlgorithm): String {
         },
     )
 }
-

@@ -74,7 +74,7 @@ fun EncodingResultCard(title: String, content: String, clipboard: Clipboard) {
                             onClick = {
                                 scope.launch {
                                     clipboard.setClipEntry(
-                                        ClipData.newPlainText("", content).toClipEntry()
+                                        ClipData.newPlainText("", content).toClipEntry(),
                                     )
                                 }
                             },

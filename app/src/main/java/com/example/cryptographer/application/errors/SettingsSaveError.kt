@@ -12,4 +12,3 @@ class SettingsSaveError(
     val settingType: String,
     cause: Throwable? = null,
 ) : ApplicationError("Failed to save setting: type=$settingType", cause)
-

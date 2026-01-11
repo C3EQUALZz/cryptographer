@@ -1,5 +1,6 @@
 package com.example.cryptographer.presentation.key.components
 
+import android.content.ClipData
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,14 +20,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import android.content.ClipData
 import androidx.compose.ui.platform.Clipboard
 import androidx.compose.ui.platform.toClipEntry
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 import com.example.cryptographer.domain.text.entities.EncryptionKey
 import com.example.cryptographer.presentation.key.KeyGenerationUiState
+import kotlinx.coroutines.launch
 
 private const val KEY_ID_PREVIEW_LENGTH = 8
 
@@ -113,7 +113,7 @@ private fun KeyValueCard(keyBase64: String, clipboard: Clipboard) {
                 onClick = {
                     scope.launch {
                         clipboard.setClipEntry(
-                            ClipData.newPlainText("", keyBase64).toClipEntry()
+                            ClipData.newPlainText("", keyBase64).toClipEntry(),
                         )
                     }
                 },

@@ -15,4 +15,3 @@ class KeyGenerationError(
     val algorithm: EncryptionAlgorithm,
     cause: Throwable? = null,
 ) : ApplicationError("Failed to generate key: algorithm=$algorithm", cause)
-

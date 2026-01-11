@@ -61,11 +61,11 @@ fun KeyGenerationScreen(viewModel: KeyGenerationViewModel) {
             onClick = { viewModel.generateKey(selectedAlgorithm) },
         )
         uiState.generatedKey?.let { key ->
-                GeneratedKeyCard(
-                    key = key,
-                    uiState = uiState,
-                    clipboard = clipboard,
-                )
+            GeneratedKeyCard(
+                key = key,
+                uiState = uiState,
+                clipboard = clipboard,
+            )
         }
         uiState.error?.let { error ->
             KeyGenerationErrorCard(error = error)

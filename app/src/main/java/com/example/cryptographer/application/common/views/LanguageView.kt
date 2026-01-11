@@ -9,4 +9,3 @@ package com.example.cryptographer.application.common.views
 data class LanguageView(
     val languageCode: String,
 )
-

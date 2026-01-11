@@ -12,4 +12,3 @@ class SettingsLoadError(
     val settingType: String,
     cause: Throwable? = null,
 ) : ApplicationError("Failed to load setting: type=$settingType", cause)
-

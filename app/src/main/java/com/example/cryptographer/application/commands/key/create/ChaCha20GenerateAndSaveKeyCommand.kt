@@ -11,4 +11,3 @@ import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 data class ChaCha20GenerateAndSaveKeyCommand(
     val algorithm: EncryptionAlgorithm,
 )
-

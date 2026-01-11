@@ -11,4 +11,3 @@ data class DrawerActions(
     val onLanguageSelected: (Language) -> Unit,
     val onThemeModeChanged: (ThemeMode) -> Unit,
 )
-

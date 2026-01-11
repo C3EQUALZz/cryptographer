@@ -53,4 +53,3 @@ class SaveLanguageCommandHandlerTest {
         assertEquals("language", (error as SettingsSaveError).settingType)
     }
 }
-

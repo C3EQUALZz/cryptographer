@@ -13,4 +13,3 @@ data class AesDecryptTextCommand(
     val encryptedText: EncryptedText,
     val key: EncryptionKey,
 )
-

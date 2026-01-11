@@ -65,4 +65,3 @@ fun EncryptionClearButton(onClearClick: () -> Unit) {
         Text("Очистить всё")
     }
 }
-

@@ -42,6 +42,4 @@ class StubSettingsQueryGateway : SettingsQueryGateway {
     fun setLanguage(language: String) {
         this.language = language
     }
-
 }
-

@@ -50,4 +50,3 @@ fun ScreenSelectionSection(selectedScreen: AppScreen, onScreenSelected: (AppScre
         modifier = Modifier.fillMaxWidth(),
     )
 }
-
