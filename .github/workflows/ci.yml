@@ -2,9 +2,19 @@ name: CI
 
 on:
   push:
-    branches: [ master, main, develop ]
+    branches: [ master, main ]
+    paths:
+      - "app/**"
+      - ".github/**"
   pull_request:
-    branches: [ master, main, develop ]
+    branches: [ master, main ]
+    paths:
+      - "app/**"
+      - ".github/**"
+    types:
+      - opened
+      - synchronize
+      - ready_for_review
 
 jobs:
   lint-and-format:

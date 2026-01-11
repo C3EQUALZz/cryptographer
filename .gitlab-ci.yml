@@ -1,0 +1,123 @@
+stages:
+  - validate
+  - test
+  - build
+
+variables:
+  ANDROID_COMPILE_SDK: "36"
+  ANDROID_BUILD_TOOLS: "36.0.0"
+  ANDROID_MIN_SDK: "33"
+  ANDROID_TARGET_SDK: "36"
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.configureondemand=true"
+  GRADLE_CACHE_VERSION: "1"
+
+# Cache configuration
+.gradle_cache: &gradle_cache
+  cache:
+    key:
+      files:
+        - gradle/wrapper/gradle-wrapper.properties
+        - gradle/libs.versions.toml
+    paths:
+      - .gradle
+      - build
+      - app/build
+    policy: pull-push
+
+# Android image template
+.android_template: &android_template
+  image: jangrewe/gitlab-ci-android:latest
+  before_script:
+    - export GRADLE_USER_HOME=$(pwd)/.gradle
+    - chmod +x ./gradlew
+
+# Code validation stage
+spotless_check:
+  <<: *android_template
+  <<: *gradle_cache
+  stage: validate
+  script:
+    - ./gradlew spotlessCheck --no-daemon
+  only:
+    - merge_requests
+    - main
+    - develop
+
+detekt_check:
+  <<: *android_template
+  <<: *gradle_cache
+  stage: validate
+  script:
+    - ./gradlew detekt --no-daemon
+  only:
+    - merge_requests
+    - main
+    - develop
+
+# Test stage
+unit_tests:
+  <<: *android_template
+  <<: *gradle_cache
+  stage: test
+  script:
+    - ./gradlew test --no-daemon
+  artifacts:
+    reports:
+      junit: app/build/test-results/test/TEST-*.xml
+    paths:
+      - app/build/reports/tests/
+    expire_in: 1 week
+  only:
+    - merge_requests
+    - main
+    - develop
+    - tags
+
+# Build stage
+build_debug:
+  <<: *android_template
+  <<: *gradle_cache
+  stage: build
+  script:
+    - ./gradlew assembleDebug --no-daemon
+  artifacts:
+    paths:
+      - app/build/outputs/apk/debug/*.apk
+    expire_in: 1 week
+  only:
+    - merge_requests
+    - main
+    - develop
+
+build_release:
+  <<: *android_template
+  <<: *gradle_cache
+  stage: build
+  script:
+    - ./gradlew assembleRelease --no-daemon
+  artifacts:
+    paths:
+      - app/build/outputs/apk/release/*.apk
+    expire_in: 1 month
+  only:
+    - main
+    - tags
+
+# Combined check task (runs all validations)
+check_all:
+  <<: *android_template
+  <<: *gradle_cache
+  stage: validate
+  script:
+    - ./gradlew check --no-daemon
+  artifacts:
+    reports:
+      junit: app/build/test-results/test/TEST-*.xml
+    paths:
+      - app/build/reports/
+    expire_in: 1 week
+  only:
+    - merge_requests
+    - main
+    - develop
+
