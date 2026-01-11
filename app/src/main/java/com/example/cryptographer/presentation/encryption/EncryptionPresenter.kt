@@ -74,7 +74,10 @@ class EncryptionPresenter(
             }
 
             logger.info {
-                "Presenter: Text encrypted successfully: algorithm=${key.algorithm}, size=${encryptedText.encryptedData.size} bytes"
+                "Presenter: " +
+                    "Text encrypted successfully:" +
+                    " algorithm=${key.algorithm}," +
+                    " size=${encryptedText.encryptedData.size} bytes"
             }
             Result.success(
                 EncryptedTextInfo(

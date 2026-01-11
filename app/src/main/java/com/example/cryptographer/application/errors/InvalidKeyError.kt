@@ -1,7 +1,5 @@
 package com.example.cryptographer.application.errors
 
-import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
-
 /**
  * Error thrown when a key is invalid for a specific operation.
  *
@@ -16,14 +14,5 @@ import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 class InvalidKeyError(
     val keyId: String,
     val reason: String,
-) : ApplicationError("Invalid key: keyId=$keyId, reason=$reason") {
-    companion object {
-        fun wrongAlgorithm(keyId: String, keyAlgorithm: EncryptionAlgorithm, requiredAlgorithm: EncryptionAlgorithm): InvalidKeyError {
-            return InvalidKeyError(
-                keyId = keyId,
-                reason = "Key algorithm ($keyAlgorithm) does not match required algorithm ($requiredAlgorithm)",
-            )
-        }
-    }
-}
+) : ApplicationError("Invalid key: keyId=$keyId, reason=$reason")
 

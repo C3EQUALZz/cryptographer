@@ -3,6 +3,7 @@ package com.example.cryptographer.domain.text.services
 import com.example.cryptographer.domain.text.errors.UnsupportedAlgorithmError
 import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import com.example.cryptographer.test.factories.KeyFactory
+import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull

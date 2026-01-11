@@ -44,7 +44,9 @@ class ChaCha20DecryptTextCommandHandler(
             val decryptedContent = String(decryptedBytes, Charsets.UTF_8)
 
             logger.info {
-                "ChaCha20 text decryption successful: algorithm=${command.key.algorithm}, decryptedLength=${decryptedContent.length}"
+                "ChaCha20 text decryption successful: " +
+                    "algorithm=${command.key.algorithm}, " +
+                    "decryptedLength=${decryptedContent.length}"
             }
             Result.success(DecryptedTextView(decryptedContent))
         } catch (e: AppError) {
