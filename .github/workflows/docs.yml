@@ -6,9 +6,13 @@ on:
       - main
     paths:
       - "docs/**"
+      - "mkdocs.yml"
+      - "./github/**"
   pull_request:
     paths:
       - "docs/**"
+      - "mkdocs.yml"
+      - "./github/**"
     types:
       - opened
       - synchronize
