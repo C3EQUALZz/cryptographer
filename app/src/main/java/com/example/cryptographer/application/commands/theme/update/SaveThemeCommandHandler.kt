@@ -1,6 +1,7 @@
 package com.example.cryptographer.application.commands.theme.update
 
 import com.example.cryptographer.application.common.ports.settings.SettingsCommandGateway
+import com.example.cryptographer.domain.common.errors.AppError
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**
@@ -33,7 +34,7 @@ class SaveThemeCommandHandler(
                 logger.warn { "Failed to save theme mode: ${command.themeMode}" }
                 Result.failure(Exception("Failed to save theme mode"))
             }
-        } catch (e: Exception) {
+        } catch (e: AppError) {
             logger.error(e) { "Error handling SaveThemeCommand: ${e.message}" }
             Result.failure(e)
         }

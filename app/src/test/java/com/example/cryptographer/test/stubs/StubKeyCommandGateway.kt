@@ -60,5 +60,4 @@ class StubKeyCommandGateway(
     fun setShouldFailDeleteAll(shouldFail: Boolean) {
         shouldFailDeleteAll = shouldFail
     }
-
 }

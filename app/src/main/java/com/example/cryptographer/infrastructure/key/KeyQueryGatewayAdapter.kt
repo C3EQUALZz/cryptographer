@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import com.example.cryptographer.application.common.ports.key.KeyQueryGateway
 import com.example.cryptographer.domain.text.entities.EncryptionKey
 import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
+import com.example.cryptographer.infrastructure.errors.InfrastructureError
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.Base64
@@ -50,7 +51,7 @@ class KeyQueryGatewayAdapter @Inject constructor(
                 value = keyBytes,
                 algorithm = algorithm,
             )
-        } catch (e: Exception) {
+        } catch (e: InfrastructureError) {
             logger.error(e) { "Failed to retrieve key: keyId=$keyId" }
             null
         }

@@ -2,6 +2,7 @@ package com.example.cryptographer.application.queries.language.read
 
 import com.example.cryptographer.application.common.ports.settings.SettingsQueryGateway
 import com.example.cryptographer.application.common.views.LanguageView
+import com.example.cryptographer.domain.common.errors.AppError
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**
@@ -30,7 +31,7 @@ class LoadLanguageQueryHandler(
             val languageCode = settingsQueryGateway.loadLanguage()
             logger.debug { "Language loaded: $languageCode" }
             Result.success(LanguageView(languageCode = languageCode))
-        } catch (e: Exception) {
+        } catch (e: AppError) {
             logger.error(e) { "Error handling LoadLanguageQuery: ${e.message}" }
             Result.failure(e)
         }

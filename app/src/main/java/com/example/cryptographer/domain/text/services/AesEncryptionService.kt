@@ -1,9 +1,10 @@
 package com.example.cryptographer.domain.text.services
 
-import com.example.cryptographer.domain.common.errors.UnsupportedAlgorithmError
+import com.example.cryptographer.domain.common.errors.DomainError
 import com.example.cryptographer.domain.common.services.DomainService
 import com.example.cryptographer.domain.text.entities.EncryptedText
 import com.example.cryptographer.domain.text.entities.EncryptionKey
+import com.example.cryptographer.domain.text.errors.UnsupportedAlgorithmError
 import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.security.SecureRandom
@@ -29,6 +30,16 @@ class AesEncryptionService : DomainService() {
         private const val TRANSFORMATION = "AES/GCM/NoPadding"
         private const val GCM_TAG_LENGTH = 128 // bits
         private const val GCM_IV_LENGTH = 12 // bytes (96 bits)
+
+        // AES key sizes in bits
+        private const val AES_128_KEY_SIZE_BITS = 128
+        private const val AES_192_KEY_SIZE_BITS = 192
+        private const val AES_256_KEY_SIZE_BITS = 256
+
+        // AES key sizes in bytes
+        private const val AES_128_KEY_SIZE_BYTES = 16 // 128 bits = 16 bytes
+        private const val AES_192_KEY_SIZE_BYTES = 24 // 192 bits = 24 bytes
+        private const val AES_256_KEY_SIZE_BYTES = 32 // 256 bits = 32 bytes
     }
 
     /**
@@ -69,11 +80,9 @@ class AesEncryptionService : DomainService() {
         } catch (e: UnsupportedAlgorithmError) {
             logger.error(e) { "Encryption failed: unsupported algorithm=${key.algorithm}" }
             Result.failure(e)
-        } catch (e: Exception) {
+        } catch (e: DomainError) {
             logger.error(e) { "Encryption failed: algorithm=${key.algorithm}, error=${e.message}" }
-            Result.failure(
-                Exception("Encryption error: ${e.message}", e),
-            )
+            Result.failure(e)
         }
     }
 
@@ -114,11 +123,9 @@ class AesEncryptionService : DomainService() {
         } catch (e: UnsupportedAlgorithmError) {
             logger.error(e) { "Decryption failed: unsupported algorithm=${key.algorithm}" }
             Result.failure(e)
-        } catch (e: Exception) {
+        } catch (e: DomainError) {
             logger.error(e) { "Decryption failed: algorithm=${key.algorithm}, error=${e.message}" }
-            Result.failure(
-                Exception("Decryption error: ${e.message}", e),
-            )
+            Result.failure(e)
         }
     }
 
@@ -131,9 +138,9 @@ class AesEncryptionService : DomainService() {
     fun generateKey(algorithm: EncryptionAlgorithm): Result<EncryptionKey> {
         return try {
             val keySize = when (algorithm) {
-                EncryptionAlgorithm.AES_128 -> 128
-                EncryptionAlgorithm.AES_192 -> 192
-                EncryptionAlgorithm.AES_256 -> 256
+                EncryptionAlgorithm.AES_128 -> AES_128_KEY_SIZE_BITS
+                EncryptionAlgorithm.AES_192 -> AES_192_KEY_SIZE_BITS
+                EncryptionAlgorithm.AES_256 -> AES_256_KEY_SIZE_BITS
                 EncryptionAlgorithm.CHACHA20_256 -> throw UnsupportedAlgorithmError(
                     algorithm,
                     "AesEncryptionService",
@@ -157,10 +164,13 @@ class AesEncryptionService : DomainService() {
         } catch (e: UnsupportedAlgorithmError) {
             logger.error(e) { "Key generation failed: unsupported algorithm=$algorithm" }
             Result.failure(e)
+        } catch (e: DomainError) {
+            logger.error(e) { "Key generation failed: algorithm=$algorithm, error=${e.message}" }
+            Result.failure(e)
         } catch (e: Exception) {
             logger.error(e) { "Key generation failed: algorithm=$algorithm, error=${e.message}" }
             Result.failure(
-                Exception("Key generation error: ${e.message}", e),
+                DomainError("Key generation error: ${e.message}", e),
             )
         }
     }
@@ -171,9 +181,9 @@ class AesEncryptionService : DomainService() {
     private fun validateKey(key: EncryptionKey) {
         // Check key length according to the algorithm
         val expectedKeyLength = when (key.algorithm) {
-            EncryptionAlgorithm.AES_128 -> 16 // 128 bits = 16 bytes
-            EncryptionAlgorithm.AES_192 -> 24 // 192 bits = 24 bytes
-            EncryptionAlgorithm.AES_256 -> 32 // 256 bits = 32 bytes
+            EncryptionAlgorithm.AES_128 -> AES_128_KEY_SIZE_BYTES
+            EncryptionAlgorithm.AES_192 -> AES_192_KEY_SIZE_BYTES
+            EncryptionAlgorithm.AES_256 -> AES_256_KEY_SIZE_BYTES
             EncryptionAlgorithm.CHACHA20_256 -> throw UnsupportedAlgorithmError(
                 key.algorithm,
                 "AesEncryptionService",

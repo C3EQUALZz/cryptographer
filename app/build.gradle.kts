@@ -145,6 +145,14 @@ detekt {
     baseline = file("$rootDir/detekt-baseline.xml")
 }
 
+// Configure detekt tasks to use JVM target 17 (detekt doesn't support JVM 21)
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    jvmTarget = "17"
+    // Exclude color configuration files from detekt checks
+    // (hex color values are not magic numbers in this context)
+    exclude("**/setup/configs/theme/Color.kt")
+}
+
 // Suppress warning about dynamic Java agent loading (used by MockK)
 tasks.withType<Test>().configureEach {
     jvmArgs("-XX:+EnableDynamicAgentLoading")

@@ -3,7 +3,7 @@ package com.example.cryptographer.application.commands.key.deleteall
 import com.example.cryptographer.test.factories.KeyFactory
 import com.example.cryptographer.test.stubs.StubKeyCommandGateway
 import com.example.cryptographer.test.stubs.StubKeyQueryGateway
-import org.junit.Assert.*
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 

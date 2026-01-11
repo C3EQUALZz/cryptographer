@@ -1,6 +1,7 @@
 package com.example.cryptographer.application.commands.text.encrypt
 
 import com.example.cryptographer.application.common.views.EncryptedTextView
+import com.example.cryptographer.domain.common.errors.AppError
 import com.example.cryptographer.domain.text.services.ChaCha20EncryptionService
 import com.example.cryptographer.domain.text.services.TextService
 import com.example.cryptographer.domain.text.valueobjects.TextEncoding
@@ -55,11 +56,9 @@ class ChaCha20EncryptTextCommandHandler(
             result.map { encryptedText ->
                 EncryptedTextView(encryptedText)
             }
-        } catch (e: Exception) {
+        } catch (e: AppError) {
             logger.error(e) { "Error handling ChaCha20 EncryptTextCommand: ${e.message}" }
-            Result.failure(
-                Exception("ChaCha20 text encryption error: ${e.message}", e),
-            )
+            Result.failure(e)
         }
     }
 }

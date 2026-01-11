@@ -1,6 +1,8 @@
 package com.example.cryptographer.application.commands.key.delete
 
+import com.example.cryptographer.application.errors.KeyDeleteError
 import com.example.cryptographer.application.common.ports.key.KeyCommandGateway
+import com.example.cryptographer.domain.common.errors.AppError
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**
@@ -33,9 +35,9 @@ class DeleteKeyCommandHandler(
                 Result.success(Unit)
             } else {
                 logger.error { "Failed to delete key: keyId=${command.keyId}" }
-                Result.failure(Exception("Failed to delete key"))
+                Result.failure(KeyDeleteError(command.keyId))
             }
-        } catch (e: Exception) {
+        } catch (e: AppError) {
             logger.error(e) { "Error handling DeleteKeyCommand: keyId=${command.keyId}" }
             Result.failure(e)
         }

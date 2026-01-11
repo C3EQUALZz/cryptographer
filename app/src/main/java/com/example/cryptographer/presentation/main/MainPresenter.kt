@@ -8,6 +8,7 @@ import com.example.cryptographer.application.queries.language.read.LoadLanguageQ
 import com.example.cryptographer.application.queries.language.read.LoadLanguageQueryHandler
 import com.example.cryptographer.application.queries.theme.read.LoadThemeQuery
 import com.example.cryptographer.application.queries.theme.read.LoadThemeQueryHandler
+import com.example.cryptographer.domain.common.errors.AppError
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**
@@ -37,7 +38,7 @@ class MainPresenter(
             val themeViewResult = loadThemeHandler(query)
 
             if (themeViewResult.isFailure) {
-                val error = themeViewResult.exceptionOrNull() ?: Exception("Failed to load theme mode")
+                val error = themeViewResult.exceptionOrNull() ?: AppError("Failed to load theme mode")
                 logger.error(error) { "Presenter: Failed to load theme mode: ${error.message}" }
                 return Result.failure(error)
             }
@@ -45,7 +46,7 @@ class MainPresenter(
             val themeView = themeViewResult.getOrThrow()
             logger.debug { "Presenter: Theme mode loaded: ${themeView.themeMode}" }
             Result.success(themeView.themeMode)
-        } catch (e: Exception) {
+        } catch (e: AppError) {
             logger.error(e) { "Presenter: Error loading theme mode: ${e.message}" }
             Result.failure(e)
         }
@@ -70,7 +71,7 @@ class MainPresenter(
             }
 
             result
-        } catch (e: Exception) {
+        } catch (e: AppError) {
             logger.error(e) { "Presenter: Error saving theme mode: ${e.message}" }
             Result.failure(e)
         }
@@ -88,7 +89,7 @@ class MainPresenter(
             val languageViewResult = loadLanguageHandler(query)
 
             if (languageViewResult.isFailure) {
-                val error = languageViewResult.exceptionOrNull() ?: Exception("Failed to load language")
+                val error = languageViewResult.exceptionOrNull() ?: AppError("Failed to load language")
                 logger.error(error) { "Presenter: Failed to load language: ${error.message}" }
                 return Result.failure(error)
             }
@@ -96,7 +97,7 @@ class MainPresenter(
             val languageView = languageViewResult.getOrThrow()
             logger.debug { "Presenter: Language loaded: ${languageView.languageCode}" }
             Result.success(languageView.languageCode)
-        } catch (e: Exception) {
+        } catch (e: AppError) {
             logger.error(e) { "Presenter: Error loading language: ${e.message}" }
             Result.failure(e)
         }
@@ -121,7 +122,7 @@ class MainPresenter(
             }
 
             result
-        } catch (e: Exception) {
+        } catch (e: AppError) {
             logger.error(e) { "Presenter: Error saving language: ${e.message}" }
             Result.failure(e)
         }

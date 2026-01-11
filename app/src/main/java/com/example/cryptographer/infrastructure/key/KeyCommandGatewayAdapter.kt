@@ -6,6 +6,7 @@ import androidx.core.content.edit
 import com.example.cryptographer.application.common.ports.key.KeyCommandGateway
 import com.example.cryptographer.application.common.ports.key.KeyQueryGateway
 import com.example.cryptographer.domain.text.entities.EncryptionKey
+import com.example.cryptographer.infrastructure.errors.InfrastructureError
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.Base64
@@ -45,7 +46,7 @@ class KeyCommandGatewayAdapter @Inject constructor(
             }
             logger.debug { "Key saved successfully: keyId=$keyId, algorithm=$algorithmName" }
             true
-        } catch (e: Exception) {
+        } catch (e: InfrastructureError) {
             logger.error(e) { "Failed to save key: keyId=$keyId, algorithm=${key.algorithm}" }
             false
         }
@@ -59,7 +60,7 @@ class KeyCommandGatewayAdapter @Inject constructor(
             }
             logger.debug { "Key deleted successfully: keyId=$keyId" }
             true
-        } catch (e: Exception) {
+        } catch (e: InfrastructureError) {
             logger.error(e) { "Failed to delete key: keyId=$keyId" }
             false
         }
@@ -78,7 +79,7 @@ class KeyCommandGatewayAdapter @Inject constructor(
             }
             logger.info { "All keys deleted successfully: count=${allKeyIds.size}" }
             true
-        } catch (e: Exception) {
+        } catch (e: InfrastructureError) {
             logger.error(e) { "Failed to delete all keys" }
             false
         }

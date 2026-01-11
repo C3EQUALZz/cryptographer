@@ -1,5 +1,6 @@
 package com.example.cryptographer.domain.text.services
 
+import com.example.cryptographer.domain.common.errors.DomainError
 import com.example.cryptographer.domain.common.services.DomainService
 import com.example.cryptographer.domain.text.entities.Text
 import com.example.cryptographer.domain.text.ports.TextIdGeneratorPort
@@ -54,7 +55,7 @@ class TextService(
 
             logger.info { "Text entity created successfully: id=$textId, length=${text.length}" }
             Result.success(text)
-        } catch (e: Exception) {
+        } catch (e: DomainError) {
             logger.error(e) { "Error creating Text entity: ${e.message}" }
             Result.failure(e)
         }

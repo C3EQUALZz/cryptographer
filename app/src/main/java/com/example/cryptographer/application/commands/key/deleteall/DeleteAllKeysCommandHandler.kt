@@ -1,6 +1,8 @@
 package com.example.cryptographer.application.commands.key.deleteall
 
+import com.example.cryptographer.application.errors.KeyDeleteAllError
 import com.example.cryptographer.application.common.ports.key.KeyCommandGateway
+import com.example.cryptographer.domain.common.errors.AppError
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**
@@ -33,9 +35,9 @@ class DeleteAllKeysCommandHandler(
                 Result.success(Unit)
             } else {
                 logger.error { "Failed to delete all keys" }
-                Result.failure(Exception("Failed to delete all keys"))
+                Result.failure(KeyDeleteAllError())
             }
-        } catch (e: Exception) {
+        } catch (e: AppError) {
             logger.error(e) { "Error handling DeleteAllKeysCommand" }
             Result.failure(e)
         }

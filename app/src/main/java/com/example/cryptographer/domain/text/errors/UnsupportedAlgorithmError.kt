@@ -1,6 +1,7 @@
-package com.example.cryptographer.domain.common.errors
+package com.example.cryptographer.domain.text.errors
 
 import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
+import com.example.cryptographer.domain.common.errors.DomainError
 
 /**
  * Domain error indicating that an encryption algorithm is not supported.

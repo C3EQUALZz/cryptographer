@@ -2,6 +2,7 @@ package com.example.cryptographer.presentation.encoding
 
 import com.example.cryptographer.application.commands.text.convertencoding.ConvertTextEncodingCommand
 import com.example.cryptographer.application.commands.text.convertencoding.ConvertTextEncodingCommandHandler
+import com.example.cryptographer.domain.common.errors.AppError
 import com.example.cryptographer.domain.text.valueobjects.TextEncoding
 import io.github.oshai.kotlinlogging.KotlinLogging
 
@@ -48,7 +49,7 @@ class EncodingPresenter(
                 "Presenter: Text converted successfully: targetEncoding=$targetEncoding, convertedLength=${converted.length}"
             }
             Result.success(converted)
-        } catch (e: Exception) {
+        } catch (e: AppError) {
             logger.error(e) { "Presenter: Error converting text: ${e.message}" }
             Result.failure(e)
         }

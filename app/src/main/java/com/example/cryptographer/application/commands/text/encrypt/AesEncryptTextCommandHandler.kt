@@ -1,6 +1,7 @@
 package com.example.cryptographer.application.commands.text.encrypt
 
 import com.example.cryptographer.application.common.views.EncryptedTextView
+import com.example.cryptographer.domain.common.errors.AppError
 import com.example.cryptographer.domain.text.services.AesEncryptionService
 import com.example.cryptographer.domain.text.services.TextService
 import com.example.cryptographer.domain.text.valueobjects.TextEncoding
@@ -55,11 +56,9 @@ class AesEncryptTextCommandHandler(
             result.map { encryptedText ->
                 EncryptedTextView(encryptedText)
             }
-        } catch (e: Exception) {
+        } catch (e: AppError) {
             logger.error(e) { "Error handling AES EncryptTextCommand: ${e.message}" }
-            Result.failure(
-                Exception("AES text encryption error: ${e.message}", e),
-            )
+            Result.failure(e)
         }
     }
 }

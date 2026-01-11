@@ -8,6 +8,7 @@ import com.example.cryptographer.application.commands.text.encrypt.AesEncryptTex
 import com.example.cryptographer.application.commands.text.encrypt.AesEncryptTextCommandHandler
 import com.example.cryptographer.application.commands.text.encrypt.ChaCha20EncryptTextCommand
 import com.example.cryptographer.application.commands.text.encrypt.ChaCha20EncryptTextCommandHandler
+import com.example.cryptographer.domain.common.errors.AppError
 import com.example.cryptographer.domain.text.entities.EncryptedText
 import com.example.cryptographer.domain.text.entities.EncryptionKey
 import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
@@ -82,7 +83,7 @@ class EncryptionPresenter(
                     algorithm = key.algorithm,
                 ),
             )
-        } catch (e: Exception) {
+        } catch (e: AppError) {
             logger.error(e) { "Presenter: Error encrypting text: ${e.message}" }
             Result.failure(e)
         }
@@ -128,7 +129,7 @@ class EncryptionPresenter(
             }
 
             if (decryptedTextViewResult.isFailure) {
-                val error = decryptedTextViewResult.exceptionOrNull() ?: Exception("Decryption failed")
+                val error = decryptedTextViewResult.exceptionOrNull() ?: AppError("Decryption failed")
                 logger.error(error) { "Presenter: Decryption failed: ${error.message}" }
                 return Result.failure(error)
             }
@@ -140,10 +141,10 @@ class EncryptionPresenter(
             Result.success(decryptedText)
         } catch (e: IllegalArgumentException) {
             logger.error(e) { "Presenter: Invalid Base64 input for decryption: ${e.message}" }
-            Result.failure(Exception("Некорректный формат Base64 для зашифрованного текста или IV."))
-        } catch (e: Exception) {
+            Result.failure(AppError("Некорректный формат Base64 для зашифрованного текста или IV.", e))
+        } catch (e: AppError) {
             logger.error(e) { "Presenter: Error decrypting text: ${e.message}" }
-            Result.failure(Exception("Ошибка дешифрования: ${e.message}"))
+            Result.failure(e)
         }
     }
 }

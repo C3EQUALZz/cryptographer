@@ -3,6 +3,7 @@ package com.example.cryptographer.infrastructure.settings
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.cryptographer.application.common.ports.settings.SettingsQueryGateway
+import com.example.cryptographer.infrastructure.errors.InfrastructureError
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
@@ -45,7 +46,7 @@ class SettingsQueryGatewayAdapter @Inject constructor(
                 val themeMode = themePrefs.getString(KEY_THEME_MODE, DEFAULT_THEME) ?: DEFAULT_THEME
                 logger.debug { "Loaded theme mode: $themeMode" }
                 themeMode
-            } catch (e: Exception) {
+            } catch (e: InfrastructureError) {
                 logger.error(e) { "Error loading theme mode: ${e.message}" }
                 DEFAULT_THEME
             }
@@ -58,7 +59,7 @@ class SettingsQueryGatewayAdapter @Inject constructor(
                 val languageCode = localePrefs.getString(KEY_SELECTED_LANGUAGE, DEFAULT_LANGUAGE) ?: DEFAULT_LANGUAGE
                 logger.debug { "Loaded language: $languageCode" }
                 languageCode
-            } catch (e: Exception) {
+            } catch (e: InfrastructureError) {
                 logger.error(e) { "Error loading language: ${e.message}" }
                 DEFAULT_LANGUAGE
             }

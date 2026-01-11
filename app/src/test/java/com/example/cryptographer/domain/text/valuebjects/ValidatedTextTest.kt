@@ -2,7 +2,11 @@ package com.example.cryptographer.domain.text.valuebjects
 
 import com.example.cryptographer.domain.common.errors.DomainFieldError
 import com.example.cryptographer.domain.text.valueobjects.ValidatedText
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**

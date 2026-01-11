@@ -1,5 +1,6 @@
 package com.example.cryptographer.domain.text.valueobjects
 
+import com.example.cryptographer.domain.common.errors.DomainError
 import com.example.cryptographer.domain.common.errors.DomainFieldError
 import com.example.cryptographer.domain.common.values.BaseValueObject
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -72,7 +73,7 @@ class ValidatedText private constructor(
                         }
                     }
                 }
-            } catch (e: Exception) {
+            } catch (e: DomainError) {
                 logger.error(e) { "Text validation error: ${e.message}" }
                 Result.failure(e)
             }

@@ -2,6 +2,7 @@ package com.example.cryptographer.application.queries.theme.read
 
 import com.example.cryptographer.application.common.ports.settings.SettingsQueryGateway
 import com.example.cryptographer.application.common.views.ThemeView
+import com.example.cryptographer.domain.common.errors.AppError
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**
@@ -30,7 +31,7 @@ class LoadThemeQueryHandler(
             val themeMode = settingsQueryGateway.loadThemeMode()
             logger.debug { "Theme mode loaded: $themeMode" }
             Result.success(ThemeView(themeMode = themeMode))
-        } catch (e: Exception) {
+        } catch (e: AppError) {
             logger.error(e) { "Error handling LoadThemeQuery: ${e.message}" }
             Result.failure(e)
         }

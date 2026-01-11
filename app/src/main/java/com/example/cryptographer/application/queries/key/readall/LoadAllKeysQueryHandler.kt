@@ -2,6 +2,7 @@ package com.example.cryptographer.application.queries.key.readall
 
 import com.example.cryptographer.application.common.ports.key.KeyQueryGateway
 import com.example.cryptographer.application.common.views.KeyView
+import com.example.cryptographer.domain.common.errors.AppError
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.Base64
 
@@ -43,7 +44,7 @@ class LoadAllKeysQueryHandler(
 
             logger.debug { "Loaded ${keys.size} key(s) successfully" }
             Result.success(keys)
-        } catch (e: Exception) {
+        } catch (e: AppError) {
             logger.error(e) { "Error handling LoadAllKeysQuery" }
             Result.failure(e)
         }

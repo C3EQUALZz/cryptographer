@@ -1,9 +1,10 @@
 package com.example.cryptographer.domain.text.services
 
-import com.example.cryptographer.domain.common.errors.UnsupportedAlgorithmError
+import com.example.cryptographer.domain.common.errors.DomainError
 import com.example.cryptographer.domain.common.services.DomainService
 import com.example.cryptographer.domain.text.entities.EncryptedText
 import com.example.cryptographer.domain.text.entities.EncryptionKey
+import com.example.cryptographer.domain.text.errors.UnsupportedAlgorithmError
 import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.security.NoSuchAlgorithmException
@@ -74,17 +75,15 @@ class ChaCha20EncryptionService : DomainService() {
         } catch (e: NoSuchAlgorithmException) {
             logger.error(e) { "ChaCha20 encryption failed: algorithm not available in this environment" }
             Result.failure(
-                Exception(
+                DomainError(
                     "ChaCha20-Poly1305 is not available in this Java/Android environment. " +
                         "Requires Java 11+ or Android API 28+",
                     e,
                 ),
             )
-        } catch (e: Exception) {
+        } catch (e: DomainError) {
             logger.error(e) { "ChaCha20 encryption failed: algorithm=${key.algorithm}, error=${e.message}" }
-            Result.failure(
-                Exception("ChaCha20 encryption error: ${e.message}", e),
-            )
+            Result.failure(e)
         }
     }
 
@@ -135,17 +134,15 @@ class ChaCha20EncryptionService : DomainService() {
         } catch (e: NoSuchAlgorithmException) {
             logger.error(e) { "ChaCha20 decryption failed: algorithm not available in this environment" }
             Result.failure(
-                Exception(
+                DomainError(
                     "ChaCha20-Poly1305 is not available in this Java/Android environment." +
                         " Requires Java 11+ or Android API 28+",
                     e,
                 ),
             )
-        } catch (e: Exception) {
+        } catch (e: DomainError) {
             logger.error(e) { "ChaCha20 decryption failed: algorithm=${key.algorithm}, error=${e.message}" }
-            Result.failure(
-                Exception("ChaCha20 decryption error: ${e.message}", e),
-            )
+            Result.failure(e)
         }
     }
 
@@ -188,11 +185,9 @@ class ChaCha20EncryptionService : DomainService() {
         } catch (e: UnsupportedAlgorithmError) {
             logger.error(e) { "ChaCha20 key generation failed: unsupported algorithm=$algorithm" }
             Result.failure(e)
-        } catch (e: Exception) {
+        } catch (e: DomainError) {
             logger.error(e) { "ChaCha20 key generation failed: algorithm=$algorithm, error=${e.message}" }
-            Result.failure(
-                Exception("ChaCha20 key generation error: ${e.message}", e),
-            )
+            Result.failure(e)
         }
     }
 

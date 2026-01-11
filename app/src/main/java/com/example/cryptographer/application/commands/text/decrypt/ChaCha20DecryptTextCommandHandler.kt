@@ -1,6 +1,7 @@
 package com.example.cryptographer.application.commands.text.decrypt
 
 import com.example.cryptographer.application.common.views.DecryptedTextView
+import com.example.cryptographer.domain.common.errors.AppError
 import com.example.cryptographer.domain.text.services.ChaCha20EncryptionService
 import io.github.oshai.kotlinlogging.KotlinLogging
 
@@ -46,11 +47,9 @@ class ChaCha20DecryptTextCommandHandler(
                 "ChaCha20 text decryption successful: algorithm=${command.key.algorithm}, decryptedLength=${decryptedContent.length}"
             }
             Result.success(DecryptedTextView(decryptedContent))
-        } catch (e: Exception) {
+        } catch (e: AppError) {
             logger.error(e) { "Error handling ChaCha20 DecryptTextCommand: ${e.message}" }
-            Result.failure(
-                Exception("ChaCha20 text decryption error: ${e.message}", e),
-            )
+            Result.failure(e)
         }
     }
 }

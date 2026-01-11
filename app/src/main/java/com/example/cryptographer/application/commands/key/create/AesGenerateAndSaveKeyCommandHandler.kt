@@ -1,7 +1,9 @@
 package com.example.cryptographer.application.commands.key.create
 
+import com.example.cryptographer.application.errors.KeySaveError
 import com.example.cryptographer.application.common.ports.key.KeyCommandGateway
 import com.example.cryptographer.application.common.views.KeyIdView
+import com.example.cryptographer.domain.common.errors.AppError
 import com.example.cryptographer.domain.text.services.AesEncryptionService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.UUID
@@ -53,9 +55,9 @@ class AesGenerateAndSaveKeyCommandHandler(
                 Result.success(KeyIdView(keyId))
             } else {
                 logger.error { "Failed to save AES key: keyId=$keyId" }
-                Result.failure(Exception("Failed to save AES key"))
+                Result.failure(KeySaveError(keyId))
             }
-        } catch (e: Exception) {
+        } catch (e: AppError) {
             logger.error(e) { "Error handling AES GenerateAndSaveKeyCommand: algorithm=${command.algorithm}" }
             Result.failure(e)
         }

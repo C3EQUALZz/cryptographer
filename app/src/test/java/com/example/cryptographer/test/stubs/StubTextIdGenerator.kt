@@ -31,5 +31,4 @@ class StubTextIdGenerator(
     fun setNextId(id: String) {
         nextId = id
     }
-
 }

@@ -12,6 +12,7 @@ import com.example.cryptographer.application.queries.key.readall.LoadAllKeysQuer
 import com.example.cryptographer.application.queries.key.readall.LoadAllKeysQueryHandler
 import com.example.cryptographer.application.queries.key.readbyid.LoadKeyQuery
 import com.example.cryptographer.application.queries.key.readbyid.LoadKeyQueryHandler
+import com.example.cryptographer.domain.common.errors.AppError
 import com.example.cryptographer.domain.text.entities.EncryptionKey
 import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -94,7 +95,7 @@ class KeyGenerationPresenter(
                     keyBase64 = keyView.keyBase64,
                 ),
             )
-        } catch (e: Exception) {
+        } catch (e: AppError) {
             logger.error(e) { "Presenter: Error generating and saving key: algorithm=$algorithm" }
             Result.failure(e)
         }
@@ -131,7 +132,7 @@ class KeyGenerationPresenter(
                     keyBase64 = keyView.keyBase64,
                 ),
             )
-        } catch (e: Exception) {
+        } catch (e: AppError) {
             logger.error(e) { "Error loading key: keyId=$keyId" }
             Result.failure(e)
         }
@@ -183,7 +184,7 @@ class KeyGenerationPresenter(
             }
 
             Result.success(keyItems)
-        } catch (e: Exception) {
+        } catch (e: AppError) {
             logger.error(e) { "Error loading all keys" }
             Result.failure(e)
         }

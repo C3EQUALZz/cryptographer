@@ -3,6 +3,7 @@ package com.example.cryptographer.infrastructure.settings
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.cryptographer.application.common.ports.settings.SettingsCommandGateway
+import com.example.cryptographer.infrastructure.errors.InfrastructureError
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
@@ -42,7 +43,7 @@ class SettingsCommandGatewayAdapter @Inject constructor(
             try {
                 logger.debug { "Saving theme mode: $themeMode" }
                 themePrefs.edit().putString(KEY_THEME_MODE, themeMode).commit()
-            } catch (e: Exception) {
+            } catch (e: InfrastructureError) {
                 logger.error(e) { "Error saving theme mode: ${e.message}" }
                 false
             }
@@ -54,7 +55,7 @@ class SettingsCommandGatewayAdapter @Inject constructor(
             try {
                 logger.debug { "Saving language: $languageCode" }
                 localePrefs.edit().putString(KEY_SELECTED_LANGUAGE, languageCode).commit()
-            } catch (e: Exception) {
+            } catch (e: InfrastructureError) {
                 logger.error(e) { "Error saving language: ${e.message}" }
                 false
             }

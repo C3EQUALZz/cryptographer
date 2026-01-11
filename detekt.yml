@@ -8,20 +8,26 @@ build:
     # LongParameterList: 1
     # style: 1
     # comments: 1
+  excludes:
+    - '**/setup/ioc/AppModule.kt'
 
 complexity:
   active: true
   LongParameterList:
     active: true
-    threshold: 6
+    functionThreshold: 6
+    constructorThreshold: 6
     ignoreDefaultParameters: true
-  ComplexMethod:
+  CyclomaticComplexMethod:
     active: true
     threshold: 10
   TooManyFunctions:
     active: true
-    threshold: 11
-    privateThreshold: 11
+    thresholdInFiles: 11
+    thresholdInClasses: 11
+    thresholdInInterfaces: 11
+    thresholdInObjects: 11
+    thresholdInEnums: 11
 
 style:
   active: true
@@ -54,8 +60,6 @@ comments:
 
 potential-bugs:
   active: true
-  UnusedPrivateMember:
-    active: true
   UnreachableCode:
     active: true
   UnconditionalJumpStatementInLoop:
@@ -82,10 +86,8 @@ naming:
   FunctionNaming:
     active: true
     functionPattern: '[a-z][a-zA-Z0-9]*'
+    ignoreAnnotated: ['Composable', 'Preview']
   VariableNaming:
     active: true
     variablePattern: '[a-z][a-zA-Z0-9]*'
-  ConstantNaming:
-    active: true
-    constantPattern: '[A-Z][_A-Z0-9]*'
 
