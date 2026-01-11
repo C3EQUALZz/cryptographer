@@ -1,4 +1,4 @@
-package com.example.cryptographer.domain.text.value_objects
+package com.example.cryptographer.domain.text.valueobjects
 
 /**
  * Enumeration of supported encryption algorithms.

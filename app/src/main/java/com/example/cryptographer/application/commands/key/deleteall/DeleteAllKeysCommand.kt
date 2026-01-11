@@ -1,4 +1,4 @@
-package com.example.cryptographer.application.commands.key.delete_all
+package com.example.cryptographer.application.commands.key.deleteall
 
 /**
  * Command for deleting all encryption keys.

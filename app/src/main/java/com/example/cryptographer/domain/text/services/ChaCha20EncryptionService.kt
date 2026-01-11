@@ -3,7 +3,7 @@ package com.example.cryptographer.domain.text.services
 import com.example.cryptographer.domain.common.errors.UnsupportedAlgorithmError
 import com.example.cryptographer.domain.common.services.DomainService
 import com.example.cryptographer.domain.text.entities.EncryptedText
-import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
+import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import com.example.cryptographer.domain.text.entities.EncryptionKey
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.security.NoSuchAlgorithmException
@@ -41,7 +41,7 @@ class ChaCha20EncryptionService : DomainService() {
 
             logger.debug { "Starting ChaCha20 encryption: algorithm=${key.algorithm}, dataSize=${data.size} bytes" }
             val secretKey = SecretKeySpec(key.value, ALGORITHM)
-            
+
             // Use ChaCha20-Poly1305 transformation (available in Java 11+ and Android API 28+)
             // For older versions, this will throw an exception which will be caught below
             val transformation = "$ALGORITHM-Poly1305/None/NoPadding"
@@ -57,7 +57,10 @@ class ChaCha20EncryptionService : DomainService() {
 
             val encryptedData = cipher.doFinal(data)
 
-            logger.debug { "ChaCha20 encryption successful: algorithm=${key.algorithm}, encryptedSize=${encryptedData.size} bytes" }
+            logger.debug {
+                "ChaCha20 encryption successful: algorithm=${key.algorithm}, " +
+                    "encryptedSize=${encryptedData.size} bytes"
+            }
             Result.success(
                 EncryptedText(
                     encryptedData = encryptedData,
@@ -71,7 +74,11 @@ class ChaCha20EncryptionService : DomainService() {
         } catch (e: NoSuchAlgorithmException) {
             logger.error(e) { "ChaCha20 encryption failed: algorithm not available in this environment" }
             Result.failure(
-                Exception("ChaCha20-Poly1305 is not available in this Java/Android environment. Requires Java 11+ or Android API 28+", e)
+                Exception(
+                    "ChaCha20-Poly1305 is not available in this Java/Android environment. " +
+                        "Requires Java 11+ or Android API 28+",
+                    e
+                )
             )
         } catch (e: Exception) {
             logger.error(e) { "ChaCha20 encryption failed: algorithm=${key.algorithm}, error=${e.message}" }
@@ -95,13 +102,18 @@ class ChaCha20EncryptionService : DomainService() {
             if (encryptedText.initializationVector == null) {
                 logger.warn { "ChaCha20 decryption failed: nonce is missing" }
                 return Result.failure(
-                    IllegalArgumentException("Nonce (Initialization Vector) is missing for ChaCha20 decryption")
+                    IllegalArgumentException(
+                        "Nonce (Initialization Vector) is missing for ChaCha20 decryption"
+                    )
                 )
             }
 
-            logger.debug { "Starting ChaCha20 decryption: algorithm=${key.algorithm}, encryptedSize=${encryptedText.encryptedData.size} bytes" }
+            logger.debug {
+                "Starting ChaCha20 decryption: algorithm=${key.algorithm}, " +
+                    "encryptedSize=${encryptedText.encryptedData.size} bytes"
+            }
             val secretKey = SecretKeySpec(key.value, ALGORITHM)
-            
+
             // Use ChaCha20-Poly1305 transformation (available in Java 11+ and Android API 28+)
             val transformation = "$ALGORITHM-Poly1305/None/NoPadding"
             val cipher = Cipher.getInstance(transformation)
@@ -112,7 +124,10 @@ class ChaCha20EncryptionService : DomainService() {
 
             val decryptedData = cipher.doFinal(encryptedText.encryptedData)
 
-            logger.debug { "ChaCha20 decryption successful: algorithm=${key.algorithm}, decryptedSize=${decryptedData.size} bytes" }
+            logger.debug {
+                "ChaCha20 decryption successful: algorithm=${key.algorithm}," +
+                    " decryptedSize=${decryptedData.size} bytes"
+            }
             Result.success(decryptedData)
         } catch (e: UnsupportedAlgorithmError) {
             logger.error(e) { "ChaCha20 decryption failed: unsupported algorithm=${key.algorithm}" }
@@ -120,7 +135,10 @@ class ChaCha20EncryptionService : DomainService() {
         } catch (e: NoSuchAlgorithmException) {
             logger.error(e) { "ChaCha20 decryption failed: algorithm not available in this environment" }
             Result.failure(
-                Exception("ChaCha20-Poly1305 is not available in this Java/Android environment. Requires Java 11+ or Android API 28+", e)
+                Exception(
+                    "ChaCha20-Poly1305 is not available in this Java/Android environment." +
+                        " Requires Java 11+ or Android API 28+", e
+                )
             )
         } catch (e: Exception) {
             logger.error(e) { "ChaCha20 decryption failed: algorithm=${key.algorithm}, error=${e.message}" }
@@ -144,16 +162,21 @@ class ChaCha20EncryptionService : DomainService() {
                 }
                 EncryptionAlgorithm.AES_128,
                 EncryptionAlgorithm.AES_192,
-                EncryptionAlgorithm.AES_256 -> throw UnsupportedAlgorithmError(algorithm, "ChaCha20EncryptionService")
+                EncryptionAlgorithm.AES_256 -> throw UnsupportedAlgorithmError(
+                    algorithm,
+                    "ChaCha20EncryptionService"
+                )
             }
 
             logger.debug { "Generating ChaCha20 encryption key: algorithm=$algorithm, keySize=256 bits" }
-            
+
             // Generate 256-bit (32-byte) key
             val keyBytes = ByteArray(KEY_LENGTH)
             SecureRandom().nextBytes(keyBytes)
 
-            logger.debug { "ChaCha20 key generated successfully: algorithm=$algorithm, keyLength=${keyBytes.size} bytes" }
+            logger.debug {
+                "ChaCha20 key generated successfully: algorithm=$algorithm, keyLength=${keyBytes.size} bytes"
+            }
             Result.success(
                 EncryptionKey(
                     value = keyBytes,
@@ -182,7 +205,10 @@ class ChaCha20EncryptionService : DomainService() {
             }
             EncryptionAlgorithm.AES_128,
             EncryptionAlgorithm.AES_192,
-            EncryptionAlgorithm.AES_256 -> throw UnsupportedAlgorithmError(key.algorithm, "ChaCha20EncryptionService")
+            EncryptionAlgorithm.AES_256 -> throw UnsupportedAlgorithmError(
+                key.algorithm,
+                "ChaCha20EncryptionService"
+            )
         }
 
         // Check key length for ChaCha20-256 (must be 32 bytes = 256 bits)

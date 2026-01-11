@@ -370,7 +370,11 @@ fun EncryptionScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
-                    enabled = !uiState.isLoading && uiState.encryptedTextInput.isNotBlank() && uiState.selectedKey != null,
+                    enabled = (
+                        !uiState.isLoading
+                            && uiState.encryptedTextInput.isNotBlank()
+                            && uiState.selectedKey != null
+                        ),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.secondary
                     ),

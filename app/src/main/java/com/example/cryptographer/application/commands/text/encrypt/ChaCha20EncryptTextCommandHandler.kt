@@ -1,7 +1,7 @@
 package com.example.cryptographer.application.commands.text.encrypt
 
 import com.example.cryptographer.application.common.views.EncryptedTextView
-import com.example.cryptographer.domain.text.value_objects.TextEncoding
+import com.example.cryptographer.domain.text.valueobjects.TextEncoding
 import com.example.cryptographer.domain.text.services.ChaCha20EncryptionService
 import com.example.cryptographer.domain.text.services.TextService
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -29,7 +29,10 @@ class ChaCha20EncryptTextCommandHandler(
      */
     operator fun invoke(command: ChaCha20EncryptTextCommand): Result<EncryptedTextView> {
         return try {
-            logger.debug { "Handling ChaCha20 EncryptTextCommand: length=${command.rawText.length}, algorithm=${command.key.algorithm}" }
+            logger.debug {
+                "Handling ChaCha20 EncryptTextCommand: length=${command.rawText.length}, " +
+                    "algorithm=${command.key.algorithm}"
+            }
 
             // Validate text using TextService (ensures consistency)
             val text = textService.create(command.rawText, TextEncoding.UTF8).getOrElse { error ->
@@ -43,7 +46,10 @@ class ChaCha20EncryptTextCommandHandler(
             // Encrypt using ChaCha20 service
             val result = chaCha20EncryptionService.encrypt(textBytes, command.key)
             if (result.isSuccess) {
-                logger.info { "ChaCha20 text encryption successful: algorithm=${command.key.algorithm}, encryptedSize=${result.getOrNull()?.encryptedData?.size ?: 0} bytes" }
+                logger.info {
+                    "ChaCha20 text encryption successful: algorithm=${command.key.algorithm}, " +
+                        "encryptedSize=${result.getOrNull()?.encryptedData?.size ?: 0} bytes"
+                }
             }
 
             result.map { encryptedText ->

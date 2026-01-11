@@ -1,9 +1,9 @@
 package com.example.cryptographer.setup.ioc
 
-import com.example.cryptographer.application.commands.text.convert_encoding.ConvertTextEncodingCommandHandler
+import com.example.cryptographer.application.commands.text.convertencoding.ConvertTextEncodingCommandHandler
 import com.example.cryptographer.application.commands.text.decrypt.AesDecryptTextCommandHandler
 import com.example.cryptographer.application.commands.text.decrypt.ChaCha20DecryptTextCommandHandler
-import com.example.cryptographer.application.commands.key.delete_all.DeleteAllKeysCommandHandler
+import com.example.cryptographer.application.commands.key.deleteall.DeleteAllKeysCommandHandler
 import com.example.cryptographer.application.commands.key.delete.DeleteKeyCommandHandler
 import com.example.cryptographer.application.commands.text.encrypt.AesEncryptTextCommandHandler
 import com.example.cryptographer.application.commands.text.encrypt.ChaCha20EncryptTextCommandHandler
@@ -11,8 +11,8 @@ import com.example.cryptographer.application.commands.key.create.AesGenerateAndS
 import com.example.cryptographer.application.commands.key.create.ChaCha20GenerateAndSaveKeyCommandHandler
 import com.example.cryptographer.application.common.ports.key.KeyCommandGateway
 import com.example.cryptographer.application.common.ports.key.KeyQueryGateway
-import com.example.cryptographer.application.queries.key.read_all.LoadAllKeysQueryHandler
-import com.example.cryptographer.application.queries.key.read_by_id.LoadKeyQueryHandler
+import com.example.cryptographer.application.queries.key.readall.LoadAllKeysQueryHandler
+import com.example.cryptographer.application.queries.key.readbyid.LoadKeyQueryHandler
 import com.example.cryptographer.domain.text.ports.TextIdGeneratorPort
 import com.example.cryptographer.domain.text.services.AesEncryptionService
 import com.example.cryptographer.domain.text.services.ChaCha20EncryptionService

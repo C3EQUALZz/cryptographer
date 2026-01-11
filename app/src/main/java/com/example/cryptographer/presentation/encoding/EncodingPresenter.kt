@@ -1,8 +1,8 @@
 package com.example.cryptographer.presentation.encoding
 
-import com.example.cryptographer.application.commands.text.convert_encoding.ConvertTextEncodingCommand
-import com.example.cryptographer.application.commands.text.convert_encoding.ConvertTextEncodingCommandHandler
-import com.example.cryptographer.domain.text.value_objects.TextEncoding
+import com.example.cryptographer.application.commands.text.convertencoding.ConvertTextEncodingCommand
+import com.example.cryptographer.application.commands.text.convertencoding.ConvertTextEncodingCommandHandler
+import com.example.cryptographer.domain.text.valueobjects.TextEncoding
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**

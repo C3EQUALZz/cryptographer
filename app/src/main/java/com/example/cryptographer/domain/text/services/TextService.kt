@@ -2,9 +2,9 @@ package com.example.cryptographer.domain.text.services
 
 import com.example.cryptographer.domain.common.services.DomainService
 import com.example.cryptographer.domain.text.entities.Text
-import com.example.cryptographer.domain.text.value_objects.TextEncoding
+import com.example.cryptographer.domain.text.valueobjects.TextEncoding
 import com.example.cryptographer.domain.text.ports.TextIdGeneratorPort
-import com.example.cryptographer.domain.text.value_objects.ValidatedText
+import com.example.cryptographer.domain.text.valueobjects.ValidatedText
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**

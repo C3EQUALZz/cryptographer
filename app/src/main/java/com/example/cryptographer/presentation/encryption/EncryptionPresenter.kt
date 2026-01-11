@@ -9,7 +9,7 @@ import com.example.cryptographer.application.commands.text.encrypt.AesEncryptTex
 import com.example.cryptographer.application.commands.text.encrypt.ChaCha20EncryptTextCommand
 import com.example.cryptographer.application.commands.text.encrypt.ChaCha20EncryptTextCommandHandler
 import com.example.cryptographer.domain.text.entities.EncryptedText
-import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
+import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import com.example.cryptographer.domain.text.entities.EncryptionKey
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.Base64

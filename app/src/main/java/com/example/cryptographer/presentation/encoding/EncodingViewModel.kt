@@ -2,7 +2,7 @@ package com.example.cryptographer.presentation.encoding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cryptographer.domain.text.value_objects.TextEncoding
+import com.example.cryptographer.domain.text.valueobjects.TextEncoding
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -49,14 +49,19 @@ class ChaCha20GenerateAndSaveKeyCommandHandler(
             val saved = commandGateway.saveKey(keyId, key)
 
             if (saved) {
-                logger.info { "ChaCha20 key generated and saved successfully: keyId=$keyId, algorithm=${command.algorithm}" }
+                logger.info {
+                    "ChaCha20 key generated and saved successfully: " +
+                    "keyId=$keyId, algorithm=${command.algorithm}"
+                }
                 Result.success(KeyIdView(keyId))
             } else {
                 logger.error { "Failed to save ChaCha20 key: keyId=$keyId" }
                 Result.failure(Exception("Failed to save ChaCha20 key"))
             }
         } catch (e: Exception) {
-            logger.error(e) { "Error handling ChaCha20 GenerateAndSaveKeyCommand: algorithm=${command.algorithm}" }
+            logger.error(e) {
+                "Error handling ChaCha20 GenerateAndSaveKeyCommand: algorithm=${command.algorithm}"
+            }
             Result.failure(e)
         }
     }

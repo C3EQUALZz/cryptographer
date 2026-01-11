@@ -1,8 +1,8 @@
 package com.example.cryptographer.test.factories
 
 import com.example.cryptographer.domain.text.entities.Text
-import com.example.cryptographer.domain.text.value_objects.TextEncoding
-import com.example.cryptographer.domain.text.value_objects.ValidatedText
+import com.example.cryptographer.domain.text.valueobjects.TextEncoding
+import com.example.cryptographer.domain.text.valueobjects.ValidatedText
 import java.time.Instant
 import java.util.UUID
 

@@ -1,6 +1,6 @@
-package com.example.cryptographer.application.commands.text.convert_encoding
+package com.example.cryptographer.application.commands.text.convertencoding
 
-import com.example.cryptographer.domain.text.value_objects.TextEncoding
+import com.example.cryptographer.domain.text.valueobjects.TextEncoding
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before

@@ -1,7 +1,7 @@
 <resources>
     <!-- App name -->
     <string name="app_name">Криптограф</string>
-    
+
     <!-- Navigation -->
     <string name="menu">Меню</string>
     <string name="close_menu">Закрыть меню</string>
@@ -10,17 +10,17 @@
     <string name="language_selection">Язык</string>
     <string name="theme_selection">Тема</string>
     <string name="dark_theme">Тёмная тема</string>
-    
+
     <!-- Screen titles -->
     <string name="screen_key_generation">Генерация ключей</string>
     <string name="screen_encryption">Шифрование</string>
     <string name="screen_encoding">Кодирование</string>
-    
+
     <!-- Screen names -->
     <string name="key_generation">Генерация ключей</string>
     <string name="encryption_decryption">Шифрование/Дешифрование</string>
     <string name="encoding">Кодирование</string>
-    
+
     <!-- Key Generation Screen -->
     <string name="key_generation_title">Генератор ключей шифрования</string>
     <string name="key_generation_info">Используйте этот инструмент для генерации криптографических ключей. Сгенерированные ключи можно сохранить и использовать для кодирования.</string>
@@ -47,7 +47,7 @@
     <string name="failed_to_delete_all_keys">Не удалось удалить все ключи: %1$s</string>
     <string name="failed_to_generate_key">Не удалось сгенерировать ключ</string>
     <string name="key_not_found">Ключ не найден</string>
-    
+
     <!-- Encryption Screen -->
     <string name="encryption_title">Шифрование и дешифрование</string>
     <string name="encryption_info">Используйте этот инструмент для шифрования и дешифрования текста с помощью AES ключей. Выберите ключ и введите текст для шифрования или дешифрования.</string>
@@ -64,7 +64,7 @@
     <string name="decrypt">Расшифровать</string>
     <string name="decrypted_text">Расшифрованный текст:</string>
     <string name="clear_all">Очистить всё</string>
-    
+
     <!-- Encoding Screen -->
     <string name="encoding_title">Кодирование текста</string>
     <string name="encoding_info">Введите текст для просмотра в разных кодировках: UTF-8, ASCII и BASE64.</string>
@@ -75,4 +75,3 @@
     <string name="ascii">ASCII</string>
     <string name="base64">BASE64</string>
 </resources>
-

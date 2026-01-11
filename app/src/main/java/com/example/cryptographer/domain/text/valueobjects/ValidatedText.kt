@@ -1,4 +1,4 @@
-package com.example.cryptographer.domain.text.value_objects
+package com.example.cryptographer.domain.text.valueobjects
 
 import com.example.cryptographer.domain.common.errors.DomainFieldError
 import com.example.cryptographer.domain.common.values.BaseValueObject
@@ -41,9 +41,14 @@ class ValidatedText private constructor(
                         )
                     }
                     rawText.length > MAX_TEXT_LENGTH -> {
-                        logger.warn { "Text validation failed: text exceeds maximum length (${rawText.length} > $MAX_TEXT_LENGTH)" }
+                        logger.warn {
+                            "Text validation failed: text exceeds maximum length" +
+                                " (${rawText.length} > $MAX_TEXT_LENGTH)"
+                        }
                         Result.failure(
-                            DomainFieldError("Text exceeds maximum length: $MAX_TEXT_LENGTH characters")
+                            DomainFieldError(
+                                "Text exceeds maximum length: $MAX_TEXT_LENGTH characters"
+                            )
                         )
                     }
                     !isValidUtf8(rawText) -> {
@@ -81,10 +86,10 @@ class ValidatedText private constructor(
          */
         private fun normalizeText(content: String): String {
             return content
-                .replace("\r\n", "\n") // Normalize Windows line breaks first
-                .replace("\r", "\n") // Normalize Mac line breaks
-                .replace(Regex("[ \t]+"), " ") // Replace multiple spaces/tabs with one space (but not \n)
-                .trim() // Remove whitespace from start and end (but preserve \n in the middle)
+                .replace("\r\n", "\n")
+                .replace("\r", "\n")
+                .replace(Regex("[ \t]+"), " ")
+                .trim()
         }
 
         /**

@@ -6,15 +6,15 @@ import com.example.cryptographer.application.commands.key.create.ChaCha20Generat
 import com.example.cryptographer.application.commands.key.create.ChaCha20GenerateAndSaveKeyCommandHandler
 import com.example.cryptographer.application.commands.key.delete.DeleteKeyCommand
 import com.example.cryptographer.application.commands.key.delete.DeleteKeyCommandHandler
-import com.example.cryptographer.application.commands.key.delete_all.DeleteAllKeysCommand
-import com.example.cryptographer.application.commands.key.delete_all.DeleteAllKeysCommandHandler
+import com.example.cryptographer.application.commands.key.deleteall.DeleteAllKeysCommand
+import com.example.cryptographer.application.commands.key.deleteall.DeleteAllKeysCommandHandler
 import com.example.cryptographer.application.common.views.KeyIdView
 import com.example.cryptographer.application.common.views.KeyView
-import com.example.cryptographer.application.queries.key.read_all.LoadAllKeysQuery
-import com.example.cryptographer.application.queries.key.read_all.LoadAllKeysQueryHandler
-import com.example.cryptographer.application.queries.key.read_by_id.LoadKeyQuery
-import com.example.cryptographer.application.queries.key.read_by_id.LoadKeyQueryHandler
-import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
+import com.example.cryptographer.application.queries.key.readall.LoadAllKeysQuery
+import com.example.cryptographer.application.queries.key.readall.LoadAllKeysQueryHandler
+import com.example.cryptographer.application.queries.key.readbyid.LoadKeyQuery
+import com.example.cryptographer.application.queries.key.readbyid.LoadKeyQueryHandler
+import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import com.example.cryptographer.test.factories.KeyFactory
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -63,7 +63,7 @@ class KeyGenerationPresenterTest {
         val key = KeyFactory.createAes256(id = "test-key-id")
         val keyId = "test-key-id"
         val keyBase64 = Base64.getEncoder().encodeToString(key.value)
-        
+
         val keyIdView = KeyIdView(keyId = keyId)
         val keyView = KeyView(
             id = keyId,
@@ -138,7 +138,7 @@ class KeyGenerationPresenterTest {
         val algorithm = EncryptionAlgorithm.AES_256
         val key = KeyFactory.createAes256(id = keyId)
         val keyBase64 = Base64.getEncoder().encodeToString(key.value)
-        
+
         val keyView = KeyView(
             id = keyId,
             algorithm = algorithm,
@@ -303,7 +303,7 @@ class KeyGenerationPresenterTest {
 
         coVerify(exactly = 1) { loadAllKeysHandler(LoadAllKeysQuery) }
     }
-    
+
     @Test
     fun `generateAndSaveKey should work with ChaCha20 algorithm`() = runTest {
         // Given
@@ -311,7 +311,7 @@ class KeyGenerationPresenterTest {
         val key = KeyFactory.createChaCha20_256(id = "test-key-id")
         val keyId = "test-key-id"
         val keyBase64 = Base64.getEncoder().encodeToString(key.value)
-        
+
         val keyIdView = KeyIdView(keyId = keyId)
         val keyView = KeyView(
             id = keyId,

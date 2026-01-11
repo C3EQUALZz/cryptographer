@@ -1,7 +1,7 @@
 package com.example.cryptographer.domain.text.services
 
 import com.example.cryptographer.domain.common.errors.UnsupportedAlgorithmError
-import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
+import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import com.example.cryptographer.test.factories.KeyFactory
 import org.junit.Assert.*
 import org.junit.Before
@@ -120,14 +120,14 @@ class AesEncryptionServiceTest {
         assertTrue(result2.isSuccess)
         val encrypted1 = result1.getOrThrow()
         val encrypted2 = result2.getOrThrow()
-        
+
         // IVs should be different
         assertNotNull(encrypted1.initializationVector)
         assertNotNull(encrypted2.initializationVector)
         assertFalse(
             encrypted1.initializationVector!!.contentEquals(encrypted2.initializationVector!!)
         )
-        
+
         // Encrypted data should be different (due to different IVs)
         assertFalse(encrypted1.encryptedData.contentEquals(encrypted2.encryptedData))
     }

@@ -1,7 +1,7 @@
 package com.example.cryptographer.application.commands.text.decrypt
 
 import com.example.cryptographer.domain.text.services.ChaCha20EncryptionService
-import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
+import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import com.example.cryptographer.test.factories.EncryptedTextFactory
 import com.example.cryptographer.test.factories.KeyFactory
 import io.mockk.every

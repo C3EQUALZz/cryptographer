@@ -1,4 +1,4 @@
-package com.example.cryptographer.application.queries.key.read_all
+package com.example.cryptographer.application.queries.key.readall
 
 /**
  * Query for loading all encryption keys.

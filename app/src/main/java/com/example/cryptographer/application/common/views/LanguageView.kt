@@ -7,6 +7,6 @@ package com.example.cryptographer.application.common.views
  * the result of a language query.
  */
 data class LanguageView(
-    val languageCode: String // Language code (e.g., "en", "ru")
+    val languageCode: String
 )
 

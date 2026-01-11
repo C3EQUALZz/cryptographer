@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.example.cryptographer.application.common.ports.key.KeyQueryGateway
 import com.example.cryptographer.domain.text.entities.EncryptionKey
-import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
+import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import io.github.oshai.kotlinlogging.KotlinLogging
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.Base64

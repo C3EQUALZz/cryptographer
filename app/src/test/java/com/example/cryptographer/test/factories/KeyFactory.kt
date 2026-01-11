@@ -1,7 +1,7 @@
 package com.example.cryptographer.test.factories
 
 import com.example.cryptographer.domain.text.entities.EncryptionKey
-import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
+import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import java.time.Instant
 import java.util.UUID
 
@@ -27,7 +27,7 @@ object KeyFactory {
             EncryptionAlgorithm.AES_256 -> keyBytes.take(32).toByteArray()
             EncryptionAlgorithm.CHACHA20_256 -> keyBytes.take(32).toByteArray() // 256 bits = 32 bytes
         }
-        
+
         return EncryptionKey(
             id = id,
             value = adjustedKeyBytes,

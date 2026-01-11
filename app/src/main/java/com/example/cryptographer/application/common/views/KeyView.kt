@@ -1,6 +1,6 @@
 package com.example.cryptographer.application.common.views
 
-import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
+import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 
 /**
  * View representing a key for presentation layer.

@@ -3,7 +3,7 @@ package com.example.cryptographer.domain.text.services
 import com.example.cryptographer.domain.common.errors.UnsupportedAlgorithmError
 import com.example.cryptographer.domain.common.services.DomainService
 import com.example.cryptographer.domain.text.entities.EncryptedText
-import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
+import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import com.example.cryptographer.domain.text.entities.EncryptionKey
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.security.SecureRandom
@@ -55,7 +55,10 @@ class AesEncryptionService : DomainService() {
 
             val encryptedData = cipher.doFinal(data)
 
-            logger.debug { "Encryption successful: algorithm=${key.algorithm}, encryptedSize=${encryptedData.size} bytes" }
+            logger.debug {
+                "Encryption successful: algorithm=${key.algorithm}, " +
+                    "encryptedSize=${encryptedData.size} bytes"
+            }
             Result.success(
                 EncryptedText(
                     encryptedData = encryptedData,
@@ -92,7 +95,10 @@ class AesEncryptionService : DomainService() {
                 )
             }
 
-            logger.debug { "Starting decryption: algorithm=${key.algorithm}, encryptedSize=${encryptedText.encryptedData.size} bytes" }
+            logger.debug {
+                "Starting decryption: algorithm=${key.algorithm}, " +
+                    "encryptedSize=${encryptedText.encryptedData.size} bytes"
+            }
             val secretKey = SecretKeySpec(key.value, ALGORITHM)
             val cipher = Cipher.getInstance(TRANSFORMATION)
 
@@ -101,7 +107,9 @@ class AesEncryptionService : DomainService() {
 
             val decryptedData = cipher.doFinal(encryptedText.encryptedData)
 
-            logger.debug { "Decryption successful: algorithm=${key.algorithm}, decryptedSize=${decryptedData.size} bytes" }
+            logger.debug {
+                "Decryption successful: algorithm=${key.algorithm}, decryptedSize=${decryptedData.size} bytes"
+            }
             Result.success(decryptedData)
         } catch (e: UnsupportedAlgorithmError) {
             logger.error(e) { "Decryption failed: unsupported algorithm=${key.algorithm}" }
@@ -126,7 +134,10 @@ class AesEncryptionService : DomainService() {
                 EncryptionAlgorithm.AES_128 -> 128
                 EncryptionAlgorithm.AES_192 -> 192
                 EncryptionAlgorithm.AES_256 -> 256
-                EncryptionAlgorithm.CHACHA20_256 -> throw UnsupportedAlgorithmError(algorithm, "AesEncryptionService")
+                EncryptionAlgorithm.CHACHA20_256 -> throw UnsupportedAlgorithmError(
+                    algorithm,
+                    "AesEncryptionService"
+                )
             }
 
             logger.debug { "Generating encryption key: algorithm=$algorithm, keySize=$keySize bits" }
@@ -134,7 +145,9 @@ class AesEncryptionService : DomainService() {
             keyGenerator.init(keySize)
             val secretKey: SecretKey = keyGenerator.generateKey()
 
-            logger.debug { "Key generated successfully: algorithm=$algorithm, keyLength=${secretKey.encoded.size} bytes" }
+            logger.debug {
+                "Key generated successfully: algorithm=$algorithm, keyLength=${secretKey.encoded.size} bytes"
+            }
             Result.success(
                 EncryptionKey(
                     value = secretKey.encoded,
@@ -161,7 +174,10 @@ class AesEncryptionService : DomainService() {
             EncryptionAlgorithm.AES_128 -> 16 // 128 bits = 16 bytes
             EncryptionAlgorithm.AES_192 -> 24 // 192 bits = 24 bytes
             EncryptionAlgorithm.AES_256 -> 32 // 256 bits = 32 bytes
-            EncryptionAlgorithm.CHACHA20_256 -> throw UnsupportedAlgorithmError(key.algorithm, "AesEncryptionService")
+            EncryptionAlgorithm.CHACHA20_256 -> throw UnsupportedAlgorithmError(
+                key.algorithm,
+                "AesEncryptionService"
+            )
         }
 
         if (key.value.size != expectedKeyLength) {

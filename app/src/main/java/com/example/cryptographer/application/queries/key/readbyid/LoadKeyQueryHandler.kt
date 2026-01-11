@@ -1,4 +1,4 @@
-package com.example.cryptographer.application.queries.key.read_all
+package com.example.cryptographer.application.queries.key.readbyid
 
 import com.example.cryptographer.application.common.ports.key.KeyQueryGateway
 import com.example.cryptographer.application.common.views.KeyView
@@ -6,7 +6,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.Base64
 
 /**
- * Query Handler for loading all encryption keys.
+ * Query Handler for loading a single encryption key.
  *
  * This is a Query Handler in CQRS pattern - it handles read operations.
  * Following Clean Architecture principles:
@@ -14,37 +14,37 @@ import java.util.Base64
  * - Uses Gateway for infrastructure operations
  * - Returns View (DTO) for presentation layer
  */
-class LoadAllKeysQueryHandler(
+class LoadKeyQueryHandler(
     private val queryGateway: KeyQueryGateway
 ) {
     private val logger = KotlinLogging.logger {}
 
     /**
-     * Handles the LoadAllKeysQuery.
+     * Handles the LoadKeyQuery.
      *
      * @param query Query to execute
-     * @return Result with list of KeyView or error
+     * @return Result with KeyView or error
      */
-    operator fun invoke(query: LoadAllKeysQuery): Result<List<KeyView>> {
+    operator fun invoke(query: LoadKeyQuery): Result<KeyView> {
         return try {
-            logger.debug { "Handling LoadAllKeysQuery" }
-            val keyIds = queryGateway.getAllKeyIds()
-            logger.debug { "Found ${keyIds.size} saved key(s)" }
+            logger.debug { "Handling LoadKeyQuery: keyId=${query.keyId}" }
+            val key = queryGateway.getKey(query.keyId)
 
-            val keys = keyIds.mapNotNull { keyId ->
-                queryGateway.getKey(keyId)?.let { key ->
+            if (key != null) {
+                logger.debug { "Key loaded successfully: keyId=${query.keyId}, algorithm=${key.algorithm}" }
+                Result.success(
                     KeyView(
-                        id = keyId,
+                        id = query.keyId,
                         algorithm = key.algorithm,
                         keyBase64 = Base64.getEncoder().encodeToString(key.value)
                     )
-                }
+                )
+            } else {
+                logger.warn { "Key not found: keyId=${query.keyId}" }
+                Result.failure(Exception("Key not found"))
             }
-
-            logger.debug { "Loaded ${keys.size} key(s) successfully" }
-            Result.success(keys)
         } catch (e: Exception) {
-            logger.error(e) { "Error handling LoadAllKeysQuery" }
+            logger.error(e) { "Error handling LoadKeyQuery: keyId=${query.keyId}" }
             Result.failure(e)
         }
     }

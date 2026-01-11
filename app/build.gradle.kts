@@ -32,7 +32,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -115,8 +115,9 @@ spotless {
             .editorConfigOverride(
                 mapOf(
                     "ktlint_standard_filename" to "disabled",
-                    "ktlint_standard_no-wildcard-imports" to "disabled"
-                )
+                    "ktlint_standard_no-wildcard-imports" to "disabled",
+                    "ktlint_function_naming_ignore_when_annotated_with" to "Composable,Preview",
+                ),
             )
         trimTrailingWhitespace()
         endWithNewline()
@@ -175,20 +176,23 @@ tasks.register("installGitHooks") {
 
         // Make hooks executable (Unix-like systems)
         if (!System.getProperty("os.name").lowercase().contains("windows")) {
-            val chmodProcess = ProcessBuilder("chmod", "+x", preCommitHook.absolutePath)
-                .start()
+            val chmodProcess =
+                ProcessBuilder("chmod", "+x", preCommitHook.absolutePath)
+                    .start()
             chmodProcess.waitFor()
 
             if (installScript.exists()) {
-                val chmodScriptProcess = ProcessBuilder("chmod", "+x", installScript.absolutePath)
-                    .start()
+                val chmodScriptProcess =
+                    ProcessBuilder("chmod", "+x", installScript.absolutePath)
+                        .start()
                 chmodScriptProcess.waitFor()
             }
         }
 
         // Configure git to use .githooks directory
-        val gitProcess = ProcessBuilder("git", "config", "core.hooksPath", ".githooks")
-            .start()
+        val gitProcess =
+            ProcessBuilder("git", "config", "core.hooksPath", ".githooks")
+                .start()
         val exitCode = gitProcess.waitFor()
 
         if (exitCode != 0) {

@@ -1,7 +1,7 @@
 package com.example.cryptographer.domain.text.entities
 
 import com.example.cryptographer.domain.common.entities.BaseEntity
-import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
+import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import java.time.Instant
 import java.util.UUID
 

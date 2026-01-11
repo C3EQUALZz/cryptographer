@@ -3,10 +3,10 @@ package com.example.cryptographer.presentation.encryption
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cryptographer.application.common.views.KeyView
-import com.example.cryptographer.application.queries.key.read_all.LoadAllKeysQuery
-import com.example.cryptographer.application.queries.key.read_all.LoadAllKeysQueryHandler
-import com.example.cryptographer.application.queries.key.read_by_id.LoadKeyQuery
-import com.example.cryptographer.application.queries.key.read_by_id.LoadKeyQueryHandler
+import com.example.cryptographer.application.queries.key.readall.LoadAllKeysQuery
+import com.example.cryptographer.application.queries.key.readall.LoadAllKeysQueryHandler
+import com.example.cryptographer.application.queries.key.readbyid.LoadKeyQuery
+import com.example.cryptographer.application.queries.key.readbyid.LoadKeyQueryHandler
 import com.example.cryptographer.domain.text.entities.EncryptionKey
 import io.github.oshai.kotlinlogging.KotlinLogging
 import dagger.hilt.android.lifecycle.HiltViewModel

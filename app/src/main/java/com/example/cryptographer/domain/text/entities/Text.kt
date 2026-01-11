@@ -1,8 +1,8 @@
 package com.example.cryptographer.domain.text.entities
 
 import com.example.cryptographer.domain.common.entities.BaseEntity
-import com.example.cryptographer.domain.text.value_objects.TextEncoding
-import com.example.cryptographer.domain.text.value_objects.ValidatedText
+import com.example.cryptographer.domain.text.valueobjects.TextEncoding
+import com.example.cryptographer.domain.text.valueobjects.ValidatedText
 
 /**
  * Entity representing text data in the domain.

@@ -2,7 +2,7 @@ package com.example.cryptographer.application.commands.text.encrypt
 
 import com.example.cryptographer.domain.text.services.AesEncryptionService
 import com.example.cryptographer.domain.text.services.TextService
-import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
+import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import com.example.cryptographer.test.factories.KeyFactory
 import com.example.cryptographer.test.stubs.StubTextIdGenerator
 import io.mockk.every

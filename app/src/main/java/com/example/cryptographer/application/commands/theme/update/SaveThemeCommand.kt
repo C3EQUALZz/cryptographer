@@ -8,5 +8,5 @@ package com.example.cryptographer.application.commands.theme.update
  * - Contains only the data needed to execute the command
  */
 data class SaveThemeCommand(
-    val themeMode: String // "system", "light", or "dark"
+    val themeMode: String
 )

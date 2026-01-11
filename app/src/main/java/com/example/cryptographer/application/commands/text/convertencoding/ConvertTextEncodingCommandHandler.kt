@@ -1,7 +1,7 @@
-package com.example.cryptographer.application.commands.text.convert_encoding
+package com.example.cryptographer.application.commands.text.convertencoding
 
 import com.example.cryptographer.application.common.views.ConvertedEncodingView
-import com.example.cryptographer.domain.text.value_objects.TextEncoding
+import com.example.cryptographer.domain.text.valueobjects.TextEncoding
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.Base64
 

@@ -1,6 +1,6 @@
-package com.example.cryptographer.application.queries.key.read_by_id
+package com.example.cryptographer.application.queries.key.readbyid
 
-import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
+import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import com.example.cryptographer.test.factories.KeyFactory
 import com.example.cryptographer.test.stubs.StubKeyQueryGateway
 import org.junit.Assert.assertEquals

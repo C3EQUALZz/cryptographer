@@ -1,7 +1,7 @@
 package com.example.cryptographer.domain.text.services
 
 import com.example.cryptographer.domain.common.errors.UnsupportedAlgorithmError
-import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
+import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import com.example.cryptographer.test.factories.KeyFactory
 import org.junit.Assert.*
 import org.junit.Assume.assumeTrue
@@ -210,14 +210,14 @@ class ChaCha20EncryptionServiceTest {
         assertTrue("Second encryption should succeed: ${result2.exceptionOrNull()?.message}", result2.isSuccess)
         val encrypted1 = result1.getOrThrow()
         val encrypted2 = result2.getOrThrow()
-        
+
         // Nonces should be different
         assertNotNull(encrypted1.initializationVector)
         assertNotNull(encrypted2.initializationVector)
         assertFalse(
             encrypted1.initializationVector!!.contentEquals(encrypted2.initializationVector!!)
         )
-        
+
         // Encrypted data should be different (due to different nonces)
         assertFalse(encrypted1.encryptedData.contentEquals(encrypted2.encryptedData))
     }

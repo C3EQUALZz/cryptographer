@@ -9,7 +9,7 @@ import com.example.cryptographer.application.commands.text.encrypt.ChaCha20Encry
 import com.example.cryptographer.application.common.views.DecryptedTextView
 import com.example.cryptographer.application.common.views.EncryptedTextView
 import com.example.cryptographer.domain.text.entities.EncryptedText
-import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
+import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import com.example.cryptographer.test.factories.KeyFactory
 import io.mockk.every
 import io.mockk.mockk

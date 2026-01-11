@@ -1,4 +1,4 @@
-package com.example.cryptographer.application.commands.key.delete_all
+package com.example.cryptographer.application.commands.key.deleteall
 
 import com.example.cryptographer.application.common.ports.key.KeyCommandGateway
 import io.github.oshai.kotlinlogging.KotlinLogging

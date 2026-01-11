@@ -1,6 +1,6 @@
 package com.example.cryptographer.domain.text.entities
 
-import com.example.cryptographer.domain.text.value_objects.EncryptionAlgorithm
+import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import com.example.cryptographer.test.factories.KeyFactory
 import org.junit.Assert.*
 import org.junit.Test

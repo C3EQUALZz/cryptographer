@@ -1,4 +1,4 @@
-package com.example.cryptographer.application.queries.key.read_all
+package com.example.cryptographer.application.queries.key.readall
 
 import com.example.cryptographer.test.factories.KeyFactory
 import com.example.cryptographer.test.stubs.StubKeyQueryGateway
@@ -39,11 +39,11 @@ class LoadAllKeysQueryHandlerTest {
         val key1 = KeyFactory.createAes128(id = "key-1")
         val key2 = KeyFactory.createAes192(id = "key-2")
         val key3 = KeyFactory.createAes256(id = "key-3")
-        
+
         queryGateway.addKey("key-1", key1)
         queryGateway.addKey("key-2", key2)
         queryGateway.addKey("key-3", key3)
-        
+
         val query = LoadAllKeysQuery
 
         // When

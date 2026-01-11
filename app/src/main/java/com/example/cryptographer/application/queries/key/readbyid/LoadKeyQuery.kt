@@ -1,4 +1,4 @@
-package com.example.cryptographer.application.queries.key.read_by_id
+package com.example.cryptographer.application.queries.key.readbyid
 
 /**
  * Query for loading a single encryption key.

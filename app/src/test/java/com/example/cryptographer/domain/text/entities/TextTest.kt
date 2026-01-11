@@ -1,6 +1,6 @@
 package com.example.cryptographer.domain.text.entities
 
-import com.example.cryptographer.domain.text.value_objects.TextEncoding
+import com.example.cryptographer.domain.text.valueobjects.TextEncoding
 import com.example.cryptographer.test.factories.TextFactory
 import org.junit.Assert.*
 import org.junit.Test
@@ -76,7 +76,7 @@ class TextTest {
         assertTrue(text.isNotEmpty)
 
         // For truly empty text, creation should fail
-        val result = com.example.cryptographer.domain.text.value_objects.ValidatedText.create("   ")
+        val result = com.example.cryptographer.domain.text.valueobjects.ValidatedText.create("   ")
         assertTrue(result.isFailure)
     }
 }
