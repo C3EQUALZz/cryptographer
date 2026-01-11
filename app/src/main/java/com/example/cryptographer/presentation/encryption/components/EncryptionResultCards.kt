@@ -14,9 +14,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import android.content.ClipData
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.Clipboard
-import androidx.compose.ui.platform.ClipData
 import androidx.compose.ui.platform.toClipEntry
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch

@@ -43,28 +43,5 @@ class StubSettingsQueryGateway : SettingsQueryGateway {
         this.language = language
     }
 
-    /**
-     * Sets whether loadThemeMode should throw an exception.
-     */
-    fun setShouldThrowOnLoadTheme(shouldThrow: Boolean) {
-        shouldThrowOnLoadTheme = shouldThrow
-    }
-
-    /**
-     * Sets whether loadLanguage should throw an exception.
-     */
-    fun setShouldThrowOnLoadLanguage(shouldThrow: Boolean) {
-        shouldThrowOnLoadLanguage = shouldThrow
-    }
-
-    /**
-     * Resets to default values.
-     */
-    fun reset() {
-        themeMode = "system"
-        language = "en"
-        shouldThrowOnLoadTheme = false
-        shouldThrowOnLoadLanguage = false
-    }
 }
 

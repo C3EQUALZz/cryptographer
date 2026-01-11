@@ -55,12 +55,5 @@ class StubSettingsCommandGateway : SettingsCommandGateway {
         shouldFailSaveLanguage = shouldFail
     }
 
-    /**
-     * Clears all saved settings.
-     */
-    fun clear() {
-        savedThemeMode = null
-        savedLanguage = null
-    }
 }
 

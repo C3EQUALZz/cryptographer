@@ -118,7 +118,7 @@ private fun SavedKeyItem(savedKey: SavedKeyItem, onKeyClick: () -> Unit, onDelet
 
 @Composable
 private fun DeleteAllKeysButton(onClick: () -> Unit) {
-    androidx.compose.material3.OutlinedButton(
+    OutlinedButton(
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()

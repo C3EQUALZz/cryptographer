@@ -19,9 +19,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import android.content.ClipData
 import androidx.compose.ui.platform.Clipboard
+import androidx.compose.ui.platform.toClipEntry
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import com.example.cryptographer.domain.text.entities.EncryptionKey
@@ -111,7 +112,9 @@ private fun KeyValueCard(keyBase64: String, clipboard: Clipboard) {
             OutlinedButton(
                 onClick = {
                     scope.launch {
-                        clipboard.setText(AnnotatedString(keyBase64))
+                        clipboard.setClipEntry(
+                            ClipData.newPlainText("", keyBase64).toClipEntry()
+                        )
                     }
                 },
                 shape = RoundedCornerShape(8.dp),
