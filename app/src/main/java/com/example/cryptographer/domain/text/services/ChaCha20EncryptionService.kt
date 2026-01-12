@@ -91,6 +91,7 @@ class ChaCha20EncryptionService : DomainService() {
      * @param key ChaCha20 encryption key
      * @return Result with decrypted data or error if authentication fails
      */
+    @Suppress("ReturnCount")
     fun decrypt(encryptedText: EncryptedText, key: EncryptionKey): Result<ByteArray> {
         return try {
             validateKey(key)

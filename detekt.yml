@@ -21,6 +21,14 @@ complexity:
     ignoreAnnotated: ['Provides', 'Composable']
     excludes:
       - '**/*Presenter.kt'
+  LongMethod:
+    active: true
+    threshold: 60
+    excludes:
+      # Cryptographic implementations often require longer methods for algorithm clarity
+      - '**/chacha20/**/*.kt'
+      - '**/ChaCha20*.kt'
+      - '**/Poly1305.kt'
   CyclomaticComplexMethod:
     active: true
     threshold: 10
@@ -44,6 +52,14 @@ style:
     ignoreHashCodeFunction: true
     ignorePropertyDeclaration: false
     ignoreLocalVariableDeclaration: false
+    excludes:
+      # Cryptographic implementations contain magic numbers from RFC specifications
+      - '**/chacha20/**/*.kt'
+      - '**/ChaCha20*.kt'
+      - '**/Poly1305.kt'
+      # Test files often contain magic numbers for test data
+      - '**/test/**/*.kt'
+      - '**/*Test.kt'
   MaxLineLength:
     active: true
     maxLineLength: 120
@@ -80,6 +96,11 @@ exceptions:
       - '**/test/**/*.kt'
       - '**/*Test.kt'
       - '**/test/stubs/**/*.kt'
+  TooGenericExceptionCaught:
+    active: true
+    excludes:
+      # Cryptographic services may need to catch generic exceptions for error handling
+      - '**/domain/text/services/ChaCha20EncryptionService.kt'
 
 performance:
   active: true
