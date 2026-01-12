@@ -48,6 +48,7 @@ class KeyQueryGatewayAdapter @Inject constructor(
 
             logger.debug { "Key retrieved successfully: keyId=$keyId, algorithm=$algorithmName" }
             EncryptionKey(
+                id = keyId,
                 value = keyBytes,
                 algorithm = algorithm,
             )
