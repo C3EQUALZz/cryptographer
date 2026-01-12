@@ -8,6 +8,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -32,6 +33,11 @@ fun ChaCha20Screen(viewModel: ChaCha20ViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val availableKeys by viewModel.availableKeys.collectAsState()
     val clipboard = LocalClipboard.current
+
+    // Reload keys when screen appears
+    LaunchedEffect(Unit) {
+        viewModel.loadAvailableKeys()
+    }
 
     Column(
         modifier = Modifier

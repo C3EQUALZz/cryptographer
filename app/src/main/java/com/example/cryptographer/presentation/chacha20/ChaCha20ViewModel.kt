@@ -228,8 +228,9 @@ class ChaCha20ViewModel @Inject constructor(
 
     /**
      * Loads all available ChaCha20 keys.
+     * Can be called externally to refresh the key list.
      */
-    private fun loadAvailableKeys() {
+    fun loadAvailableKeys() {
         viewModelScope.launch {
             val query = LoadAllKeysQuery
             loadAllKeysHandler(query)

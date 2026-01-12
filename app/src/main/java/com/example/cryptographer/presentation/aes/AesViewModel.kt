@@ -251,8 +251,9 @@ class AesViewModel @Inject constructor(
 
     /**
      * Loads all available AES keys (filtered by selected key length).
+     * Can be called externally to refresh the key list.
      */
-    private fun loadAvailableKeys() {
+    fun loadAvailableKeys() {
         viewModelScope.launch {
             val query = LoadAllKeysQuery
             loadAllKeysHandler(query)

@@ -5,62 +5,63 @@ import com.example.cryptographer.domain.common.services.DomainService
 import com.example.cryptographer.domain.text.entities.EncryptedText
 import com.example.cryptographer.domain.text.entities.EncryptionKey
 import com.example.cryptographer.domain.text.errors.UnsupportedAlgorithmError
+import com.example.cryptographer.domain.text.services.chacha20.ChaCha20Poly1305
 import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import io.github.oshai.kotlinlogging.KotlinLogging
-import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
-import javax.crypto.Cipher
-import javax.crypto.spec.IvParameterSpec
-import javax.crypto.spec.SecretKeySpec
 
 /**
- * Domain service for ChaCha20 encryption algorithm.
- * Supports ChaCha20-256 with 96-bit nonce.
+ * Domain service for ChaCha20-Poly1305 encryption algorithm.
+ * Supports ChaCha20-256 with 96-bit nonce and Poly1305 authentication.
  *
- * Note: ChaCha20 is available in Java 11+ and Android API 28+.
- * For older Android versions, consider using a library like BouncyCastle.
+ * Uses custom implementation of ChaCha20-Poly1305 following RFC 8439.
+ * This implementation follows SOLID principles with separate components
+ * for ChaCha20 core, stream cipher, Poly1305 MAC, and AEAD scheme.
  */
 class ChaCha20EncryptionService : DomainService() {
     private val logger = KotlinLogging.logger {}
 
     companion object {
-        private const val ALGORITHM = "ChaCha20"
         private const val NONCE_LENGTH = 12 // bytes (96 bits) for ChaCha20-Poly1305
         private const val KEY_LENGTH = 32 // bytes (256 bits)
+        private const val TAG_LENGTH = 16 // bytes (128 bits) for Poly1305 tag
     }
 
     /**
-     * Encrypts data using the provided ChaCha20 key.
+     * Encrypts data using the provided ChaCha20 key with Poly1305 authentication.
      *
      * @param data Data to encrypt
      * @param key ChaCha20 encryption key
-     * @return Result with encrypted data or error
+     * @return Result with encrypted data (ciphertext + tag) and nonce, or error
      */
     fun encrypt(data: ByteArray, key: EncryptionKey): Result<EncryptedText> {
         return try {
             validateKey(key)
 
-            logger.debug { "Starting ChaCha20 encryption: algorithm=${key.algorithm}, dataSize=${data.size} bytes" }
-            val secretKey = SecretKeySpec(key.value, ALGORITHM)
-
-            // Use ChaCha20-Poly1305 transformation (available in Java 11+ and Android API 28+)
-            // For older versions, this will throw an exception which will be caught below
-            val transformation = "$ALGORITHM-Poly1305/None/NoPadding"
-            val cipher = Cipher.getInstance(transformation)
+            logger.debug {
+                "Starting ChaCha20-Poly1305 encryption: " +
+                    "algorithm=${key.algorithm}, " +
+                    "dataSize=${data.size} bytes"
+            }
 
             // Generate random nonce (96 bits = 12 bytes)
-            // For ChaCha20-Poly1305, we use IvParameterSpec with the nonce
             val nonce = ByteArray(NONCE_LENGTH)
             SecureRandom().nextBytes(nonce)
 
-            val parameterSpec = IvParameterSpec(nonce)
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey, parameterSpec)
+            // Create ChaCha20-Poly1305 instance
+            val aead = ChaCha20Poly1305(key.value, nonce)
 
-            val encryptedData = cipher.doFinal(data)
+            // Encrypt and compute authentication tag
+            val (ciphertext, tag) = aead.encrypt(data)
+
+            // Combine ciphertext and tag (ciphertext || tag)
+            val encryptedData = ByteArray(ciphertext.size + tag.size)
+            ciphertext.copyInto(encryptedData, 0, 0, ciphertext.size)
+            tag.copyInto(encryptedData, ciphertext.size, 0, tag.size)
 
             logger.debug {
-                "ChaCha20 encryption successful: algorithm=${key.algorithm}, " +
-                    "encryptedSize=${encryptedData.size} bytes"
+                "ChaCha20-Poly1305 encryption successful: algorithm=${key.algorithm}, " +
+                    "encryptedSize=${encryptedData.size} bytes (ciphertext=${ciphertext.size}, tag=${tag.size})"
             }
             Result.success(
                 EncryptedText(
@@ -72,27 +73,23 @@ class ChaCha20EncryptionService : DomainService() {
         } catch (e: UnsupportedAlgorithmError) {
             logger.error(e) { "ChaCha20 encryption failed: unsupported algorithm=${key.algorithm}" }
             Result.failure(e)
-        } catch (e: NoSuchAlgorithmException) {
-            logger.error(e) { "ChaCha20 encryption failed: algorithm not available in this environment" }
+        } catch (e: Exception) {
+            logger.error(e) { "ChaCha20 encryption failed: algorithm=${key.algorithm}, error=${e.message}" }
             Result.failure(
                 DomainError(
-                    "ChaCha20-Poly1305 is not available in this Java/Android environment. " +
-                        "Requires Java 11+ or Android API 28+",
+                    "ChaCha20-Poly1305 encryption failed: ${e.message}",
                     e,
                 ),
             )
-        } catch (e: DomainError) {
-            logger.error(e) { "ChaCha20 encryption failed: algorithm=${key.algorithm}, error=${e.message}" }
-            Result.failure(e)
         }
     }
 
     /**
-     * Decrypts data using the provided ChaCha20 key.
+     * Decrypts data using the provided ChaCha20 key and verifies Poly1305 authentication tag.
      *
-     * @param encryptedText Encrypted data with nonce
+     * @param encryptedText Encrypted data (ciphertext || tag) with nonce
      * @param key ChaCha20 encryption key
-     * @return Result with decrypted data or error
+     * @return Result with decrypted data or error if authentication fails
      */
     fun decrypt(encryptedText: EncryptedText, key: EncryptionKey): Result<ByteArray> {
         return try {
@@ -101,48 +98,71 @@ class ChaCha20EncryptionService : DomainService() {
             if (encryptedText.initializationVector == null) {
                 logger.warn { "ChaCha20 decryption failed: nonce is missing" }
                 return Result.failure(
-                    IllegalArgumentException(
+                    DomainError(
                         "Nonce (Initialization Vector) is missing for ChaCha20 decryption",
                     ),
                 )
             }
 
-            logger.debug {
-                "Starting ChaCha20 decryption: algorithm=${key.algorithm}, " +
-                    "encryptedSize=${encryptedText.encryptedData.size} bytes"
+            val encryptedData = encryptedText.encryptedData
+            if (encryptedData.size < TAG_LENGTH) {
+                logger.warn { "ChaCha20 decryption failed: encrypted data too short" }
+                return Result.failure(
+                    DomainError(
+                        "Encrypted data is too short. " +
+                            "Expected at least $TAG_LENGTH bytes (tag), got ${encryptedData.size} bytes",
+                    ),
+                )
             }
-            val secretKey = SecretKeySpec(key.value, ALGORITHM)
-
-            // Use ChaCha20-Poly1305 transformation (available in Java 11+ and Android API 28+)
-            val transformation = "$ALGORITHM-Poly1305/None/NoPadding"
-            val cipher = Cipher.getInstance(transformation)
-
-            // For ChaCha20-Poly1305, we use IvParameterSpec with the nonce
-            val parameterSpec = IvParameterSpec(encryptedText.initializationVector)
-            cipher.init(Cipher.DECRYPT_MODE, secretKey, parameterSpec)
-
-            val decryptedData = cipher.doFinal(encryptedText.encryptedData)
 
             logger.debug {
-                "ChaCha20 decryption successful: algorithm=${key.algorithm}," +
+                "Starting ChaCha20-Poly1305 decryption: algorithm=${key.algorithm}, " +
+                    "encryptedSize=${encryptedData.size} bytes"
+            }
+
+            // Split ciphertext and tag
+            val ciphertextSize = encryptedData.size - TAG_LENGTH
+            val ciphertext = ByteArray(ciphertextSize)
+            val tag = ByteArray(TAG_LENGTH)
+            encryptedData.copyInto(ciphertext, 0, 0, ciphertextSize)
+            encryptedData.copyInto(
+                tag,
+                0,
+                ciphertextSize,
+                encryptedData.size,
+            )
+
+            // Create ChaCha20-Poly1305 instance
+            val aead = ChaCha20Poly1305(key.value, encryptedText.initializationVector)
+
+            // Decrypt and verify authentication tag
+            val decryptedData = aead.decrypt(ciphertext, tag)
+            if (decryptedData == null) {
+                logger.warn { "ChaCha20 decryption failed: authentication tag verification failed" }
+                return Result.failure(
+                    DomainError(
+                        "ChaCha20-Poly1305 authentication failed. " +
+                            "The data may have been tampered with or the key is incorrect.",
+                    ),
+                )
+            }
+
+            logger.debug {
+                "ChaCha20-Poly1305 decryption successful: algorithm=${key.algorithm}," +
                     " decryptedSize=${decryptedData.size} bytes"
             }
             Result.success(decryptedData)
         } catch (e: UnsupportedAlgorithmError) {
             logger.error(e) { "ChaCha20 decryption failed: unsupported algorithm=${key.algorithm}" }
             Result.failure(e)
-        } catch (e: NoSuchAlgorithmException) {
-            logger.error(e) { "ChaCha20 decryption failed: algorithm not available in this environment" }
+        } catch (e: Exception) {
+            logger.error(e) { "ChaCha20 decryption failed: algorithm=${key.algorithm}, error=${e.message}" }
             Result.failure(
                 DomainError(
-                    "ChaCha20-Poly1305 is not available in this Java/Android environment." +
-                        " Requires Java 11+ or Android API 28+",
+                    "ChaCha20-Poly1305 decryption failed: ${e.message}",
                     e,
                 ),
             )
-        } catch (e: DomainError) {
-            logger.error(e) { "ChaCha20 decryption failed: algorithm=${key.algorithm}, error=${e.message}" }
-            Result.failure(e)
         }
     }
 
@@ -212,7 +232,8 @@ class ChaCha20EncryptionService : DomainService() {
         // Check key length for ChaCha20-256 (must be 32 bytes = 256 bits)
         if (key.value.size != KEY_LENGTH) {
             throw DomainError(
-                "Invalid ChaCha20 key length. Expected $KEY_LENGTH bytes (256 bits), got ${key.value.size} bytes",
+                "Invalid ChaCha20 key length. " +
+                    "Expected $KEY_LENGTH bytes (256 bits), got ${key.value.size} bytes",
             )
         }
     }
