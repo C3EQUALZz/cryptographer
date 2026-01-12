@@ -72,4 +72,3 @@ fun AesScreen(viewModel: AesViewModel) {
         AesClearButton(onClearClick = { viewModel.clearAll() })
     }
 }
-

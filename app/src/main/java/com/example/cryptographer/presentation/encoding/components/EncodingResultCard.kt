@@ -26,7 +26,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun EncodingResultCard(title: String, content: String, clipboard: Clipboard) {
-    val scope = rememberCoroutineScope()
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -52,39 +51,45 @@ fun EncodingResultCard(title: String, content: String, clipboard: Clipboard) {
                 color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
             )
 
-            Card(
+            EncodingContentCard(content, clipboard)
+        }
+    }
+}
+
+@Composable
+private fun EncodingContentCard(content: String, clipboard: Clipboard) {
+    val scope = rememberCoroutineScope()
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+        ),
+        shape = RoundedCornerShape(8.dp),
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                text = content,
+                style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                ),
-                shape = RoundedCornerShape(8.dp),
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
             ) {
-                Column(
-                    modifier = Modifier.padding(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Text(
-                        text = content,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End,
-                    ) {
-                        OutlinedButton(
-                            onClick = {
-                                scope.launch {
-                                    clipboard.setClipEntry(
-                                        ClipData.newPlainText("", content).toClipEntry(),
-                                    )
-                                }
-                            },
-                            shape = RoundedCornerShape(8.dp),
-                        ) {
-                            Text(stringResource(R.string.copy))
+                OutlinedButton(
+                    onClick = {
+                        scope.launch {
+                            clipboard.setClipEntry(
+                                ClipData.newPlainText("", content).toClipEntry(),
+                            )
                         }
-                    }
+                    },
+                    shape = RoundedCornerShape(8.dp),
+                ) {
+                    Text(stringResource(R.string.copy))
                 }
             }
         }

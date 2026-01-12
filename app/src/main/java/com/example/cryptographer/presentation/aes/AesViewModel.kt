@@ -1,7 +1,9 @@
 package com.example.cryptographer.presentation.aes
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cryptographer.R
 import com.example.cryptographer.application.common.views.KeyView
 import com.example.cryptographer.application.queries.key.readall.LoadAllKeysQuery
 import com.example.cryptographer.application.queries.key.readall.LoadAllKeysQueryHandler
@@ -10,6 +12,7 @@ import com.example.cryptographer.application.queries.key.readbyid.LoadKeyQueryHa
 import com.example.cryptographer.domain.text.entities.EncryptionKey
 import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,6 +29,7 @@ class AesViewModel @Inject constructor(
     private val presenter: AesPresenter,
     private val loadKeyHandler: LoadKeyQueryHandler,
     private val loadAllKeysHandler: LoadAllKeysQueryHandler,
+    @ApplicationContext private val context: Context,
 ) : ViewModel() {
     private val logger = KotlinLogging.logger {}
 
@@ -103,7 +107,7 @@ class AesViewModel @Inject constructor(
                     // Verify key matches selected algorithm
                     if (keyView.algorithm != _uiState.value.selectedKeyLength) {
                         _uiState.value = _uiState.value.copy(
-                            error = "Выбранный ключ не соответствует выбранному алгоритму",
+                            error = context.getString(R.string.error_key_mismatch),
                         )
                         return@launch
                     }
@@ -122,7 +126,7 @@ class AesViewModel @Inject constructor(
                 .onFailure { error ->
                     logger.error(error) { "Failed to load key: keyId=$keyId" }
                     _uiState.value = _uiState.value.copy(
-                        error = "Не удалось загрузить ключ: ${error.message}",
+                        error = context.getString(R.string.error_failed_to_load_key, error.message ?: ""),
                     )
                 }
         }
@@ -137,14 +141,14 @@ class AesViewModel @Inject constructor(
 
         if (inputText.isBlank()) {
             _uiState.value = _uiState.value.copy(
-                error = "Введите текст для шифрования",
+                error = context.getString(R.string.error_enter_text_to_encrypt),
             )
             return
         }
 
         if (selectedKey == null) {
             _uiState.value = _uiState.value.copy(
-                error = "Выберите ключ для шифрования",
+                error = context.getString(R.string.error_select_key_to_encrypt),
             )
             return
         }
@@ -169,7 +173,7 @@ class AesViewModel @Inject constructor(
                     logger.error(error) { "Encryption failed: ${error.message}" }
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = "Ошибка шифрования: ${error.message}",
+                        error = context.getString(R.string.error_encryption_failed, error.message ?: ""),
                     )
                 }
         }
@@ -185,14 +189,14 @@ class AesViewModel @Inject constructor(
 
         if (encryptedText.isBlank()) {
             _uiState.value = _uiState.value.copy(
-                error = "Введите зашифрованный текст",
+                error = context.getString(R.string.error_enter_encrypted_text),
             )
             return
         }
 
         if (selectedKey == null) {
             _uiState.value = _uiState.value.copy(
-                error = "Выберите ключ для дешифрования",
+                error = context.getString(R.string.error_select_key_to_decrypt),
             )
             return
         }
@@ -218,9 +222,17 @@ class AesViewModel @Inject constructor(
                 }
                 .onFailure { error ->
                     logger.error(error) { "Decryption failed: ${error.message}" }
+                    val errorMessage = when {
+                        error.message?.contains("Invalid Base64 format") == true -> {
+                            context.getString(R.string.error_invalid_base64_format)
+                        }
+                        else -> {
+                            context.getString(R.string.error_decryption_failed, error.message ?: "")
+                        }
+                    }
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = "Ошибка дешифрования: ${error.message}",
+                        error = errorMessage,
                     )
                 }
         }
@@ -255,4 +267,3 @@ class AesViewModel @Inject constructor(
         }
     }
 }
-

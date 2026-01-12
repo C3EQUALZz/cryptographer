@@ -26,8 +26,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.cryptographer.R
 import com.example.cryptographer.presentation.chacha20.ChaCha20UiState
-import com.example.cryptographer.presentation.encryption.components.DecryptedResultCard
-import com.example.cryptographer.presentation.encryption.components.SectionHeader
 
 @Composable
 fun ChaCha20DecryptionSection(
@@ -51,7 +49,7 @@ fun ChaCha20DecryptionSection(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            SectionHeader(
+            ChaCha20SectionHeader(
                 icon = Icons.Default.CheckCircle,
                 title = stringResource(R.string.decryption_section),
                 color = MaterialTheme.colorScheme.secondary,
@@ -88,7 +86,7 @@ fun ChaCha20DecryptionSection(
             )
 
             if (uiState.decryptedText.isNotEmpty()) {
-                DecryptedResultCard(
+                ChaCha20DecryptedResultCard(
                     decryptedText = uiState.decryptedText,
                     clipboard = clipboard,
                 )
@@ -123,4 +121,3 @@ private fun ChaCha20DecryptionButton(isLoading: Boolean, enabled: Boolean, onCli
         )
     }
 }
-

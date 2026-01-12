@@ -22,11 +22,7 @@ import com.example.cryptographer.application.common.views.KeyView
 private const val KEY_ID_PREVIEW_LENGTH = 8
 
 @Composable
-fun AesKeySelectionSection(
-    availableKeys: List<KeyView>,
-    selectedKeyId: String?,
-    onKeySelected: (String) -> Unit,
-) {
+fun AesKeySelectionSection(availableKeys: List<KeyView>, selectedKeyId: String?, onKeySelected: (String) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -88,4 +84,3 @@ private fun AesKeySelectionItem(keyItem: KeyView, isSelected: Boolean, onSelecte
         }
     }
 }
-

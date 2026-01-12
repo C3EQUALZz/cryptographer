@@ -75,7 +75,6 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
                 scope = scope,
                 context = context,
                 selectedScreen = uiState.selectedScreen,
-                selectedAlgorithm = uiState.selectedAlgorithm,
                 currentLanguage = currentLanguage,
                 currentThemeMode = currentThemeMode,
                 actions = drawerActions,

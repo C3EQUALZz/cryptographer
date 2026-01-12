@@ -67,4 +67,3 @@ fun ChaCha20Screen(viewModel: ChaCha20ViewModel) {
         ChaCha20ClearButton(onClearClick = { viewModel.clearAll() })
     }
 }
-

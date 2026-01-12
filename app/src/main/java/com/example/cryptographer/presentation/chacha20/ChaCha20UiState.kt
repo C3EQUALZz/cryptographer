@@ -17,4 +17,3 @@ data class ChaCha20UiState(
     val isLoading: Boolean = false,
     val error: String? = null,
 )
-

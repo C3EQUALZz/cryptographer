@@ -4,7 +4,6 @@ import android.content.ClipData
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,10 +15,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,7 +28,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.cryptographer.R
 import com.example.cryptographer.presentation.chacha20.ChaCha20UiState
-import com.example.cryptographer.presentation.encryption.components.SectionHeader
 import kotlinx.coroutines.launch
 
 @Composable
@@ -55,7 +51,7 @@ fun ChaCha20EncryptionSection(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            SectionHeader(
+            ChaCha20SectionHeader(
                 icon = Icons.Default.Lock,
                 title = stringResource(R.string.encryption_section),
                 color = MaterialTheme.colorScheme.primary,
@@ -146,47 +142,3 @@ private fun ChaCha20EncryptedResultCard(encryptedText: String, nonceText: String
         )
     }
 }
-
-@Composable
-private fun ChaCha20ResultCard(
-    title: String,
-    content: String,
-    onCopyClick: () -> Unit,
-    copyButtonText: String,
-    containerColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.surface,
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = containerColor,
-        ),
-        shape = RoundedCornerShape(8.dp),
-    ) {
-        Column(
-            modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.labelMedium,
-            )
-            Text(
-                text = content,
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-            ) {
-                OutlinedButton(
-                    onClick = onCopyClick,
-                    shape = RoundedCornerShape(8.dp),
-                ) {
-                    Text(copyButtonText)
-                }
-            }
-        }
-    }
-}
-

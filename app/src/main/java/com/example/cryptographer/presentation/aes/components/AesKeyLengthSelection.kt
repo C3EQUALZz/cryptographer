@@ -19,10 +19,7 @@ import com.example.cryptographer.R
 import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 
 @Composable
-fun AesKeyLengthSelection(
-    selectedLength: EncryptionAlgorithm,
-    onLengthSelected: (EncryptionAlgorithm) -> Unit,
-) {
+fun AesKeyLengthSelection(selectedLength: EncryptionAlgorithm, onLengthSelected: (EncryptionAlgorithm) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -64,11 +61,7 @@ fun AesKeyLengthSelection(
 }
 
 @Composable
-private fun AesKeyLengthItem(
-    algorithm: EncryptionAlgorithm,
-    isSelected: Boolean,
-    onSelected: () -> Unit,
-) {
+private fun AesKeyLengthItem(algorithm: EncryptionAlgorithm, isSelected: Boolean, onSelected: () -> Unit) {
     androidx.compose.foundation.layout.Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -89,4 +82,3 @@ private fun AesKeyLengthItem(
         )
     }
 }
-

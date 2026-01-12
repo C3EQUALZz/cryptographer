@@ -57,4 +57,3 @@ fun ChaCha20InfoCard() {
         }
     }
 }
-

@@ -72,6 +72,19 @@
     <string name="key_id_prefix">ID: %1$s...</string>
     <string name="encryption_info_text">Use saved keys to encrypt and decrypt text. Encrypted text will be displayed in Base64 format.</string>
 
+    <!-- Error messages -->
+    <string name="error_key_mismatch">Selected key does not match the selected algorithm</string>
+    <string name="error_key_not_chacha20">Selected key is not a ChaCha20 key</string>
+    <string name="error_failed_to_load_key">Failed to load key: %1$s</string>
+    <string name="error_enter_text_to_encrypt">Enter text to encrypt</string>
+    <string name="error_select_key_to_encrypt">Select a key for encryption</string>
+    <string name="error_encryption_failed">Encryption error: %1$s</string>
+    <string name="error_enter_encrypted_text">Enter encrypted text</string>
+    <string name="error_select_key_to_decrypt">Select a key for decryption</string>
+    <string name="error_decryption_failed">Decryption error: %1$s</string>
+    <string name="error_invalid_base64_format">Invalid Base64 format for encrypted text or IV.</string>
+    <string name="error_invalid_base64_format_nonce">Invalid Base64 format for encrypted text or nonce.</string>
+
     <!-- ChaCha20 Encryption Screen -->
     <string name="chacha20_encryption_title">ChaCha20 Encryption and Decryption</string>
     <string name="chacha20_encryption_info">Use this tool to encrypt and decrypt text using ChaCha20-256 keys. Select a key and enter text to encrypt or decrypt.</string>

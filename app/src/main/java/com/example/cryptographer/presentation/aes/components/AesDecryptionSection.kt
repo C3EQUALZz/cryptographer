@@ -26,8 +26,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.cryptographer.R
 import com.example.cryptographer.presentation.aes.AesUiState
-import com.example.cryptographer.presentation.encryption.components.DecryptedResultCard
-import com.example.cryptographer.presentation.encryption.components.SectionHeader
 
 @Composable
 fun AesDecryptionSection(
@@ -51,7 +49,7 @@ fun AesDecryptionSection(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            SectionHeader(
+            AESSectionHeader(
                 icon = Icons.Default.CheckCircle,
                 title = stringResource(R.string.decryption_section),
                 color = MaterialTheme.colorScheme.secondary,
@@ -88,7 +86,7 @@ fun AesDecryptionSection(
             )
 
             if (uiState.decryptedText.isNotEmpty()) {
-                DecryptedResultCard(
+                AesDecryptedResultCard(
                     decryptedText = uiState.decryptedText,
                     clipboard = clipboard,
                 )
@@ -123,4 +121,3 @@ private fun AesDecryptionButton(isLoading: Boolean, enabled: Boolean, onClick: (
         )
     }
 }
-

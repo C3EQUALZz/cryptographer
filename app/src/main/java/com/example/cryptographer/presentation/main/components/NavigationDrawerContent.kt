@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.cryptographer.domain.common.valueobjects.Language
 import com.example.cryptographer.domain.common.valueobjects.ThemeMode
-import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import com.example.cryptographer.presentation.main.AppScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -26,7 +25,6 @@ fun NavigationDrawerContent(
     scope: CoroutineScope,
     context: Context,
     selectedScreen: AppScreen,
-    selectedAlgorithm: EncryptionAlgorithm,
     currentLanguage: Language,
     currentThemeMode: ThemeMode,
     actions: DrawerActions,
@@ -63,11 +61,6 @@ fun NavigationDrawerContent(
                 ScreenSelectionSection(
                     selectedScreen = selectedScreen,
                     onScreenSelected = actions.onScreenSelected,
-                )
-                DividerSpacer()
-                AlgorithmSelectionSection(
-                    selectedAlgorithm = selectedAlgorithm,
-                    onAlgorithmSelected = actions.onAlgorithmSelected,
                 )
             }
         }

@@ -36,4 +36,3 @@ fun ChaCha20ErrorCard(error: String) {
         )
     }
 }
-

@@ -88,4 +88,17 @@
     <string name="utf8">UTF-8</string>
     <string name="ascii">ASCII</string>
     <string name="base64">BASE64</string>
+
+    <!-- Error messages -->
+    <string name="error_key_mismatch">Выбранный ключ не соответствует выбранному алгоритму</string>
+    <string name="error_key_not_chacha20">Выбранный ключ не является ChaCha20 ключом</string>
+    <string name="error_failed_to_load_key">Не удалось загрузить ключ: %1$s</string>
+    <string name="error_enter_text_to_encrypt">Введите текст для шифрования</string>
+    <string name="error_select_key_to_encrypt">Выберите ключ для шифрования</string>
+    <string name="error_encryption_failed">Ошибка шифрования: %1$s</string>
+    <string name="error_enter_encrypted_text">Введите зашифрованный текст</string>
+    <string name="error_select_key_to_decrypt">Выберите ключ для дешифрования</string>
+    <string name="error_decryption_failed">Ошибка дешифрования: %1$s</string>
+    <string name="error_invalid_base64_format">Некорректный формат Base64 для зашифрованного текста или IV.</string>
+    <string name="error_invalid_base64_format_nonce">Некорректный формат Base64 для зашифрованного текста или nonce.</string>
 </resources>

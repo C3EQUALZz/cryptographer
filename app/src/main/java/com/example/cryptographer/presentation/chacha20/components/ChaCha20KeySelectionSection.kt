@@ -88,4 +88,3 @@ private fun ChaCha20KeySelectionItem(keyItem: KeyView, isSelected: Boolean, onSe
         }
     }
 }
-

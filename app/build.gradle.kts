@@ -3,9 +3,9 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.android)
-    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.spotless)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.kotlin.kapt)
 }
 hilt {
     enableAggregatingTask = false

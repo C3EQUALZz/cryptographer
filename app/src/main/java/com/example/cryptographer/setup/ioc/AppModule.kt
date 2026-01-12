@@ -31,7 +31,6 @@ import com.example.cryptographer.infrastructure.text.UuidTextIdGenerator
 import com.example.cryptographer.presentation.aes.AesPresenter
 import com.example.cryptographer.presentation.chacha20.ChaCha20Presenter
 import com.example.cryptographer.presentation.encoding.EncodingPresenter
-import com.example.cryptographer.presentation.encryption.EncryptionPresenter
 import com.example.cryptographer.presentation.key.KeyGenerationPresenter
 import com.example.cryptographer.presentation.main.MainPresenter
 import dagger.Module
@@ -234,24 +233,6 @@ object AppModule {
             deleteKeyHandler = deleteKeyHandler,
             deleteAllKeysHandler = deleteAllKeysHandler,
             loadAllKeysHandler = loadAllKeysHandler,
-        )
-    }
-
-    /**
-     * Provides EncryptionPresenter.
-     */
-    @Provides
-    fun provideEncryptionPresenter(
-        aesEncryptHandler: AesEncryptTextCommandHandler,
-        chaCha20EncryptHandler: ChaCha20EncryptTextCommandHandler,
-        aesDecryptHandler: AesDecryptTextCommandHandler,
-        chaCha20DecryptHandler: ChaCha20DecryptTextCommandHandler,
-    ): EncryptionPresenter {
-        return EncryptionPresenter(
-            aesEncryptHandler = aesEncryptHandler,
-            chaCha20EncryptHandler = chaCha20EncryptHandler,
-            aesDecryptHandler = aesDecryptHandler,
-            chaCha20DecryptHandler = chaCha20DecryptHandler,
         )
     }
 

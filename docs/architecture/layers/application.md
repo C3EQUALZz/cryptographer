@@ -211,3 +211,5 @@ sealed class ApplicationError : AppError {
 - [Infrastructure Layer](infrastructure.md) - How adapters implement ports
 - [Presentation Layer](presentation.md) - How ViewModels use commands/queries
 
+
+
