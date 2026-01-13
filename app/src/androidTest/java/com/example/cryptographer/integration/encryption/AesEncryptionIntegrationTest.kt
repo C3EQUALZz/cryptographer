@@ -27,7 +27,6 @@ import org.junit.runner.RunWith
 class AesEncryptionIntegrationTest {
 
     private lateinit var aesService: AesEncryptionService
-    private val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Before
     fun setUp() {

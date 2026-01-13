@@ -40,23 +40,6 @@ object TestFixtures {
     }
 
     /**
-     * Creates a test encryption key with specific key bytes.
-     */
-    fun createEncryptionKeyWithBytes(
-        algorithm: EncryptionAlgorithm,
-        keyBytes: ByteArray,
-        id: String = UUID.randomUUID().toString(),
-    ): EncryptionKey {
-        return EncryptionKey(
-            id = id,
-            value = keyBytes,
-            algorithm = algorithm,
-            createdAt = Instant.now(),
-            updatedAt = Instant.now(),
-        )
-    }
-
-    /**
      * Creates a test encryption key that is guaranteed to be different from another key.
      */
     fun createDifferentKey(
@@ -84,14 +67,5 @@ object TestFixtures {
      */
     fun createTestText(content: String = "Test message"): ByteArray {
         return content.toByteArray(Charsets.UTF_8)
-    }
-
-    /**
-     * Creates test nonce for ChaCha20 (12 bytes).
-     */
-    fun createNonce(): ByteArray {
-        val nonce = ByteArray(12)
-        random.nextBytes(nonce)
-        return nonce
     }
 }
