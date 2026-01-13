@@ -1,7 +1,6 @@
 package com.example.cryptographer.integration.encryption
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import com.example.cryptographer.domain.text.services.AesEncryptionService
 import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import com.example.cryptographer.fixtures.TestFixtures

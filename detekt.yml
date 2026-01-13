@@ -28,7 +28,7 @@ complexity:
       # Cryptographic implementations often require longer methods for algorithm clarity
       - '**/chacha20/**/*.kt'
       - '**/ChaCha20*.kt'
-      - '**/Poly1305.kt'
+      - '**/Poly1305Mac.kt'
   CyclomaticComplexMethod:
     active: true
     threshold: 10
@@ -56,7 +56,7 @@ style:
       # Cryptographic implementations contain magic numbers from RFC specifications
       - '**/chacha20/**/*.kt'
       - '**/ChaCha20*.kt'
-      - '**/Poly1305.kt'
+      - '**/Poly1305Mac.kt'
       # Test files often contain magic numbers for test data
       - '**/test/**/*.kt'
       - '**/*Test.kt'
