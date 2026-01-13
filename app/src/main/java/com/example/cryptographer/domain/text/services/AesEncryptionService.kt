@@ -141,7 +141,7 @@ class AesEncryptionService : DomainService() {
                 EncryptionAlgorithm.AES_128 -> AES_128_KEY_SIZE_BITS
                 EncryptionAlgorithm.AES_192 -> AES_192_KEY_SIZE_BITS
                 EncryptionAlgorithm.AES_256 -> AES_256_KEY_SIZE_BITS
-                EncryptionAlgorithm.CHACHA20_256 -> throw UnsupportedAlgorithmError(
+                else -> throw UnsupportedAlgorithmError(
                     algorithm,
                     "AesEncryptionService",
                 )
@@ -179,7 +179,7 @@ class AesEncryptionService : DomainService() {
             EncryptionAlgorithm.AES_128 -> AES_128_KEY_SIZE_BYTES
             EncryptionAlgorithm.AES_192 -> AES_192_KEY_SIZE_BYTES
             EncryptionAlgorithm.AES_256 -> AES_256_KEY_SIZE_BYTES
-            EncryptionAlgorithm.CHACHA20_256 -> throw UnsupportedAlgorithmError(
+            else -> throw UnsupportedAlgorithmError(
                 key.algorithm,
                 "AesEncryptionService",
             )

@@ -2,6 +2,7 @@ package com.example.cryptographer.di
 
 import com.example.cryptographer.application.commands.key.create.AesGenerateAndSaveKeyCommandHandler
 import com.example.cryptographer.application.commands.key.create.ChaCha20GenerateAndSaveKeyCommandHandler
+import com.example.cryptographer.application.commands.key.create.TripleDesGenerateAndSaveKeyCommandHandler
 import com.example.cryptographer.application.commands.key.delete.DeleteKeyCommandHandler
 import com.example.cryptographer.application.commands.key.deleteall.DeleteAllKeysCommandHandler
 import com.example.cryptographer.application.commands.language.update.SaveLanguageCommandHandler
@@ -23,10 +24,10 @@ import com.example.cryptographer.domain.text.ports.TextIdGeneratorPort
 import com.example.cryptographer.domain.text.services.AesEncryptionService
 import com.example.cryptographer.domain.text.services.ChaCha20EncryptionService
 import com.example.cryptographer.domain.text.services.TextService
-import com.example.cryptographer.infrastructure.key.KeyCommandGatewayAdapter
-import com.example.cryptographer.infrastructure.key.KeyQueryGatewayAdapter
-import com.example.cryptographer.infrastructure.settings.SettingsCommandGatewayAdapter
-import com.example.cryptographer.infrastructure.settings.SettingsQueryGatewayAdapter
+import com.example.cryptographer.infrastructure.persistence.adapters.key.KeyCommandGatewayAdapter
+import com.example.cryptographer.infrastructure.persistence.adapters.key.KeyQueryGatewayAdapter
+import com.example.cryptographer.infrastructure.persistence.adapters.settings.SettingsCommandGatewayAdapter
+import com.example.cryptographer.infrastructure.persistence.adapters.settings.SettingsQueryGatewayAdapter
 import com.example.cryptographer.infrastructure.text.UuidTextIdGenerator
 import com.example.cryptographer.presentation.aes.AesPresenter
 import com.example.cryptographer.presentation.chacha20.ChaCha20Presenter
@@ -220,6 +221,7 @@ object TestAppModule {
         deleteKeyHandler: DeleteKeyCommandHandler,
         deleteAllKeysHandler: DeleteAllKeysCommandHandler,
         loadAllKeysHandler: LoadAllKeysQueryHandler,
+        tripleDesGenerateAndSaveKeyCommandHandler: TripleDesGenerateAndSaveKeyCommandHandler,
     ): KeyGenerationPresenter {
         return KeyGenerationPresenter(
             aesGenerateAndSaveKeyHandler = aesGenerateAndSaveKeyHandler,
@@ -228,6 +230,7 @@ object TestAppModule {
             deleteKeyHandler = deleteKeyHandler,
             deleteAllKeysHandler = deleteAllKeysHandler,
             loadAllKeysHandler = loadAllKeysHandler,
+            tripleDesGenerateAndSaveKeyHandler = tripleDesGenerateAndSaveKeyCommandHandler,
         )
     }
 

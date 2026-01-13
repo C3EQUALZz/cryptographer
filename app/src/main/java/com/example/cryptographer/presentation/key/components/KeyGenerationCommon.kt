@@ -28,6 +28,8 @@ fun getAlgorithmDisplayName(algorithm: EncryptionAlgorithm): String {
             EncryptionAlgorithm.AES_192 -> R.string.algorithm_aes_192
             EncryptionAlgorithm.AES_256 -> R.string.algorithm_aes_256
             EncryptionAlgorithm.CHACHA20_256 -> R.string.algorithm_chacha20_256
+            EncryptionAlgorithm.TDES_112 -> R.string.algorithm_tdes_112
+            EncryptionAlgorithm.TDES_168 -> R.string.algorithm_tdes_168
         },
     )
 }

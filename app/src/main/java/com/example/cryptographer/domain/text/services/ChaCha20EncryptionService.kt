@@ -186,10 +186,8 @@ class ChaCha20EncryptionService : DomainService() {
                 EncryptionAlgorithm.CHACHA20_256 -> {
                     // Algorithm is supported, continue with generation
                 }
-                EncryptionAlgorithm.AES_128,
-                EncryptionAlgorithm.AES_192,
-                EncryptionAlgorithm.AES_256,
-                -> throw UnsupportedAlgorithmError(
+
+                else -> throw UnsupportedAlgorithmError(
                     algorithm,
                     "ChaCha20EncryptionService",
                 )
@@ -232,10 +230,7 @@ class ChaCha20EncryptionService : DomainService() {
             EncryptionAlgorithm.CHACHA20_256 -> {
                 // Algorithm is supported, continue with validation
             }
-            EncryptionAlgorithm.AES_128,
-            EncryptionAlgorithm.AES_192,
-            EncryptionAlgorithm.AES_256,
-            -> throw UnsupportedAlgorithmError(
+            else -> throw UnsupportedAlgorithmError(
                 key.algorithm,
                 "ChaCha20EncryptionService",
             )

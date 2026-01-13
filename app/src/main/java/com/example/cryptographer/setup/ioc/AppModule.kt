@@ -1,15 +1,19 @@
 package com.example.cryptographer.setup.ioc
 
+import android.content.Context
 import com.example.cryptographer.application.commands.key.create.AesGenerateAndSaveKeyCommandHandler
 import com.example.cryptographer.application.commands.key.create.ChaCha20GenerateAndSaveKeyCommandHandler
+import com.example.cryptographer.application.commands.key.create.TripleDesGenerateAndSaveKeyCommandHandler
 import com.example.cryptographer.application.commands.key.delete.DeleteKeyCommandHandler
 import com.example.cryptographer.application.commands.key.deleteall.DeleteAllKeysCommandHandler
 import com.example.cryptographer.application.commands.language.update.SaveLanguageCommandHandler
 import com.example.cryptographer.application.commands.text.convertencoding.ConvertTextEncodingCommandHandler
 import com.example.cryptographer.application.commands.text.decrypt.AesDecryptTextCommandHandler
 import com.example.cryptographer.application.commands.text.decrypt.ChaCha20DecryptTextCommandHandler
+import com.example.cryptographer.application.commands.text.decrypt.TripleDesDecryptTextCommandHandler
 import com.example.cryptographer.application.commands.text.encrypt.AesEncryptTextCommandHandler
 import com.example.cryptographer.application.commands.text.encrypt.ChaCha20EncryptTextCommandHandler
+import com.example.cryptographer.application.commands.text.encrypt.TripleDesEncryptTextCommandHandler
 import com.example.cryptographer.application.commands.theme.update.SaveThemeCommandHandler
 import com.example.cryptographer.application.common.ports.key.KeyCommandGateway
 import com.example.cryptographer.application.common.ports.key.KeyQueryGateway
@@ -23,20 +27,27 @@ import com.example.cryptographer.domain.text.ports.TextIdGeneratorPort
 import com.example.cryptographer.domain.text.services.AesEncryptionService
 import com.example.cryptographer.domain.text.services.ChaCha20EncryptionService
 import com.example.cryptographer.domain.text.services.TextService
-import com.example.cryptographer.infrastructure.key.KeyCommandGatewayAdapter
-import com.example.cryptographer.infrastructure.key.KeyQueryGatewayAdapter
-import com.example.cryptographer.infrastructure.settings.SettingsCommandGatewayAdapter
-import com.example.cryptographer.infrastructure.settings.SettingsQueryGatewayAdapter
+import com.example.cryptographer.domain.text.services.TripleDesEncryptionService
+import com.example.cryptographer.infrastructure.persistence.adapters.key.KeyCommandGatewayAdapter
+import com.example.cryptographer.infrastructure.persistence.adapters.key.KeyQueryGatewayAdapter
+import com.example.cryptographer.infrastructure.persistence.adapters.settings.SettingsCommandGatewayAdapter
+import com.example.cryptographer.infrastructure.persistence.adapters.settings.SettingsQueryGatewayAdapter
+import com.example.cryptographer.infrastructure.persistence.dao.KeyDao
+import com.example.cryptographer.infrastructure.persistence.dao.SettingsDao
+import com.example.cryptographer.infrastructure.persistence.database.CryptographerDatabase
 import com.example.cryptographer.infrastructure.text.UuidTextIdGenerator
 import com.example.cryptographer.presentation.aes.AesPresenter
 import com.example.cryptographer.presentation.chacha20.ChaCha20Presenter
 import com.example.cryptographer.presentation.encoding.EncodingPresenter
 import com.example.cryptographer.presentation.key.KeyGenerationPresenter
 import com.example.cryptographer.presentation.main.MainPresenter
+import com.example.cryptographer.presentation.tdes.TripleDesPresenter
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 /**
  * Hilt module for providing application-wide dependencies.
@@ -74,8 +85,43 @@ object AppModule {
     }
 
     /**
+     * Provides Triple DES encryption service.
+     * Creates a new instance for each injection (stateless, so safe).
+     */
+    @Provides
+    fun provideTripleDesEncryptionService(): TripleDesEncryptionService {
+        return TripleDesEncryptionService()
+    }
+
+    /**
+     * Provides CryptographerDatabase instance.
+     * Creates Room database for secure key storage.
+     */
+    @Provides
+    @Singleton
+    fun provideCryptographerDatabase(@ApplicationContext context: Context): CryptographerDatabase {
+        return CryptographerDatabase.create(context)
+    }
+
+    /**
+     * Provides KeyDao from CryptographerDatabase.
+     */
+    @Provides
+    fun provideKeyDao(database: CryptographerDatabase): KeyDao {
+        return database.keyDao()
+    }
+
+    /**
+     * Provides SettingsDao from CryptographerDatabase.
+     */
+    @Provides
+    fun provideSettingsDao(database: CryptographerDatabase): SettingsDao {
+        return database.settingsDao()
+    }
+
+    /**
      * Provides KeyCommandGateway implementation.
-     * Uses KeyCommandGatewayAdapter as the implementation.
+     * Uses KeyCommandGatewayAdapter with Room and Android Keystore.
      */
     @Provides
     fun provideKeyCommandGateway(adapter: KeyCommandGatewayAdapter): KeyCommandGateway {
@@ -84,7 +130,7 @@ object AppModule {
 
     /**
      * Provides KeyQueryGateway implementation.
-     * Uses KeyQueryGatewayAdapter as the implementation.
+     * Uses KeyQueryGatewayAdapter with Room and Android Keystore.
      */
     @Provides
     fun provideKeyQueryGateway(adapter: KeyQueryGatewayAdapter): KeyQueryGateway {
@@ -111,6 +157,17 @@ object AppModule {
         commandGateway: KeyCommandGateway,
     ): ChaCha20GenerateAndSaveKeyCommandHandler {
         return ChaCha20GenerateAndSaveKeyCommandHandler(chaCha20EncryptionService, commandGateway)
+    }
+
+    /**
+     * Provides TripleDesGenerateAndSaveKeyCommandHandler.
+     */
+    @Provides
+    fun provideTripleDesGenerateAndSaveKeyCommandHandler(
+        tripleDesEncryptionService: TripleDesEncryptionService,
+        commandGateway: KeyCommandGateway,
+    ): TripleDesGenerateAndSaveKeyCommandHandler {
+        return TripleDesGenerateAndSaveKeyCommandHandler(tripleDesEncryptionService, commandGateway)
     }
 
     /**
@@ -170,6 +227,18 @@ object AppModule {
     }
 
     /**
+     * Provides TripleDesEncryptTextCommandHandler.
+     * Uses TextService for text validation to ensure consistency.
+     */
+    @Provides
+    fun provideTripleDesEncryptTextCommandHandler(
+        tripleDesEncryptionService: TripleDesEncryptionService,
+        textService: TextService,
+    ): TripleDesEncryptTextCommandHandler {
+        return TripleDesEncryptTextCommandHandler(tripleDesEncryptionService, textService)
+    }
+
+    /**
      * Provides AesDecryptTextCommandHandler.
      */
     @Provides
@@ -185,6 +254,16 @@ object AppModule {
         chaCha20EncryptionService: ChaCha20EncryptionService,
     ): ChaCha20DecryptTextCommandHandler {
         return ChaCha20DecryptTextCommandHandler(chaCha20EncryptionService)
+    }
+
+    /**
+     * Provides TripleDesDecryptTextCommandHandler.
+     */
+    @Provides
+    fun provideTripleDesDecryptTextCommandHandler(
+        tripleDesEncryptionService: TripleDesEncryptionService,
+    ): TripleDesDecryptTextCommandHandler {
+        return TripleDesDecryptTextCommandHandler(tripleDesEncryptionService)
     }
 
     /**
@@ -221,6 +300,7 @@ object AppModule {
     fun provideKeyGenerationPresenter(
         aesGenerateAndSaveKeyHandler: AesGenerateAndSaveKeyCommandHandler,
         chaCha20GenerateAndSaveKeyHandler: ChaCha20GenerateAndSaveKeyCommandHandler,
+        tripleDesGenerateAndSaveKeyHandler: TripleDesGenerateAndSaveKeyCommandHandler,
         loadKeyHandler: LoadKeyQueryHandler,
         deleteKeyHandler: DeleteKeyCommandHandler,
         deleteAllKeysHandler: DeleteAllKeysCommandHandler,
@@ -229,6 +309,7 @@ object AppModule {
         return KeyGenerationPresenter(
             aesGenerateAndSaveKeyHandler = aesGenerateAndSaveKeyHandler,
             chaCha20GenerateAndSaveKeyHandler = chaCha20GenerateAndSaveKeyHandler,
+            tripleDesGenerateAndSaveKeyHandler = tripleDesGenerateAndSaveKeyHandler,
             loadKeyHandler = loadKeyHandler,
             deleteKeyHandler = deleteKeyHandler,
             deleteAllKeysHandler = deleteAllKeysHandler,
@@ -265,6 +346,20 @@ object AppModule {
     }
 
     /**
+     * Provides TripleDesPresenter.
+     */
+    @Provides
+    fun provideTripleDesPresenter(
+        tripleDesEncryptHandler: TripleDesEncryptTextCommandHandler,
+        tripleDesDecryptHandler: TripleDesDecryptTextCommandHandler,
+    ): TripleDesPresenter {
+        return TripleDesPresenter(
+            tripleDesEncryptHandler = tripleDesEncryptHandler,
+            tripleDesDecryptHandler = tripleDesDecryptHandler,
+        )
+    }
+
+    /**
      * Provides EncodingPresenter.
      */
     @Provides
@@ -274,7 +369,7 @@ object AppModule {
 
     /**
      * Provides SettingsCommandGateway implementation.
-     * Uses SettingsCommandGatewayAdapter as the implementation.
+     * Uses SettingsCommandGatewayAdapter with Room and Android Keystore.
      */
     @Provides
     fun provideSettingsCommandGateway(adapter: SettingsCommandGatewayAdapter): SettingsCommandGateway {
@@ -283,7 +378,7 @@ object AppModule {
 
     /**
      * Provides SettingsQueryGateway implementation.
-     * Uses SettingsQueryGatewayAdapter as the implementation.
+     * Uses SettingsQueryGatewayAdapter with Room and Android Keystore.
      */
     @Provides
     fun provideSettingsQueryGateway(adapter: SettingsQueryGatewayAdapter): SettingsQueryGateway {

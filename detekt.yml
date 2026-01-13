@@ -10,6 +10,10 @@ build:
     # comments: 1
   excludes:
     - '**/setup/ioc/AppModule.kt'
+    # Data class equals methods may have multiple returns for validation
+    - '**/TripleDesDecryptionParams.kt'
+    # Padding validation functions need multiple return statements for error handling
+    - '**/TripleDesPaddingHelper.kt'
 
 complexity:
   active: true
@@ -57,6 +61,8 @@ style:
       - '**/chacha20/**/*.kt'
       - '**/ChaCha20*.kt'
       - '**/Poly1305Mac.kt'
+      - '**/DesCore.kt'
+      - "**/TripleDesEncryptionService.kt"
       # Test files often contain magic numbers for test data
       - '**/test/**/*.kt'
       - '**/*Test.kt'

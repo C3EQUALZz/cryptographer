@@ -15,12 +15,14 @@
     <string name="screen_key_generation">Генерация ключей</string>
     <string name="screen_aes_encryption">AES Шифрование</string>
     <string name="screen_chacha20_encryption">ChaCha20 Шифрование</string>
+    <string name="screen_tdes_encryption">3DES Шифрование</string>
     <string name="screen_encoding">Кодирование</string>
 
     <!-- Screen names -->
     <string name="key_generation">Генерация ключей</string>
     <string name="aes_encryption">AES Шифрование</string>
     <string name="chacha20_encryption">ChaCha20 Шифрование</string>
+    <string name="tdes_encryption">3DES Шифрование</string>
     <string name="encoding">Кодирование</string>
 
     <!-- Key Generation Screen -->
@@ -30,7 +32,9 @@
     <string name="algorithm_aes_128">AES-128</string>
     <string name="algorithm_aes_192">AES-192</string>
     <string name="algorithm_aes_256">AES-256</string>
-    <string name="algorithm_chacha20_256">ChaCha20-256</string>
+    <string name="algorithm_chacha20_256">ChaCha20–256</string>
+    <string name="algorithm_tdes_112">3DES-112</string>
+    <string name="algorithm_tdes_168">3DES-168</string>
     <string name="generate_key">Сгенерировать ключ</string>
     <string name="saved_keys">Сохранённые ключи</string>
     <string name="delete_all_keys">Удалить все ключи</string>
@@ -43,7 +47,7 @@
     <string name="key_id">ID: %1$s</string>
     <string name="generated_key">Сгенерированный ключ</string>
     <string name="algorithm_label">Алгоритм: %1$s</string>
-    <string name="key_id_label">ID ключа: %1$s...</string>
+    <string name="key_id_label">ID ключа: %1$s…</string>
     <string name="delete_all_keys_dialog_title">Удалить все ключи?</string>
     <string name="delete_all_keys_dialog_message">Вы уверены, что хотите удалить все сохранённые ключи? Это действие нельзя отменить. Всего ключей: %1$d</string>
     <string name="failed_to_delete_all_keys">Не удалось удалить все ключи: %1$s</string>
@@ -69,15 +73,20 @@
     <string name="clear_all">Очистить всё</string>
     <string name="iv_label">IV (Initialization Vector):</string>
     <string name="copy_iv">Копировать IV</string>
-    <string name="key_id_prefix">ID: %1$s...</string>
+    <string name="key_id_prefix">ID: %1$s…</string>
     <string name="encryption_info_text">Используйте сохранённые ключи для шифрования и дешифрования текста. Зашифрованный текст будет представлен в формате Base64.</string>
 
     <!-- ChaCha20 Encryption Screen -->
     <string name="chacha20_encryption_title">ChaCha20 Шифрование и дешифрование</string>
-    <string name="chacha20_encryption_info">Используйте этот инструмент для шифрования и дешифрования текста с помощью ChaCha20-256 ключей. Выберите ключ и введите текст для шифрования или дешифрования.</string>
+    <string name="chacha20_encryption_info">Используйте этот инструмент для шифрования и дешифрования текста с помощью ChaCha20–256 ключей. Выберите ключ и введите текст для шифрования или дешифрования.</string>
     <string name="nonce_label">Nonce:</string>
     <string name="copy_nonce">Копировать Nonce</string>
     <string name="enter_nonce_placeholder">Введите nonce (опционально)…</string>
+
+    <!-- 3DES Encryption Screen -->
+    <string name="tdes_encryption_title">3DES Шифрование и дешифрование</string>
+    <string name="tdes_encryption_info">Используйте этот инструмент для шифрования и дешифрования текста с помощью 3DES ключей (3DES-112 или 3DES-168). Выберите ключ и введите текст для шифрования или дешифрования.</string>
+    <string name="error_key_not_tdes">Выбранный ключ не является 3DES ключом</string>
 
     <!-- Encoding Screen -->
     <string name="encoding_title">Кодирование текста</string>
@@ -92,6 +101,7 @@
     <!-- Error messages -->
     <string name="error_key_mismatch">Выбранный ключ не соответствует выбранному алгоритму</string>
     <string name="error_key_not_chacha20">Выбранный ключ не является ChaCha20 ключом</string>
+    <string name="error_invalid_algorithm_tdes">Некорректный алгоритм для 3DES: %1$s</string>
     <string name="error_failed_to_load_key">Не удалось загрузить ключ: %1$s</string>
     <string name="error_enter_text_to_encrypt">Введите текст для шифрования</string>
     <string name="error_select_key_to_encrypt">Выберите ключ для шифрования</string>

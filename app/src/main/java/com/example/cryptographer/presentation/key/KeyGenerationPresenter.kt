@@ -4,6 +4,8 @@ import com.example.cryptographer.application.commands.key.create.AesGenerateAndS
 import com.example.cryptographer.application.commands.key.create.AesGenerateAndSaveKeyCommandHandler
 import com.example.cryptographer.application.commands.key.create.ChaCha20GenerateAndSaveKeyCommand
 import com.example.cryptographer.application.commands.key.create.ChaCha20GenerateAndSaveKeyCommandHandler
+import com.example.cryptographer.application.commands.key.create.TripleDesGenerateAndSaveKeyCommand
+import com.example.cryptographer.application.commands.key.create.TripleDesGenerateAndSaveKeyCommandHandler
 import com.example.cryptographer.application.commands.key.delete.DeleteKeyCommand
 import com.example.cryptographer.application.commands.key.delete.DeleteKeyCommandHandler
 import com.example.cryptographer.application.commands.key.deleteall.DeleteAllKeysCommand
@@ -29,6 +31,7 @@ import java.util.Base64
 class KeyGenerationPresenter(
     private val aesGenerateAndSaveKeyHandler: AesGenerateAndSaveKeyCommandHandler,
     private val chaCha20GenerateAndSaveKeyHandler: ChaCha20GenerateAndSaveKeyCommandHandler,
+    private val tripleDesGenerateAndSaveKeyHandler: TripleDesGenerateAndSaveKeyCommandHandler,
     private val loadKeyHandler: LoadKeyQueryHandler,
     private val deleteKeyHandler: DeleteKeyCommandHandler,
     private val deleteAllKeysHandler: DeleteAllKeysCommandHandler,
@@ -76,6 +79,12 @@ class KeyGenerationPresenter(
             EncryptionAlgorithm.CHACHA20_256 -> {
                 val command = ChaCha20GenerateAndSaveKeyCommand(algorithm)
                 chaCha20GenerateAndSaveKeyHandler(command)
+            }
+            EncryptionAlgorithm.TDES_112,
+            EncryptionAlgorithm.TDES_168,
+            -> {
+                val command = TripleDesGenerateAndSaveKeyCommand(algorithm)
+                tripleDesGenerateAndSaveKeyHandler(command)
             }
         }
     }

@@ -15,12 +15,14 @@
     <string name="screen_key_generation">Key Generation</string>
     <string name="screen_aes_encryption">AES Encryption</string>
     <string name="screen_chacha20_encryption">ChaCha20 Encryption</string>
+    <string name="screen_tdes_encryption">3DES Encryption</string>
     <string name="screen_encoding">Encoding</string>
 
     <!-- Screen names -->
     <string name="key_generation">Key Generation</string>
     <string name="aes_encryption">AES Encryption</string>
     <string name="chacha20_encryption">ChaCha20 Encryption</string>
+    <string name="tdes_encryption">3DES Encryption</string>
     <string name="encoding">Encoding</string>
 
     <!-- Key Generation Screen -->
@@ -31,6 +33,8 @@
     <string name="algorithm_aes_192">AES-192</string>
     <string name="algorithm_aes_256">AES-256</string>
     <string name="algorithm_chacha20_256">ChaCha20-256</string>
+    <string name="algorithm_tdes_112">3DES-112</string>
+    <string name="algorithm_tdes_168">3DES-168</string>
     <string name="generate_key">Generate Key</string>
     <string name="saved_keys">Saved Keys</string>
     <string name="delete_all_keys">Delete All Keys</string>
@@ -75,6 +79,7 @@
     <!-- Error messages -->
     <string name="error_key_mismatch">Selected key does not match the selected algorithm</string>
     <string name="error_key_not_chacha20">Selected key is not a ChaCha20 key</string>
+    <string name="error_invalid_algorithm_tdes">Invalid algorithm for 3DES: %1$s</string>
     <string name="error_failed_to_load_key">Failed to load key: %1$s</string>
     <string name="error_enter_text_to_encrypt">Enter text to encrypt</string>
     <string name="error_select_key_to_encrypt">Select a key for encryption</string>
@@ -91,6 +96,11 @@
     <string name="nonce_label">Nonce:</string>
     <string name="copy_nonce">Copy Nonce</string>
     <string name="enter_nonce_placeholder">Enter nonce (optional)…</string>
+
+    <!-- 3DES Encryption Screen -->
+    <string name="tdes_encryption_title">3DES Encryption and Decryption</string>
+    <string name="tdes_encryption_info">Use this tool to encrypt and decrypt text using 3DES keys (3DES-112 or 3DES-168). Select a key and enter text to encrypt or decrypt.</string>
+    <string name="error_key_not_tdes">Selected key is not a 3DES key</string>
 
     <!-- Encoding Screen -->
     <string name="encoding_title">Text Encoding</string>

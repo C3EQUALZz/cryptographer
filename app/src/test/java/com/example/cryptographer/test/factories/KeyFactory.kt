@@ -26,6 +26,8 @@ object KeyFactory {
             EncryptionAlgorithm.AES_192 -> keyBytes.take(24).toByteArray()
             EncryptionAlgorithm.AES_256 -> keyBytes.take(32).toByteArray()
             EncryptionAlgorithm.CHACHA20_256 -> keyBytes.take(32).toByteArray() // 256 bits = 32 bytes
+            EncryptionAlgorithm.TDES_112 -> keyBytes.take(16).toByteArray()
+            EncryptionAlgorithm.TDES_168 -> keyBytes.take(24).toByteArray() // 168 bits = 21 bytes
         }
 
         return EncryptionKey(
@@ -41,27 +43,43 @@ object KeyFactory {
      * Creates an AES-128 key.
      */
     fun createAes128(id: String = UUID.randomUUID().toString()): EncryptionKey {
-        return create(id = id, algorithm = EncryptionAlgorithm.AES_128, keyBytes = ByteArray(16) { it.toByte() })
+        return create(
+            id = id,
+            algorithm = EncryptionAlgorithm.AES_128,
+            keyBytes = ByteArray(16) { it.toByte() },
+        )
     }
 
     /**
      * Creates an AES-192 key.
      */
     fun createAes192(id: String = UUID.randomUUID().toString()): EncryptionKey {
-        return create(id = id, algorithm = EncryptionAlgorithm.AES_192, keyBytes = ByteArray(24) { it.toByte() })
+        return create(
+            id = id,
+            algorithm = EncryptionAlgorithm.AES_192,
+            keyBytes = ByteArray(24) { it.toByte() },
+        )
     }
 
     /**
      * Creates an AES-256 key.
      */
     fun createAes256(id: String = UUID.randomUUID().toString()): EncryptionKey {
-        return create(id = id, algorithm = EncryptionAlgorithm.AES_256, keyBytes = ByteArray(32) { it.toByte() })
+        return create(
+            id = id,
+            algorithm = EncryptionAlgorithm.AES_256,
+            keyBytes = ByteArray(32) { it.toByte() },
+        )
     }
 
     /**
      * Creates a ChaCha20-256 key.
      */
     fun createChaCha256(id: String = UUID.randomUUID().toString()): EncryptionKey {
-        return create(id = id, algorithm = EncryptionAlgorithm.CHACHA20_256, keyBytes = ByteArray(32) { it.toByte() })
+        return create(
+            id = id,
+            algorithm = EncryptionAlgorithm.CHACHA20_256,
+            keyBytes = ByteArray(32) { it.toByte() },
+        )
     }
 }

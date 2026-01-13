@@ -4,6 +4,7 @@ import com.example.cryptographer.application.commands.key.create.AesGenerateAndS
 import com.example.cryptographer.application.commands.key.create.AesGenerateAndSaveKeyCommandHandler
 import com.example.cryptographer.application.commands.key.create.ChaCha20GenerateAndSaveKeyCommand
 import com.example.cryptographer.application.commands.key.create.ChaCha20GenerateAndSaveKeyCommandHandler
+import com.example.cryptographer.application.commands.key.create.TripleDesGenerateAndSaveKeyCommandHandler
 import com.example.cryptographer.application.commands.key.delete.DeleteKeyCommand
 import com.example.cryptographer.application.commands.key.delete.DeleteKeyCommandHandler
 import com.example.cryptographer.application.commands.key.deleteall.DeleteAllKeysCommand
@@ -34,6 +35,7 @@ class KeyGenerationPresenterTest {
 
     private lateinit var aesGenerateAndSaveKeyHandler: AesGenerateAndSaveKeyCommandHandler
     private lateinit var chaCha20GenerateAndSaveKeyHandler: ChaCha20GenerateAndSaveKeyCommandHandler
+    private lateinit var tripleDesGenerateAndSaveKeyHandler: TripleDesGenerateAndSaveKeyCommandHandler
     private lateinit var loadKeyHandler: LoadKeyQueryHandler
     private lateinit var deleteKeyHandler: DeleteKeyCommandHandler
     private lateinit var deleteAllKeysHandler: DeleteAllKeysCommandHandler
@@ -44,6 +46,7 @@ class KeyGenerationPresenterTest {
     fun setUp() {
         aesGenerateAndSaveKeyHandler = mockk()
         chaCha20GenerateAndSaveKeyHandler = mockk()
+        tripleDesGenerateAndSaveKeyHandler = mockk()
         loadKeyHandler = mockk()
         deleteKeyHandler = mockk()
         deleteAllKeysHandler = mockk()
@@ -51,6 +54,7 @@ class KeyGenerationPresenterTest {
         presenter = KeyGenerationPresenter(
             aesGenerateAndSaveKeyHandler = aesGenerateAndSaveKeyHandler,
             chaCha20GenerateAndSaveKeyHandler = chaCha20GenerateAndSaveKeyHandler,
+            tripleDesGenerateAndSaveKeyHandler = tripleDesGenerateAndSaveKeyHandler,
             loadKeyHandler = loadKeyHandler,
             deleteKeyHandler = deleteKeyHandler,
             deleteAllKeysHandler = deleteAllKeysHandler,

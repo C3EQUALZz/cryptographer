@@ -1,13 +1,17 @@
 package com.example.cryptographer.integration.key
 
+import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.cryptographer.application.common.ports.key.KeyCommandGateway
 import com.example.cryptographer.application.common.ports.key.KeyQueryGateway
 import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import com.example.cryptographer.fixtures.TestFixtures
-import com.example.cryptographer.infrastructure.key.KeyCommandGatewayAdapter
-import com.example.cryptographer.infrastructure.key.KeyQueryGatewayAdapter
+import com.example.cryptographer.infrastructure.persistence.KeystoreHelper
+import com.example.cryptographer.infrastructure.persistence.adapters.key.KeyCommandGatewayAdapter
+import com.example.cryptographer.infrastructure.persistence.adapters.key.KeyQueryGatewayAdapter
+import com.example.cryptographer.infrastructure.persistence.database.CryptographerDatabase
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -15,12 +19,13 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.io.IOException
 
 /**
  * Integration tests for key management functionality.
  *
  * These tests verify that key storage and retrieval work correctly
- * in a real Android environment using SharedPreferences.
+ * in a real Android environment using Room database and Android Keystore.
  *
  * Category: Integration Tests
  * Scope: Key persistence and retrieval
@@ -30,20 +35,39 @@ class KeyManagementIntegrationTest {
 
     private lateinit var keyCommandGateway: KeyCommandGateway
     private lateinit var keyQueryGateway: KeyQueryGateway
+    private lateinit var database: CryptographerDatabase
+    private lateinit var keystoreHelper: KeystoreHelper
     private val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Before
     fun setUp() {
-        // Create query gateway first (needed by command gateway)
-        keyQueryGateway = KeyQueryGatewayAdapter(appContext)
-        // Create command gateway with query gateway dependency
-        keyCommandGateway = KeyCommandGatewayAdapter(appContext, keyQueryGateway)
+        // Create in-memory database for testing
+        database = Room.inMemoryDatabaseBuilder(
+            appContext,
+            CryptographerDatabase::class.java,
+        )
+            .allowMainThreadQueries()
+            .build()
+
+        // Create KeystoreHelper
+        keystoreHelper = KeystoreHelper()
+
+        // Create adapters with dependencies
+        val keyDao = database.keyDao()
+        keyQueryGateway = KeyQueryGatewayAdapter(keyDao, keystoreHelper)
+        keyCommandGateway = KeyCommandGatewayAdapter(keyDao, keystoreHelper)
 
         // Clear all keys before each test
         val allKeyIds = keyQueryGateway.getAllKeyIds()
         allKeyIds.forEach { keyId ->
             keyCommandGateway.deleteKey(keyId)
         }
+    }
+
+    @After
+    @Throws(IOException::class)
+    fun tearDown() {
+        database.close()
     }
 
     @Test

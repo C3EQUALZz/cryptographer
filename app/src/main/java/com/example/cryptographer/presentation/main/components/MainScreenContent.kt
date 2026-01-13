@@ -17,6 +17,8 @@ import com.example.cryptographer.presentation.encoding.EncodingViewModel
 import com.example.cryptographer.presentation.key.KeyGenerationScreen
 import com.example.cryptographer.presentation.key.KeyGenerationViewModel
 import com.example.cryptographer.presentation.main.AppScreen
+import com.example.cryptographer.presentation.tdes.TripleDesScreen
+import com.example.cryptographer.presentation.tdes.TripleDesViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -56,6 +58,10 @@ private fun ScreenContent(selectedScreen: AppScreen) {
         AppScreen.ChaCha20Encryption -> {
             val chaCha20ViewModel: ChaCha20ViewModel = viewModel()
             ChaCha20Screen(viewModel = chaCha20ViewModel)
+        }
+        AppScreen.TripleDesEncryption -> {
+            val tripleDesViewModel: TripleDesViewModel = viewModel()
+            TripleDesScreen(viewModel = tripleDesViewModel)
         }
         AppScreen.Encoding -> {
             val encodingViewModel: EncodingViewModel = viewModel()

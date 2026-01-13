@@ -129,5 +129,6 @@ enum class AppScreen {
     KeyGeneration,
     AesEncryption,
     ChaCha20Encryption,
+    TripleDesEncryption,
     Encoding,
 }

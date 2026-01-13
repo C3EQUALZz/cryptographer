@@ -97,6 +97,11 @@ dependencies {
     implementation(libs.slf4j.api)
     runtimeOnly(libs.slf4j.android)
 
+    // Room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    kapt(libs.androidx.room.compiler)
+
     // Testing
     testImplementation(libs.junit)
     testImplementation(libs.mockk)

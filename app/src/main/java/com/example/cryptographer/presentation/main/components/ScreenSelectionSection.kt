@@ -51,6 +51,14 @@ fun ScreenSelectionSection(selectedScreen: AppScreen, onScreenSelected: (AppScre
     )
 
     NavigationDrawerItem(
+        icon = { Icon(Icons.Default.Lock, contentDescription = null) },
+        label = { Text(stringResource(R.string.tdes_encryption)) },
+        selected = selectedScreen == AppScreen.TripleDesEncryption,
+        onClick = { onScreenSelected(AppScreen.TripleDesEncryption) },
+        modifier = Modifier.fillMaxWidth(),
+    )
+
+    NavigationDrawerItem(
         icon = { Icon(Icons.Default.ArrowDropDown, contentDescription = null) },
         label = { Text(stringResource(R.string.encoding)) },
         selected = selectedScreen == AppScreen.Encoding,
