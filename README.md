@@ -30,11 +30,11 @@ Built using the principles of Robert Martin (aka Uncle Bob) and Domain-Driven De
 
 ### Code Quality
 
-| Tool          | Role                     |
-|---------------|--------------------------|
-| **Spotless**  | Code formatting (ktlint) |
-| **Detekt**    | Static code analysis     |
-| **GitLab CI** | Continuous Integration   |
+| Tool                               | Role                     |
+|------------------------------------|--------------------------|
+| **Spotless**                       | Code formatting (ktlint) |
+| **Detekt**                         | Static code analysis     |
+| **GitLab CI** / **Github Actions** | Continuous Integration   |
 
 ## Features
 
