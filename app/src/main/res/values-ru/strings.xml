@@ -111,4 +111,34 @@
     <string name="error_decryption_failed">Ошибка дешифрования: %1$s</string>
     <string name="error_invalid_base64_format">Некорректный формат Base64 для зашифрованного текста или IV.</string>
     <string name="error_invalid_base64_format_nonce">Некорректный формат Base64 для зашифрованного текста или nonce.</string>
+
+    <!-- Lock Screen -->
+    <string name="lock_screen_title">Защита приложения</string>
+    <string name="lock_screen_subtitle">Введите пароль для доступа</string>
+    <string name="lock_password_label">Пароль</string>
+    <string name="lock_password_placeholder">Введите пароль</string>
+    <string name="lock_unlock_button">Разблокировать</string>
+    <string name="lock_use_fingerprint">Использовать отпечаток пальца</string>
+    <string name="lock_error_wrong_password">Неверный пароль</string>
+    <string name="lock_error_too_many_attempts">Слишком много попыток. Попробуйте позже.</string>
+    <string name="lock_error_biometric_locked">Биометрическая аутентификация заблокирована.</string>
+    <string name="lock_error_biometric_failed">Ошибка биометрической аутентификации</string>
+    <string name="lock_error_failed_to_set_password">Не удалось установить пароль</string>
+    <string name="lock_biometric_title">Биометрическая аутентификация</string>
+    <string name="lock_biometric_subtitle">Используйте отпечаток пальца для разблокировки</string>
+    <string name="lock_biometric_cancel">Отмена</string>
+    <string name="lock_biometric_failed_to_recognize">Не удалось распознать отпечаток</string>
+
+    <!-- Password Setup Screen -->
+    <string name="password_setup_title">Защита приложения</string>
+    <string name="password_setup_subtitle">Установите пароль для защиты приложения</string>
+    <string name="password_setup_password_label">Пароль</string>
+    <string name="password_setup_password_placeholder">Введите пароль (минимум 4 символа)</string>
+    <string name="password_setup_confirm_password_label">Подтвердите пароль</string>
+    <string name="password_setup_confirm_password_placeholder">Повторите пароль</string>
+    <string name="password_setup_set_button">Установить пароль</string>
+    <string name="password_setup_enable_biometric">Включить отпечаток пальца</string>
+    <string name="password_setup_skip">Пропустить</string>
+    <string name="password_setup_error_passwords_not_match">Пароли не совпадают</string>
+    <string name="password_setup_error_password_too_short">Пароль должен содержать минимум 4 символа</string>
 </resources>

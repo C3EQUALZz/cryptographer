@@ -16,7 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.example.cryptographer.domain.common.valueobjects.ThemeMode
 import com.example.cryptographer.presentation.common.CryptographerTheme
-import com.example.cryptographer.presentation.main.MainScreen
+import com.example.cryptographer.presentation.lock.LockScreen
 import com.example.cryptographer.setup.i18n.LocaleHelper
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -54,8 +54,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-                    // MainScreen now uses ViewModel for state management
-                    MainScreen()
+                    // LockScreen handles its own state and shows MainScreen when unlocked
+                    LockScreen()
                 }
             }
         }

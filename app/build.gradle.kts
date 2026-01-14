@@ -102,6 +102,9 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler)
 
+    // Biometric
+    implementation(libs.androidx.biometric)
+
     // Testing
     testImplementation(libs.junit)
     testImplementation(libs.mockk)

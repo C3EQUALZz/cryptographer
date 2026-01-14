@@ -107,6 +107,7 @@ exceptions:
     excludes:
       # Cryptographic services may need to catch generic exceptions for error handling
       - '**/domain/text/services/ChaCha20EncryptionService.kt'
+      - "**/PasswordManager.kt"
 
 performance:
   active: true

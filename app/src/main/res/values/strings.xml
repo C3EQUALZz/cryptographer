@@ -111,4 +111,34 @@
     <string name="utf8">UTF-8</string>
     <string name="ascii">ASCII</string>
     <string name="base64">BASE64</string>
+
+    <!-- Lock Screen -->
+    <string name="lock_screen_title">App Protection</string>
+    <string name="lock_screen_subtitle">Enter password to access</string>
+    <string name="lock_password_label">Password</string>
+    <string name="lock_password_placeholder">Enter password</string>
+    <string name="lock_unlock_button">Unlock</string>
+    <string name="lock_use_fingerprint">Use fingerprint</string>
+    <string name="lock_error_wrong_password">Wrong password</string>
+    <string name="lock_error_too_many_attempts">Too many attempts. Try again later.</string>
+    <string name="lock_error_biometric_locked">Biometric authentication is locked.</string>
+    <string name="lock_error_biometric_failed">Biometric authentication error</string>
+    <string name="lock_error_failed_to_set_password">Failed to set password</string>
+    <string name="lock_biometric_title">Biometric Authentication</string>
+    <string name="lock_biometric_subtitle">Use fingerprint to unlock</string>
+    <string name="lock_biometric_cancel">Cancel</string>
+    <string name="lock_biometric_failed_to_recognize">Failed to recognize fingerprint</string>
+
+    <!-- Password Setup Screen -->
+    <string name="password_setup_title">App Protection</string>
+    <string name="password_setup_subtitle">Set password to protect the app</string>
+    <string name="password_setup_password_label">Password</string>
+    <string name="password_setup_password_placeholder">Enter password (minimum 4 characters)</string>
+    <string name="password_setup_confirm_password_label">Confirm Password</string>
+    <string name="password_setup_confirm_password_placeholder">Repeat password</string>
+    <string name="password_setup_set_button">Set Password</string>
+    <string name="password_setup_enable_biometric">Enable fingerprint</string>
+    <string name="password_setup_skip">Skip</string>
+    <string name="password_setup_error_passwords_not_match">Passwords do not match</string>
+    <string name="password_setup_error_password_too_short">Password must be at least 4 characters</string>
 </resources>
