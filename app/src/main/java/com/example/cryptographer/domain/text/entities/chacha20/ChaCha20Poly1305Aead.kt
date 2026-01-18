@@ -1,8 +1,9 @@
-package com.example.cryptographer.domain.text.services.crypto.chacha20poly1305
+package com.example.cryptographer.domain.text.entities.chacha20
 
-import com.example.cryptographer.domain.text.services.crypto.chacha20.ChaCha20Core
-import com.example.cryptographer.domain.text.services.crypto.chacha20.ChaCha20StreamCipher
-import com.example.cryptographer.domain.text.services.crypto.poly1305.Poly1305Mac
+import com.example.cryptographer.domain.text.entities.poly1305.Poly1305Mac
+import com.example.cryptographer.domain.text.valueobjects.chacha20.ChaCha20Key
+import com.example.cryptographer.domain.text.valueobjects.chacha20.ChaCha20Nonce
+import com.example.cryptographer.domain.text.valueobjects.chacha20.Poly1305Tag
 
 /**
  * ChaCha20-Poly1305 AEAD (Authenticated Encryption with Associated Data) implementation.
@@ -20,9 +21,10 @@ internal class ChaCha20Poly1305Aead(
     private val streamCipher: ChaCha20StreamCipher = ChaCha20StreamCipher(),
     private val mac: Poly1305Mac = Poly1305Mac(),
 ) {
-    private val keyLength = 32 // bytes (256 bits)
-    private val nonceLength = 12 // bytes (96 bits)
-    private val tagLength = 16 // bytes (128 bits)
+    private val emptyAad = ByteArray(0)
+    private val poly1305KeyLength = 32
+    private val lengthFieldSize = 8
+    private val macDataTrailerSize = lengthFieldSize * 2
 
     /**
      * Encrypts data and generates an authentication tag.
@@ -40,23 +42,21 @@ internal class ChaCha20Poly1305Aead(
      */
     fun encrypt(
         plaintext: ByteArray,
-        key: ByteArray,
-        nonce: ByteArray,
-        aad: ByteArray = ByteArray(0),
-    ): Pair<ByteArray, ByteArray> {
-        require(key.size == keyLength) { "Key must be $keyLength bytes" }
-        require(nonce.size == nonceLength) { "Nonce must be $nonceLength bytes" }
-
+        key: ChaCha20Key,
+        nonce: ChaCha20Nonce,
+        aad: ByteArray = emptyAad,
+    ): Pair<ByteArray, Poly1305Tag> {
         // Step 1: Generate Poly1305 one-time key using ChaCha20 with counter=0
         val polyKey = generatePoly1305Key(key, nonce)
 
         // Step 2: Encrypt plaintext using ChaCha20 with counter=1
-        val ciphertext = streamCipher.process(plaintext, key, nonce, initialCounter = 1)
+        val ciphertext = streamCipher.process(plaintext, key.raw(), nonce.bytes, initialCounter = 1)
 
         // Step 3: Generate authentication tag
         // Poly1305 authenticates: AAD || ciphertext || AAD length (8 bytes) || ciphertext length (8 bytes)
         val macData = constructMacData(aad, ciphertext)
-        val tag = mac.generateTag(macData, polyKey)
+        val tagBytes = mac.generateTag(macData, polyKey)
+        val tag = Poly1305Tag.create(tagBytes).getOrThrow()
 
         return Pair(ciphertext, tag)
     }
@@ -73,15 +73,11 @@ internal class ChaCha20Poly1305Aead(
      */
     fun decrypt(
         ciphertext: ByteArray,
-        tag: ByteArray,
-        key: ByteArray,
-        nonce: ByteArray,
-        aad: ByteArray = ByteArray(0),
+        tag: Poly1305Tag,
+        key: ChaCha20Key,
+        nonce: ChaCha20Nonce,
+        aad: ByteArray = emptyAad,
     ): ByteArray? {
-        require(key.size == keyLength) { "Key must be $keyLength bytes" }
-        require(nonce.size == nonceLength) { "Nonce must be $nonceLength bytes" }
-        require(tag.size == tagLength) { "Tag must be $tagLength bytes" }
-
         // Step 1: Generate Poly1305 one-time key using ChaCha20 with counter=0
         val polyKey = generatePoly1305Key(key, nonce)
 
@@ -89,14 +85,12 @@ internal class ChaCha20Poly1305Aead(
         val macData = constructMacData(aad, ciphertext)
         val expectedTag = mac.generateTag(macData, polyKey)
 
-        if (!constantTimeEquals(tag, expectedTag)) {
+        if (!constantTimeEquals(tag.bytes, expectedTag)) {
             return null // Authentication failed
         }
 
         // Step 3: Decrypt ciphertext using ChaCha20 with counter=1
-        val plaintext = streamCipher.process(ciphertext, key, nonce, initialCounter = 1)
-
-        return plaintext
+        return streamCipher.process(ciphertext, key.raw(), nonce.bytes, initialCounter = 1)
     }
 
     /**
@@ -105,11 +99,9 @@ internal class ChaCha20Poly1305Aead(
      * Uses ChaCha20 block function with counter=0 to generate 32 bytes (256 bits) for the Poly1305 key.
      * According to RFC 8439, this is the first 32 bytes of the ChaCha20 block output.
      */
-    private fun generatePoly1305Key(key: ByteArray, nonce: ByteArray): ByteArray {
-        // Generate 64-byte block using ChaCha20 with counter=0
-        // The Poly1305 key is the first 32 bytes of the block output
-        val block = core.block(key, counter = 0, nonce)
-        return block.take(32).toByteArray()
+    private fun generatePoly1305Key(key: ChaCha20Key, nonce: ChaCha20Nonce): ByteArray {
+        val block = core.block(key.raw(), counter = 0, nonce.bytes)
+        return block.take(poly1305KeyLength).toByteArray()
     }
 
     /**
@@ -121,7 +113,7 @@ internal class ChaCha20Poly1305Aead(
         val aadLength = aad.size.toLong()
         val ciphertextLength = ciphertext.size.toLong()
 
-        val macData = ByteArray(aad.size + ciphertext.size + 16)
+        val macData = ByteArray(aad.size + ciphertext.size + macDataTrailerSize)
         var offset = 0
 
         // Append AAD
@@ -133,13 +125,13 @@ internal class ChaCha20Poly1305Aead(
         offset += ciphertext.size
 
         // Append AAD length (8 bytes, little-endian)
-        for (i in 0 until 8) {
+        for (i in 0 until lengthFieldSize) {
             macData[offset + i] = ((aadLength shr (i * 8)) and 0xFF).toByte()
         }
-        offset += 8
+        offset += lengthFieldSize
 
         // Append ciphertext length (8 bytes, little-endian)
-        for (i in 0 until 8) {
+        for (i in 0 until lengthFieldSize) {
             macData[offset + i] = ((ciphertextLength shr (i * 8)) and 0xFF).toByte()
         }
 

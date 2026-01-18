@@ -1,4 +1,4 @@
-package com.example.cryptographer.domain.text.services.crypto.chacha20
+package com.example.cryptographer.domain.text.entities.chacha20
 
 /**
  * Core ChaCha20 block function implementation.
@@ -37,19 +37,19 @@ internal object ChaCha20Core {
     private fun quarterRound(a: Int, b: Int, c: Int, d: Int, state: IntArray) {
         state[a] = state[a].plus(state[b]) and 0xFFFFFFFF.toInt()
         state[d] = state[d] xor state[a]
-        state[d] = (state[d] shl 16) or (state[d] shr 16)
+        state[d] = (state[d] shl 16) or (state[d] ushr 16)
 
         state[c] = state[c].plus(state[d]) and 0xFFFFFFFF.toInt()
         state[b] = state[b] xor state[c]
-        state[b] = (state[b] shl 12) or (state[b] shr 20)
+        state[b] = (state[b] shl 12) or (state[b] ushr 20)
 
         state[a] = state[a].plus(state[b]) and 0xFFFFFFFF.toInt()
         state[d] = state[d] xor state[a]
-        state[d] = (state[d] shl 8) or (state[d] shr 24)
+        state[d] = (state[d] shl 8) or (state[d] ushr 24)
 
         state[c] = state[c].plus(state[d]) and 0xFFFFFFFF.toInt()
         state[b] = state[b] xor state[c]
-        state[b] = (state[b] shl 7) or (state[b] shr 25)
+        state[b] = (state[b] shl 7) or (state[b] ushr 25)
     }
 
     /**

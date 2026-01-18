@@ -1,4 +1,4 @@
-package com.example.cryptographer.domain.text.services.crypto.poly1305
+package com.example.cryptographer.domain.text.entities.poly1305
 
 /**
  * Poly1305 MAC (Message Authentication Code) implementation.

@@ -1,4 +1,4 @@
-package com.example.cryptographer.domain.text.services.crypto.chacha20
+package com.example.cryptographer.domain.text.entities.chacha20
 
 /**
  * ChaCha20 stream cipher implementation.
