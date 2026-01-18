@@ -42,11 +42,7 @@ import com.example.cryptographer.presentation.common.CryptographerTheme
  * Screen for setting up app lock password (first time setup).
  */
 @Composable
-fun PasswordSetupScreen(
-    onPasswordSet: () -> Unit,
-    onSkip: () -> Unit,
-    viewModel: LockViewModel = viewModel(),
-) {
+fun PasswordSetupScreen(onPasswordSet: () -> Unit, onSkip: () -> Unit, viewModel: LockViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     var password by remember { mutableStateOf("") }
@@ -224,10 +220,7 @@ private fun PasswordFields(
 }
 
 @Composable
-private fun BiometricSetupOptions(
-    onEnableBiometric: () -> Unit,
-    onSkipBiometric: () -> Unit,
-) {
+private fun BiometricSetupOptions(onEnableBiometric: () -> Unit, onSkipBiometric: () -> Unit) {
     TextButton(
         onClick = onEnableBiometric,
         modifier = Modifier.fillMaxWidth(),

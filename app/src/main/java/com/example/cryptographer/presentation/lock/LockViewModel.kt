@@ -101,11 +101,7 @@ class LockViewModel @Inject constructor(
     /**
      * Sets password for app lock (first time setup).
      */
-    fun setPassword(
-        password: String,
-        confirmPassword: String,
-        context: android.content.Context,
-    ): Result<Unit> {
+    fun setPassword(password: String, confirmPassword: String, context: android.content.Context): Result<Unit> {
         val validationError = validatePasswordInput(password, confirmPassword, context)
         if (validationError != null) {
             _uiState.value = _uiState.value.copy(errorMessage = validationError)

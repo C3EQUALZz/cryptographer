@@ -4,15 +4,14 @@ import com.example.cryptographer.domain.common.errors.DomainError
 import com.example.cryptographer.domain.common.services.DomainService
 import com.example.cryptographer.domain.text.entities.EncryptedText
 import com.example.cryptographer.domain.text.entities.EncryptionKey
+import com.example.cryptographer.domain.text.entities.aes.AesGcmMode
+import com.example.cryptographer.domain.text.entities.aes.AesKeyExpansion
 import com.example.cryptographer.domain.text.errors.UnsupportedAlgorithmError
 import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
+import com.example.cryptographer.domain.text.valueobjects.aes.AesKeySize
+import com.example.cryptographer.domain.text.valueobjects.aes.AesNumRounds
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.security.SecureRandom
-import javax.crypto.Cipher
-import javax.crypto.KeyGenerator
-import javax.crypto.SecretKey
-import javax.crypto.spec.GCMParameterSpec
-import javax.crypto.spec.SecretKeySpec
 
 /**
  * Domain service for AES encryption algorithm.
@@ -26,15 +25,8 @@ class AesEncryptionService : DomainService() {
     private val logger = KotlinLogging.logger {}
 
     companion object {
-        private const val ALGORITHM = "AES"
-        private const val TRANSFORMATION = "AES/GCM/NoPadding"
-        private const val GCM_TAG_LENGTH = 128 // bits
+        private const val GCM_TAG_LENGTH = 16 // bytes (128 bits)
         private const val GCM_IV_LENGTH = 12 // bytes (96 bits)
-
-        // AES key sizes in bits
-        private const val AES_128_KEY_SIZE_BITS = 128
-        private const val AES_192_KEY_SIZE_BITS = 192
-        private const val AES_256_KEY_SIZE_BITS = 256
 
         // AES key sizes in bytes
         private const val AES_128_KEY_SIZE_BYTES = 16 // 128 bits = 16 bytes
@@ -43,7 +35,9 @@ class AesEncryptionService : DomainService() {
     }
 
     /**
-     * Encrypts data using the provided AES key.
+     * Encrypts data using the provided AES key with GCM mode.
+     *
+     * Uses custom AES implementation without Java Cipher.
      *
      * @param data Data to encrypt
      * @param key AES encryption key
@@ -51,24 +45,59 @@ class AesEncryptionService : DomainService() {
      */
     fun encrypt(data: ByteArray, key: EncryptionKey): Result<EncryptedText> {
         return try {
-            validateKey(key)
+            logger.info { "Starting AES encryption: algorithm=${key.algorithm}, dataSize=${data.size} bytes" }
 
-            logger.debug { "Starting encryption: algorithm=${key.algorithm}, dataSize=${data.size} bytes" }
-            val secretKey = SecretKeySpec(key.value, ALGORITHM)
-            val cipher = Cipher.getInstance(TRANSFORMATION)
+            // Validate key
+            validateKey(key)
+            logger.debug { "Key validation passed: keySize=${key.value.size} bytes" }
+
+            // Create value objects for validation and type safety
+            val keySize = AesKeySize.create(key.algorithm).getOrElse {
+                throw UnsupportedAlgorithmError(key.algorithm, "AesEncryptionService")
+            }
+            val numRounds = AesNumRounds.create(key.algorithm).getOrElse {
+                throw UnsupportedAlgorithmError(key.algorithm, "AesEncryptionService")
+            }
+            logger.debug { "Value objects created: keySize=$keySize, numRounds=$numRounds" }
+
+            // Validate key bytes match expected size
+            keySize.validateKeyBytes(key.value).getOrThrow()
+            logger.debug { "Key bytes validation passed" }
+
+            // Expand key to round keys
+            logger.debug { "Expanding key to round keys: numRounds=${numRounds.rounds}" }
+            val roundKeys = AesKeyExpansion.expandKey(key.value, numRounds)
+            logger.debug { "Key expansion completed: generated ${roundKeys.roundKeys.size} round keys" }
 
             // Generate random IV (Initialization Vector)
+            logger.debug { "Generating random IV: ivLength=$GCM_IV_LENGTH bytes" }
             val iv = ByteArray(GCM_IV_LENGTH)
             SecureRandom().nextBytes(iv)
+            logger.debug { "IV generated successfully" }
 
-            val parameterSpec = GCMParameterSpec(GCM_TAG_LENGTH, iv)
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey, parameterSpec)
-
-            val encryptedData = cipher.doFinal(data)
-
+            // Encrypt using AES-GCM
+            logger.debug { "Starting AES-GCM encryption: plaintextSize=${data.size} bytes, ivSize=${iv.size} bytes" }
+            val aad = ByteArray(0) // No additional authenticated data
+            val (ciphertext, tag) = AesGcmMode.encrypt(data, iv, aad, roundKeys, numRounds)
             logger.debug {
-                "Encryption successful: algorithm=${key.algorithm}, " +
-                    "encryptedSize=${encryptedData.size} bytes"
+                "AES-GCM encryption completed: " +
+                    "ciphertextSize=${ciphertext.size} bytes, " +
+                    "tagSize=${tag.size} bytes"
+            }
+
+            // Combine ciphertext and tag: encryptedData = ciphertext || tag
+            val encryptedData = ByteArray(ciphertext.size + tag.size)
+            System.arraycopy(ciphertext, 0, encryptedData, 0, ciphertext.size)
+            System.arraycopy(tag, 0, encryptedData, ciphertext.size, tag.size)
+            logger.debug { "Ciphertext and tag combined: totalSize=${encryptedData.size} bytes" }
+
+            logger.info {
+                "AES encryption completed successfully: algorithm=${key.algorithm}, " +
+                    "plaintextSize=${data.size} bytes, " +
+                    "encryptedSize=${encryptedData.size} bytes, " +
+                    "ciphertextSize=${ciphertext.size} bytes, " +
+                    "tagSize=${tag.size} bytes, " +
+                    "ivSize=${iv.size} bytes"
             }
             Result.success(
                 EncryptedText(
@@ -83,41 +112,117 @@ class AesEncryptionService : DomainService() {
         } catch (e: DomainError) {
             logger.error(e) { "Encryption failed: algorithm=${key.algorithm}, error=${e.message}" }
             Result.failure(e)
+        } catch (e: Exception) {
+            logger.error(e) { "Encryption failed: unexpected error" }
+            Result.failure(DomainError("Encryption failed: ${e.message}", e))
         }
     }
 
     /**
-     * Decrypts data using the provided AES key.
+     * Decrypts data using the provided AES key and verifies GCM authentication tag.
      *
-     * @param encryptedText Encrypted data with IV
+     * Uses custom AES implementation without Java Cipher.
+     *
+     * @param encryptedText Encrypted data (ciphertext || tag) with IV
      * @param key AES encryption key
-     * @return Result with decrypted data or error
+     * @return Result with decrypted data or error if authentication fails
      */
     fun decrypt(encryptedText: EncryptedText, key: EncryptionKey): Result<ByteArray> {
         return try {
+            logger.info {
+                "Starting AES decryption: " +
+                    "algorithm=${key.algorithm}, " +
+                    "encryptedSize=${encryptedText.encryptedData.size} bytes"
+            }
+
+            // Validate key
             validateKey(key)
+            logger.debug { "Key validation passed: keySize=${key.value.size} bytes" }
 
             if (encryptedText.initializationVector == null) {
                 logger.warn { "Decryption failed: IV is missing" }
                 return Result.failure(
-                    IllegalArgumentException("IV (Initialization Vector) is missing for decryption"),
+                    DomainError("IV (Initialization Vector) is missing for decryption"),
                 )
             }
 
-            logger.debug {
-                "Starting decryption: algorithm=${key.algorithm}, " +
-                    "encryptedSize=${encryptedText.encryptedData.size} bytes"
+            val encryptedData = encryptedText.encryptedData
+            if (encryptedData.size < GCM_TAG_LENGTH) {
+                logger.warn {
+                    "Decryption failed: encrypted data too short, " +
+                        "size=${encryptedData.size}, " +
+                        "expected at least $GCM_TAG_LENGTH bytes"
+                }
+                return Result.failure(
+                    DomainError(
+                        "Encrypted data is too short. " +
+                            "Minimum size is $GCM_TAG_LENGTH bytes for tag",
+                    ),
+                )
             }
-            val secretKey = SecretKeySpec(key.value, ALGORITHM)
-            val cipher = Cipher.getInstance(TRANSFORMATION)
 
-            val parameterSpec = GCMParameterSpec(GCM_TAG_LENGTH, encryptedText.initializationVector)
-            cipher.init(Cipher.DECRYPT_MODE, secretKey, parameterSpec)
+            // Create value objects for validation and type safety
+            val keySize = AesKeySize.create(key.algorithm).getOrElse {
+                throw UnsupportedAlgorithmError(key.algorithm, "AesEncryptionService")
+            }
+            val numRounds = AesNumRounds.create(key.algorithm).getOrElse {
+                throw UnsupportedAlgorithmError(key.algorithm, "AesEncryptionService")
+            }
+            logger.debug { "Value objects created: keySize=$keySize, numRounds=$numRounds" }
 
-            val decryptedData = cipher.doFinal(encryptedText.encryptedData)
+            // Validate key bytes match expected size
+            keySize.validateKeyBytes(key.value).getOrThrow()
+            logger.debug { "Key bytes validation passed" }
 
+            // Expand key to round keys
+            logger.debug { "Expanding key to round keys: numRounds=${numRounds.rounds}" }
+            val roundKeys = AesKeyExpansion.expandKey(key.value, numRounds)
+            logger.debug { "Key expansion completed: generated ${roundKeys.roundKeys.size} round keys" }
+
+            // Split encryptedData into ciphertext and tag
+            val ciphertextSize = encryptedData.size - GCM_TAG_LENGTH
+            val ciphertext = ByteArray(ciphertextSize)
+            val tag = ByteArray(GCM_TAG_LENGTH)
+            System.arraycopy(encryptedData, 0, ciphertext, 0, ciphertextSize)
+            System.arraycopy(encryptedData, ciphertextSize, tag, 0, GCM_TAG_LENGTH)
             logger.debug {
-                "Decryption successful: algorithm=${key.algorithm}, decryptedSize=${decryptedData.size} bytes"
+                "Encrypted data split: " +
+                    "ciphertextSize=$ciphertextSize bytes, " +
+                    "tagSize=${tag.size} bytes, " +
+                    "ivSize=${encryptedText.initializationVector.size} bytes"
+            }
+
+            // Decrypt and verify using AES-GCM
+            logger.debug { "Starting AES-GCM decryption and authentication verification" }
+            val aad = ByteArray(0) // No additional authenticated data
+            val decryptedData = AesGcmMode.decrypt(
+                ciphertext,
+                tag,
+                encryptedText.initializationVector,
+                aad,
+                roundKeys,
+                numRounds,
+            )
+
+            if (decryptedData == null) {
+                logger.warn {
+                    "Decryption failed: authentication tag verification failed - data may have been tampered with"
+                }
+                return Result.failure(
+                    DomainError(
+                        "Authentication failed: invalid tag. The data may have been tampered with.",
+                    ),
+                )
+            }
+
+            logger.debug { "Authentication tag verification passed" }
+
+            logger.info {
+                "AES decryption completed successfully: algorithm=${key.algorithm}, " +
+                    "encryptedSize=${encryptedData.size} bytes, " +
+                    "ciphertextSize=$ciphertextSize bytes, " +
+                    "tagSize=${tag.size} bytes, " +
+                    "decryptedSize=${decryptedData.size} bytes"
             }
             Result.success(decryptedData)
         } catch (e: UnsupportedAlgorithmError) {
@@ -132,32 +237,40 @@ class AesEncryptionService : DomainService() {
     /**
      * Generates a new AES encryption key for the specified algorithm.
      *
+     * Uses SecureRandom directly instead of KeyGenerator, following the same pattern
+     * as ChaCha20 and TripleDES implementations.
+     *
      * @param algorithm AES algorithm (AES_128, AES_192, AES_256)
      * @return Result with generated key or error
      */
     fun generateKey(algorithm: EncryptionAlgorithm): Result<EncryptionKey> {
         return try {
-            val keySize = when (algorithm) {
-                EncryptionAlgorithm.AES_128 -> AES_128_KEY_SIZE_BITS
-                EncryptionAlgorithm.AES_192 -> AES_192_KEY_SIZE_BITS
-                EncryptionAlgorithm.AES_256 -> AES_256_KEY_SIZE_BITS
+            logger.info { "Starting AES key generation: algorithm=$algorithm" }
+
+            val keySizeBytes = when (algorithm) {
+                EncryptionAlgorithm.AES_128 -> AES_128_KEY_SIZE_BYTES
+                EncryptionAlgorithm.AES_192 -> AES_192_KEY_SIZE_BYTES
+                EncryptionAlgorithm.AES_256 -> AES_256_KEY_SIZE_BYTES
                 else -> throw UnsupportedAlgorithmError(
                     algorithm,
                     "AesEncryptionService",
                 )
             }
+            logger.debug { "Key size determined: keySize=$keySizeBytes bytes (${keySizeBytes * 8} bits)" }
 
-            logger.debug { "Generating encryption key: algorithm=$algorithm, keySize=$keySize bits" }
-            val keyGenerator = KeyGenerator.getInstance(ALGORITHM)
-            keyGenerator.init(keySize)
-            val secretKey: SecretKey = keyGenerator.generateKey()
+            // Generate random key using SecureRandom (cryptographically secure random number generator)
+            logger.debug { "Generating random key bytes using SecureRandom" }
+            val keyBytes = ByteArray(keySizeBytes)
+            SecureRandom().nextBytes(keyBytes)
+            logger.debug { "Random key bytes generated successfully" }
 
-            logger.debug {
-                "Key generated successfully: algorithm=$algorithm, keyLength=${secretKey.encoded.size} bytes"
+            logger.info {
+                "AES key generation completed successfully: algorithm=$algorithm, " +
+                    "keySize=${keyBytes.size} bytes (${keyBytes.size * 8} bits)"
             }
             Result.success(
                 EncryptionKey(
-                    value = secretKey.encoded,
+                    value = keyBytes,
                     algorithm = algorithm,
                 ),
             )

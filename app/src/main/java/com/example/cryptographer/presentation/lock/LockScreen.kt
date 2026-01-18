@@ -88,11 +88,7 @@ fun LockScreen(viewModel: LockViewModel = viewModel()) {
 }
 
 @Composable
-private fun LockScreenContent(
-    uiState: LockUiState,
-    viewModel: LockViewModel,
-    context: android.content.Context,
-) {
+private fun LockScreenContent(uiState: LockUiState, viewModel: LockViewModel, context: android.content.Context) {
     var password by remember { mutableStateOf("") }
     val isBiometricAvailable = remember { viewModel.isBiometricAvailable(context) }
     val isBiometricEnabled = remember { viewModel.isBiometricEnabled() }
