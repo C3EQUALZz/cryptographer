@@ -1,8 +1,7 @@
-package com.example.cryptographer.domain.text.valuebjects.aes
+package com.example.cryptographer.domain.text.valueobjects.aes
 
 import com.example.cryptographer.domain.common.errors.DomainFieldError
 import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
-import com.example.cryptographer.domain.text.valueobjects.aes.AesKeySize
 import org.junit.Assert
 import org.junit.Test
 

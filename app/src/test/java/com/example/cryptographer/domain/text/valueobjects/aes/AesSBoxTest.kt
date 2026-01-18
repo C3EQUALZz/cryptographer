@@ -1,6 +1,5 @@
-package com.example.cryptographer.domain.text.valuebjects.aes
+package com.example.cryptographer.domain.text.valueobjects.aes
 
-import com.example.cryptographer.domain.text.valueobjects.aes.AesSBox
 import org.junit.Assert
 import org.junit.Test
 

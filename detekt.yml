@@ -63,7 +63,7 @@ style:
       - '**/chacha20/**/*.kt'
       - '**/ChaCha20*.kt'
       - '**/Poly1305Mac.kt'
-      - '**/DesCore.kt'
+      - '**/DesCipher.kt'
       - "**/TripleDesEncryptionService.kt"
       # Test files often contain magic numbers for test data
       - '**/test/**/*.kt'

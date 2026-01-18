@@ -1,4 +1,4 @@
-package com.example.cryptographer.domain.text.services.crypto.des
+package com.example.cryptographer.domain.text.entities.des
 
 /**
  * Core DES (Data Encryption Standard) implementation.
@@ -9,7 +9,7 @@ package com.example.cryptographer.domain.text.services.crypto.des
  * Note: DES is considered insecure for modern applications due to its 56-bit key size.
  * This implementation is provided for educational purposes and compatibility.
  */
-internal object DesCore {
+internal object DesCipher {
     private const val BLOCK_SIZE = 8 // bytes (64 bits)
     private const val KEY_SIZE = 8 // bytes (64 bits, but only 56 bits are used)
     private const val ROUNDS = 16
@@ -272,15 +272,14 @@ internal object DesCore {
             // Extract 6 bits for this S-box
             val byteIndex = i * 6 / 8
             val bitOffset = (i * 6) % 8
-            var input6 = 0
-            if (bitOffset <= 2) {
+            val input6 = if (bitOffset <= 2) {
                 // All 6 bits in one byte
-                input6 = ((xored[byteIndex].toInt() and 0xFF) shr (2 - bitOffset)) and 0x3F
+                ((xored[byteIndex].toInt() and 0xFF) shr (2 - bitOffset)) and 0x3F
             } else {
                 // Bits span two bytes
                 val firstByte = (xored[byteIndex].toInt() and 0xFF) shl (bitOffset - 2)
                 val secondByte = (xored[byteIndex + 1].toInt() and 0xFF) shr (10 - bitOffset)
-                input6 = (firstByte or secondByte) and 0x3F
+                (firstByte or secondByte) and 0x3F
             }
 
             // Extract row (bits 0 and 5) and column (bits 1-4)

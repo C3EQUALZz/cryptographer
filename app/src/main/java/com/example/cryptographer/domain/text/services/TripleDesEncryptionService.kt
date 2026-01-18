@@ -4,8 +4,12 @@ import com.example.cryptographer.domain.common.errors.DomainError
 import com.example.cryptographer.domain.common.services.DomainService
 import com.example.cryptographer.domain.text.entities.EncryptedText
 import com.example.cryptographer.domain.text.entities.EncryptionKey
+import com.example.cryptographer.domain.text.entities.tdes.TripleDesCbcMode
 import com.example.cryptographer.domain.text.errors.UnsupportedAlgorithmError
 import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
+import com.example.cryptographer.domain.text.valueobjects.tdes.Pkcs5Padding
+import com.example.cryptographer.domain.text.valueobjects.tdes.TripleDesIv
+import com.example.cryptographer.domain.text.valueobjects.tdes.TripleDesKey
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.security.GeneralSecurityException
 import java.security.SecureRandom
@@ -33,32 +37,20 @@ class TripleDesEncryptionService : DomainService() {
      */
     fun encrypt(data: ByteArray, key: EncryptionKey): Result<EncryptedText> {
         return try {
-            TripleDesValidationHelper.validateKey(key)
-
             logger.debug { "Starting 3DES encryption: dataSize=${data.size} bytes, algorithm=${key.algorithm}" }
+
+            val keyMaterial = buildKeyMaterial(key)
 
             // Generate random IV
             val iv = ByteArray(IV_LENGTH)
             SecureRandom().nextBytes(iv)
-
-            // Extract keys based on algorithm
-            val (key1, key2, key3) = TripleDesValidationHelper.extractKeys(key)
+            val ivValue = TripleDesIv.create(iv).getOrThrow()
 
             // Pad data before encryption
-            val paddedData = TripleDesPaddingHelper.padData(data)
+            val paddedData = Pkcs5Padding.pad(data)
 
             // Encrypt using CBC mode
-            val encryptedData = when (key.algorithm) {
-                EncryptionAlgorithm.TDES_112 -> {
-                    TripleDesCbcHelper.encryptCbc112(paddedData, key1, key2, iv)
-                }
-
-                EncryptionAlgorithm.TDES_168 -> {
-                    TripleDesCbcHelper.encryptCbc168(paddedData, key1, key2, key3!!, iv)
-                }
-
-                else -> throw UnsupportedAlgorithmError(key.algorithm, "TripleDesEncryptionService")
-            }
+            val encryptedData = TripleDesCbcMode.encrypt(paddedData, keyMaterial, ivValue)
 
             logger.debug {
                 "3DES encryption successful: " +
@@ -70,7 +62,7 @@ class TripleDesEncryptionService : DomainService() {
                 EncryptedText(
                     encryptedData = encryptedData,
                     algorithm = key.algorithm,
-                    initializationVector = iv,
+                    initializationVector = ivValue.toByteArray(),
                 ),
             )
         } catch (e: UnsupportedAlgorithmError) {
@@ -97,14 +89,10 @@ class TripleDesEncryptionService : DomainService() {
      */
     fun decrypt(encryptedText: EncryptedText, key: EncryptionKey): Result<ByteArray> {
         return try {
-            TripleDesValidationHelper.validateKey(key)
-            val validationError = TripleDesValidationHelper.validateDecryptionInput(encryptedText)
-            if (validationError != null) {
-                return Result.failure(validationError)
-            }
-
-            val iv = encryptedText.initializationVector!!
+            val keyMaterial = buildKeyMaterial(key)
+            val iv = requireIv(encryptedText)
             val encryptedData = encryptedText.encryptedData
+            requireEncryptedDataLength(encryptedData)
 
             logger.debug {
                 "Starting 3DES decryption: " +
@@ -112,13 +100,11 @@ class TripleDesEncryptionService : DomainService() {
                     "algorithm=${key.algorithm}"
             }
 
-            // Extract keys and decrypt
-            val (key1, key2, key3) = TripleDesValidationHelper.extractKeys(key)
-            val params = TripleDesDecryptionParams(encryptedData, key1, key2, key3, iv, key.algorithm)
-            val decryptedPadded = performDecryption(params)
+            // Decrypt using CBC mode
+            val decryptedPadded = TripleDesCbcMode.decrypt(encryptedData, keyMaterial, iv)
 
             // Remove padding
-            val decryptedData = TripleDesPaddingHelper.removePadding(decryptedPadded)
+            val decryptedData = Pkcs5Padding.unpad(decryptedPadded)
 
             logger.debug {
                 "3DES decryption successful: " +
@@ -142,27 +128,6 @@ class TripleDesEncryptionService : DomainService() {
         }
     }
 
-    private fun performDecryption(params: TripleDesDecryptionParams): ByteArray {
-        return when (params.algorithm) {
-            EncryptionAlgorithm.TDES_112 -> TripleDesCbcHelper.decryptCbc112(
-                params.encryptedData,
-                params.key1,
-                params.key2,
-                params.iv,
-            )
-
-            EncryptionAlgorithm.TDES_168 -> TripleDesCbcHelper.decryptCbc168(
-                params.encryptedData,
-                params.key1,
-                params.key2,
-                params.key3!!,
-                params.iv,
-            )
-
-            else -> throw UnsupportedAlgorithmError(params.algorithm, "TripleDesEncryptionService")
-        }
-    }
-
     /**
      * Generates a new 3DES encryption key.
      *
@@ -171,11 +136,8 @@ class TripleDesEncryptionService : DomainService() {
      */
     fun generateKey(algorithm: EncryptionAlgorithm): Result<EncryptionKey> {
         return try {
-            if (!TripleDesValidationHelper.isAlgorithmSupported(algorithm)) {
-                throw UnsupportedAlgorithmError(algorithm, "TripleDesEncryptionService")
-            }
-
-            val keySize = TripleDesValidationHelper.getExpectedKeyLength(algorithm)
+            ensureAlgorithmSupported(algorithm)
+            val keySize = TripleDesKey.expectedKeyLength(algorithm)
             logger.debug { "Generating 3DES key: algorithm=$algorithm, keySize=$keySize bytes" }
 
             val keyBytes = generateRandomKey(keySize)
@@ -208,5 +170,32 @@ class TripleDesEncryptionService : DomainService() {
         val keyBytes = ByteArray(keySize)
         SecureRandom().nextBytes(keyBytes)
         return keyBytes
+    }
+
+    private fun ensureAlgorithmSupported(algorithm: EncryptionAlgorithm) {
+        if (algorithm != EncryptionAlgorithm.TDES_112 && algorithm != EncryptionAlgorithm.TDES_168) {
+            throw UnsupportedAlgorithmError(algorithm, "TripleDesEncryptionService")
+        }
+    }
+
+    private fun buildKeyMaterial(key: EncryptionKey): TripleDesKey {
+        ensureAlgorithmSupported(key.algorithm)
+        return TripleDesKey.create(key.algorithm, key.value).getOrElse { error ->
+            throw error
+        }
+    }
+
+    private fun requireIv(encryptedText: EncryptedText): TripleDesIv {
+        return TripleDesIv.create(encryptedText.initializationVector).getOrElse { error ->
+            logger.warn { "Decryption failed: ${error.message}" }
+            throw error
+        }
+    }
+
+    private fun requireEncryptedDataLength(encryptedData: ByteArray) {
+        if (encryptedData.size < IV_LENGTH) {
+            logger.warn { "Decryption failed: encrypted data too short, size=${encryptedData.size}" }
+            throw DomainError("Encrypted data is too short. Minimum size is $IV_LENGTH bytes")
+        }
     }
 }

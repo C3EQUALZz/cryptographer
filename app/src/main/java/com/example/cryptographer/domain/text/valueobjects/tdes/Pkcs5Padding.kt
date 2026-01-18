@@ -1,10 +1,9 @@
-package com.example.cryptographer.domain.text.services
+package com.example.cryptographer.domain.text.valueobjects.tdes
 
 /**
- * Helper object for PKCS#5 padding operations used in 3DES encryption.
- * Extracted to reduce function count in TripleDesEncryptionService.
+ * PKCS#5 padding for 64-bit block ciphers (e.g., DES/3DES).
  */
-internal object TripleDesPaddingHelper {
+internal object Pkcs5Padding {
     private const val BLOCK_SIZE = 8
     private const val MIN_PAD_LENGTH = 1
     private const val MAX_PAD_LENGTH = 8
@@ -13,7 +12,7 @@ internal object TripleDesPaddingHelper {
     /**
      * Pads data to block size using PKCS#5 padding.
      */
-    fun padData(data: ByteArray): ByteArray {
+    fun pad(data: ByteArray): ByteArray {
         val padLength = BLOCK_SIZE - (data.size % BLOCK_SIZE)
         val padded = ByteArray(data.size + padLength)
         System.arraycopy(data, 0, padded, 0, data.size)
@@ -27,7 +26,7 @@ internal object TripleDesPaddingHelper {
      * Removes PKCS#5 padding from data.
      * Returns original data if padding is invalid.
      */
-    fun removePadding(data: ByteArray): ByteArray {
+    fun unpad(data: ByteArray): ByteArray {
         val padLength = if (data.isEmpty()) 0 else extractPadLength(data)
         val canUnpad = data.isNotEmpty() &&
             isValidPadLength(padLength) &&

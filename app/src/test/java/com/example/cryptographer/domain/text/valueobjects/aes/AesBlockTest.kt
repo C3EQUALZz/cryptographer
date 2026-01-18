@@ -1,14 +1,13 @@
-package com.example.cryptographer.domain.text.valuebjects.aes
+package com.example.cryptographer.domain.text.valueobjects.aes
 
 import com.example.cryptographer.domain.common.errors.DomainFieldError
-import com.example.cryptographer.domain.text.valueobjects.aes.AesRoundKey
 import org.junit.Assert
 import org.junit.Test
 
 /**
- * Unit tests for AesRoundKey.
+ * Unit tests for AesBlock.
  */
-class AesRoundKeyTest {
+class AesBlockTest {
 
     @Test
     fun `create should succeed with 16 bytes`() {
@@ -16,7 +15,7 @@ class AesRoundKeyTest {
         val bytes = ByteArray(16) { it.toByte() }
 
         // When
-        val result = AesRoundKey.create(bytes)
+        val result = AesBlock.create(bytes)
 
         // Then
         Assert.assertTrue(result.isSuccess)
@@ -26,10 +25,10 @@ class AesRoundKeyTest {
     @Test
     fun `create should fail with invalid size`() {
         // Given
-        val bytes = ByteArray(17)
+        val bytes = ByteArray(15)
 
         // When
-        val result = AesRoundKey.create(bytes)
+        val result = AesBlock.create(bytes)
 
         // Then
         Assert.assertTrue(result.isFailure)
@@ -37,16 +36,25 @@ class AesRoundKeyTest {
     }
 
     @Test
+    fun `createZero should return zeroed block`() {
+        // When
+        val block = AesBlock.createZero()
+
+        // Then
+        Assert.assertArrayEquals(ByteArray(16), block.bytes)
+    }
+
+    @Test
     fun `toByteArray should return a copy`() {
         // Given
         val bytes = ByteArray(16) { it.toByte() }
-        val roundKey = AesRoundKey.create(bytes).getOrThrow()
+        val block = AesBlock.create(bytes).getOrThrow()
 
         // When
-        val copy = roundKey.toByteArray()
+        val copy = block.toByteArray()
         copy[0] = 0x7F
 
         // Then
-        Assert.assertNotEquals(copy[0], roundKey.bytes[0])
+        Assert.assertNotEquals(copy[0], block.bytes[0])
     }
 }

@@ -1,7 +1,6 @@
-package com.example.cryptographer.domain.text.valuebjects
+package com.example.cryptographer.domain.text.valueobjects
 
 import com.example.cryptographer.domain.common.errors.DomainFieldError
-import com.example.cryptographer.domain.text.valueobjects.ValidatedText
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
