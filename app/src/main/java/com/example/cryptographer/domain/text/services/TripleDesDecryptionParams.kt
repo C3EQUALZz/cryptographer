@@ -27,12 +27,11 @@ internal data class TripleDesDecryptionParams(
     }
 
     private fun areArraysEqual(other: TripleDesDecryptionParams): Boolean {
-        if (!encryptedData.contentEquals(other.encryptedData)) return false
-        if (!key1.contentEquals(other.key1)) return false
-        if (!key2.contentEquals(other.key2)) return false
-        if (!areKey3Equal(other.key3)) return false
-        if (!iv.contentEquals(other.iv)) return false
-        return true
+        return encryptedData.contentEquals(other.encryptedData) &&
+            key1.contentEquals(other.key1) &&
+            key2.contentEquals(other.key2) &&
+            areKey3Equal(other.key3) &&
+            iv.contentEquals(other.iv)
     }
 
     private fun areKey3Equal(otherKey3: ByteArray?): Boolean {

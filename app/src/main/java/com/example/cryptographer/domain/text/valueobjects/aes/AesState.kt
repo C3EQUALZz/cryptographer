@@ -30,7 +30,7 @@ class AesState private constructor(
             val state = Array(STATE_ROWS) { ByteArray(STATE_COLS) }
             for (c in 0 until STATE_COLS) {
                 for (r in 0 until STATE_ROWS) {
-                    state[r][c] = block[r + 4 * c]
+                    state[r][c] = block[r + STATE_ROWS * c]
                 }
             }
             return AesState(state)
@@ -110,7 +110,7 @@ class AesState private constructor(
         val block = ByteArray(BLOCK_SIZE)
         for (c in 0 until STATE_COLS) {
             for (r in 0 until STATE_ROWS) {
-                block[r + 4 * c] = state[r][c]
+                block[r + STATE_ROWS * c] = state[r][c]
             }
         }
         return block

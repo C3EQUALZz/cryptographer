@@ -20,12 +20,22 @@ class AesRoundKeys(
     createdAt: Instant = Instant.now(),
     updatedAt: Instant = Instant.now(),
 ) : BaseEntity<String>(id, createdAt, updatedAt) {
+    private companion object {
+        private const val AES_128_ROUNDS = 10
+        private const val AES_192_ROUNDS = 12
+        private const val AES_256_ROUNDS = 14
+    }
+
     init {
         require(roundKeys.size == numRounds + 1) {
             "Number of round keys must be numRounds + 1 (got ${roundKeys.size}, expected ${numRounds + 1})"
         }
-        require(numRounds == 10 || numRounds == 12 || numRounds == 14) {
-            "Invalid number of rounds: $numRounds (must be 10, 12, or 14)"
+        require(
+            numRounds == AES_128_ROUNDS ||
+                numRounds == AES_192_ROUNDS ||
+                numRounds == AES_256_ROUNDS,
+        ) {
+            "Invalid number of rounds: $numRounds (must be $AES_128_ROUNDS, $AES_192_ROUNDS, or $AES_256_ROUNDS)"
         }
     }
 

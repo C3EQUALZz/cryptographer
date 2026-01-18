@@ -130,17 +130,15 @@ class LockViewModel @Inject constructor(
         confirmPassword: String,
         context: android.content.Context,
     ): String? {
-        if (password != confirmPassword) {
-            return context.getString(
+        return when {
+            password != confirmPassword -> context.getString(
                 com.example.cryptographer.R.string.password_setup_error_passwords_not_match,
             )
-        }
-        if (password.length < MIN_PASSWORD_LENGTH) {
-            return context.getString(
+            password.length < MIN_PASSWORD_LENGTH -> context.getString(
                 com.example.cryptographer.R.string.password_setup_error_password_too_short,
             )
+            else -> null
         }
-        return null
     }
 
     /**

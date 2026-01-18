@@ -22,9 +22,9 @@ class AesKeySize private constructor(
 ) : BaseValueObject() {
     val numRounds: Int
         get() = when (algorithm) {
-            EncryptionAlgorithm.AES_128 -> 10
-            EncryptionAlgorithm.AES_192 -> 12
-            EncryptionAlgorithm.AES_256 -> 14
+            EncryptionAlgorithm.AES_128 -> AES_128_ROUNDS
+            EncryptionAlgorithm.AES_192 -> AES_192_ROUNDS
+            EncryptionAlgorithm.AES_256 -> AES_256_ROUNDS
             else -> throw DomainFieldError("Unsupported AES algorithm: $algorithm")
         }
 
@@ -33,6 +33,9 @@ class AesKeySize private constructor(
         private const val AES_128_SIZE = 16 // bytes (128 bits)
         private const val AES_192_SIZE = 24 // bytes (192 bits)
         private const val AES_256_SIZE = 32 // bytes (256 bits)
+        private const val AES_128_ROUNDS = 10
+        private const val AES_192_ROUNDS = 12
+        private const val AES_256_ROUNDS = 14
 
         /**
          * Creates an AES key size from encryption algorithm.
@@ -64,16 +67,24 @@ class AesKeySize private constructor(
     fun validateKeyBytes(keyBytes: ByteArray): Result<Unit> {
         return if (keyBytes.size == sizeBytes) {
             logger.trace {
-                "Key bytes validation passed: expected=$sizeBytes bytes, actual=${keyBytes.size} bytes, algorithm=$algorithm"
+                "Key bytes validation passed: " +
+                    "expected=$sizeBytes bytes, " +
+                    "actual=${keyBytes.size} bytes, " +
+                    "algorithm=$algorithm"
             }
             Result.success(Unit)
         } else {
             logger.error {
-                "Key bytes validation failed: expected=$sizeBytes bytes, got=${keyBytes.size} bytes, algorithm=$algorithm"
+                "Key bytes validation failed: " +
+                    "expected=$sizeBytes bytes, " +
+                    "got=${keyBytes.size} bytes, " +
+                    "algorithm=$algorithm"
             }
             Result.failure(
                 DomainFieldError(
-                    "Key size mismatch: expected $sizeBytes bytes, got ${keyBytes.size} bytes",
+                    "Key size mismatch: " +
+                        "expected $sizeBytes bytes, " +
+                        "got ${keyBytes.size} bytes",
                 ),
             )
         }

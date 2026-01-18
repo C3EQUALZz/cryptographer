@@ -28,16 +28,16 @@ internal object TripleDesPaddingHelper {
      * Returns original data if padding is invalid.
      */
     fun removePadding(data: ByteArray): ByteArray {
-        if (data.isEmpty()) {
-            return data
-        }
+        val padLength = if (data.isEmpty()) 0 else extractPadLength(data)
+        val canUnpad = data.isNotEmpty() &&
+            isValidPadLength(padLength) &&
+            isPaddingValid(data, padLength)
 
-        val padLength = extractPadLength(data)
-        if (!isValidPadLength(padLength) || !isPaddingValid(data, padLength)) {
-            return data // Invalid padding, return as-is
+        return if (canUnpad) {
+            data.sliceArray(0 until (data.size - padLength))
+        } else {
+            data
         }
-
-        return data.sliceArray(0 until (data.size - padLength))
     }
 
     private fun extractPadLength(data: ByteArray): Int {

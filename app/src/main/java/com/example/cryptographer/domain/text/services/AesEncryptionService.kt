@@ -6,6 +6,7 @@ import com.example.cryptographer.domain.text.entities.EncryptedText
 import com.example.cryptographer.domain.text.entities.EncryptionKey
 import com.example.cryptographer.domain.text.entities.aes.AesGcmMode
 import com.example.cryptographer.domain.text.entities.aes.AesKeyExpansion
+import com.example.cryptographer.domain.text.entities.aes.AesRoundKeys
 import com.example.cryptographer.domain.text.errors.UnsupportedAlgorithmError
 import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
 import com.example.cryptographer.domain.text.valueobjects.aes.AesKeySize
@@ -27,12 +28,43 @@ class AesEncryptionService : DomainService() {
     companion object {
         private const val GCM_TAG_LENGTH = 16 // bytes (128 bits)
         private const val GCM_IV_LENGTH = 12 // bytes (96 bits)
+        private const val BITS_IN_BYTE = 8
 
         // AES key sizes in bytes
         private const val AES_128_KEY_SIZE_BYTES = 16 // 128 bits = 16 bytes
         private const val AES_192_KEY_SIZE_BYTES = 24 // 192 bits = 24 bytes
         private const val AES_256_KEY_SIZE_BYTES = 32 // 256 bits = 32 bytes
     }
+
+    private data class KeyContext(
+        val roundKeys: AesRoundKeys,
+        val numRounds: AesNumRounds,
+    )
+
+    private data class CiphertextAndTag(
+        val ciphertext: ByteArray,
+        val tag: ByteArray,
+    ) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as CiphertextAndTag
+
+            if (!ciphertext.contentEquals(other.ciphertext)) return false
+            if (!tag.contentEquals(other.tag)) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = ciphertext.contentHashCode()
+            result = 31 * result + tag.contentHashCode()
+            return result
+        }
+    }
+
+    private val emptyAad = ByteArray(0)
 
     /**
      * Encrypts data using the provided AES key with GCM mode.
@@ -77,8 +109,15 @@ class AesEncryptionService : DomainService() {
 
             // Encrypt using AES-GCM
             logger.debug { "Starting AES-GCM encryption: plaintextSize=${data.size} bytes, ivSize=${iv.size} bytes" }
-            val aad = ByteArray(0) // No additional authenticated data
-            val (ciphertext, tag) = AesGcmMode.encrypt(data, iv, aad, roundKeys, numRounds)
+            val (ciphertext, tag) = AesGcmMode.encrypt(
+                AesGcmMode.EncryptParams(
+                    plaintext = data,
+                    iv = iv,
+                    aad = emptyAad,
+                    roundKeys = roundKeys,
+                    numRounds = numRounds,
+                ),
+            )
             logger.debug {
                 "AES-GCM encryption completed: " +
                     "ciphertextSize=${ciphertext.size} bytes, " +
@@ -112,9 +151,6 @@ class AesEncryptionService : DomainService() {
         } catch (e: DomainError) {
             logger.error(e) { "Encryption failed: algorithm=${key.algorithm}, error=${e.message}" }
             Result.failure(e)
-        } catch (e: Exception) {
-            logger.error(e) { "Encryption failed: unexpected error" }
-            Result.failure(DomainError("Encryption failed: ${e.message}", e))
         }
     }
 
@@ -135,92 +171,26 @@ class AesEncryptionService : DomainService() {
                     "encryptedSize=${encryptedText.encryptedData.size} bytes"
             }
 
-            // Validate key
-            validateKey(key)
-            logger.debug { "Key validation passed: keySize=${key.value.size} bytes" }
-
-            if (encryptedText.initializationVector == null) {
-                logger.warn { "Decryption failed: IV is missing" }
-                return Result.failure(
-                    DomainError("IV (Initialization Vector) is missing for decryption"),
-                )
-            }
-
+            val iv = requireInitializationVector(encryptedText)
             val encryptedData = encryptedText.encryptedData
-            if (encryptedData.size < GCM_TAG_LENGTH) {
-                logger.warn {
-                    "Decryption failed: encrypted data too short, " +
-                        "size=${encryptedData.size}, " +
-                        "expected at least $GCM_TAG_LENGTH bytes"
-                }
-                return Result.failure(
-                    DomainError(
-                        "Encrypted data is too short. " +
-                            "Minimum size is $GCM_TAG_LENGTH bytes for tag",
-                    ),
-                )
-            }
+            requireEncryptedDataLength(encryptedData)
 
-            // Create value objects for validation and type safety
-            val keySize = AesKeySize.create(key.algorithm).getOrElse {
-                throw UnsupportedAlgorithmError(key.algorithm, "AesEncryptionService")
-            }
-            val numRounds = AesNumRounds.create(key.algorithm).getOrElse {
-                throw UnsupportedAlgorithmError(key.algorithm, "AesEncryptionService")
-            }
-            logger.debug { "Value objects created: keySize=$keySize, numRounds=$numRounds" }
-
-            // Validate key bytes match expected size
-            keySize.validateKeyBytes(key.value).getOrThrow()
-            logger.debug { "Key bytes validation passed" }
-
-            // Expand key to round keys
-            logger.debug { "Expanding key to round keys: numRounds=${numRounds.rounds}" }
-            val roundKeys = AesKeyExpansion.expandKey(key.value, numRounds)
-            logger.debug { "Key expansion completed: generated ${roundKeys.roundKeys.size} round keys" }
-
-            // Split encryptedData into ciphertext and tag
-            val ciphertextSize = encryptedData.size - GCM_TAG_LENGTH
-            val ciphertext = ByteArray(ciphertextSize)
-            val tag = ByteArray(GCM_TAG_LENGTH)
-            System.arraycopy(encryptedData, 0, ciphertext, 0, ciphertextSize)
-            System.arraycopy(encryptedData, ciphertextSize, tag, 0, GCM_TAG_LENGTH)
+            val keyContext = buildKeyContext(key)
+            val (ciphertext, tag) = splitCiphertextAndTag(encryptedData)
             logger.debug {
                 "Encrypted data split: " +
-                    "ciphertextSize=$ciphertextSize bytes, " +
+                    "ciphertextSize=${ciphertext.size} bytes, " +
                     "tagSize=${tag.size} bytes, " +
-                    "ivSize=${encryptedText.initializationVector.size} bytes"
+                    "ivSize=${iv.size} bytes"
             }
 
             // Decrypt and verify using AES-GCM
-            logger.debug { "Starting AES-GCM decryption and authentication verification" }
-            val aad = ByteArray(0) // No additional authenticated data
-            val decryptedData = AesGcmMode.decrypt(
-                ciphertext,
-                tag,
-                encryptedText.initializationVector,
-                aad,
-                roundKeys,
-                numRounds,
-            )
-
-            if (decryptedData == null) {
-                logger.warn {
-                    "Decryption failed: authentication tag verification failed - data may have been tampered with"
-                }
-                return Result.failure(
-                    DomainError(
-                        "Authentication failed: invalid tag. The data may have been tampered with.",
-                    ),
-                )
-            }
-
-            logger.debug { "Authentication tag verification passed" }
+            val decryptedData = decryptAndVerify(ciphertext, tag, iv, emptyAad, keyContext)
 
             logger.info {
                 "AES decryption completed successfully: algorithm=${key.algorithm}, " +
                     "encryptedSize=${encryptedData.size} bytes, " +
-                    "ciphertextSize=$ciphertextSize bytes, " +
+                    "ciphertextSize=${ciphertext.size} bytes, " +
                     "tagSize=${tag.size} bytes, " +
                     "decryptedSize=${decryptedData.size} bytes"
             }
@@ -256,7 +226,9 @@ class AesEncryptionService : DomainService() {
                     "AesEncryptionService",
                 )
             }
-            logger.debug { "Key size determined: keySize=$keySizeBytes bytes (${keySizeBytes * 8} bits)" }
+            logger.debug {
+                "Key size determined: keySize=$keySizeBytes bytes (${keySizeBytes * BITS_IN_BYTE} bits)"
+            }
 
             // Generate random key using SecureRandom (cryptographically secure random number generator)
             logger.debug { "Generating random key bytes using SecureRandom" }
@@ -266,7 +238,7 @@ class AesEncryptionService : DomainService() {
 
             logger.info {
                 "AES key generation completed successfully: algorithm=$algorithm, " +
-                    "keySize=${keyBytes.size} bytes (${keyBytes.size * 8} bits)"
+                    "keySize=${keyBytes.size} bytes (${keyBytes.size * BITS_IN_BYTE} bits)"
             }
             Result.success(
                 EncryptionKey(
@@ -281,6 +253,90 @@ class AesEncryptionService : DomainService() {
             logger.error(e) { "Key generation failed: algorithm=$algorithm, error=${e.message}" }
             Result.failure(e)
         }
+    }
+
+    private fun requireInitializationVector(encryptedText: EncryptedText): ByteArray {
+        val iv = encryptedText.initializationVector
+        if (iv == null) {
+            logger.warn { "Decryption failed: IV is missing" }
+            throw DomainError("IV (Initialization Vector) is missing for decryption")
+        }
+        return iv
+    }
+
+    private fun requireEncryptedDataLength(encryptedData: ByteArray) {
+        if (encryptedData.size < GCM_TAG_LENGTH) {
+            logger.warn {
+                "Decryption failed: encrypted data too short, " +
+                    "size=${encryptedData.size}, " +
+                    "expected at least $GCM_TAG_LENGTH bytes"
+            }
+            throw DomainError(
+                "Encrypted data is too short. " +
+                    "Minimum size is $GCM_TAG_LENGTH bytes for tag",
+            )
+        }
+    }
+
+    private fun buildKeyContext(key: EncryptionKey): KeyContext {
+        validateKey(key)
+        logger.debug { "Key validation passed: keySize=${key.value.size} bytes" }
+
+        val keySize = AesKeySize.create(key.algorithm).getOrElse {
+            throw UnsupportedAlgorithmError(key.algorithm, "AesEncryptionService")
+        }
+        val numRounds = AesNumRounds.create(key.algorithm).getOrElse {
+            throw UnsupportedAlgorithmError(key.algorithm, "AesEncryptionService")
+        }
+        logger.debug { "Value objects created: keySize=$keySize, numRounds=$numRounds" }
+
+        keySize.validateKeyBytes(key.value).getOrThrow()
+        logger.debug { "Key bytes validation passed" }
+
+        logger.debug { "Expanding key to round keys: numRounds=${numRounds.rounds}" }
+        val roundKeys = AesKeyExpansion.expandKey(key.value, numRounds)
+        logger.debug { "Key expansion completed: generated ${roundKeys.roundKeys.size} round keys" }
+
+        return KeyContext(roundKeys = roundKeys, numRounds = numRounds)
+    }
+
+    private fun splitCiphertextAndTag(encryptedData: ByteArray): CiphertextAndTag {
+        val ciphertextSize = encryptedData.size - GCM_TAG_LENGTH
+        val ciphertext = ByteArray(ciphertextSize)
+        val tag = ByteArray(GCM_TAG_LENGTH)
+        System.arraycopy(encryptedData, 0, ciphertext, 0, ciphertextSize)
+        System.arraycopy(encryptedData, ciphertextSize, tag, 0, GCM_TAG_LENGTH)
+        return CiphertextAndTag(ciphertext = ciphertext, tag = tag)
+    }
+
+    private fun decryptAndVerify(
+        ciphertext: ByteArray,
+        tag: ByteArray,
+        iv: ByteArray,
+        aad: ByteArray,
+        keyContext: KeyContext,
+    ): ByteArray {
+        logger.debug { "Starting AES-GCM decryption and authentication verification" }
+        val decryptedData = AesGcmMode.decrypt(
+            AesGcmMode.DecryptParams(
+                ciphertext = ciphertext,
+                tag = tag,
+                iv = iv,
+                aad = aad,
+                roundKeys = keyContext.roundKeys,
+                numRounds = keyContext.numRounds,
+            ),
+        )
+        if (decryptedData == null) {
+            logger.warn {
+                "Decryption failed: authentication tag verification failed - data may have been tampered with"
+            }
+            throw DomainError(
+                "Authentication failed: invalid tag. The data may have been tampered with.",
+            )
+        }
+        logger.debug { "Authentication tag verification passed" }
+        return decryptedData
     }
 
     /**

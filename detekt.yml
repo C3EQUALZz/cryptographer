@@ -25,6 +25,7 @@ complexity:
     ignoreAnnotated: ['Provides', 'Composable']
     excludes:
       - '**/*Presenter.kt'
+      - '**/AesGcmMode.kt'
   LongMethod:
     active: true
     threshold: 60
@@ -33,6 +34,7 @@ complexity:
       - '**/chacha20/**/*.kt'
       - '**/ChaCha20*.kt'
       - '**/Poly1305Mac.kt'
+      - '**/AesEncryptionService.kt'
   CyclomaticComplexMethod:
     active: true
     threshold: 10

@@ -13,6 +13,10 @@ import com.example.cryptographer.domain.common.values.BaseValueObject
  * This is a Value Object following DDD principles - it's immutable.
  */
 object AesSBox : BaseValueObject() {
+    private const val MIN_BYTE_VALUE = 0
+    private const val MAX_BYTE_VALUE = 255
+    private const val BYTE_MASK = 0xFF
+
     /**
      * AES S-box for SubBytes transformation.
      * Provides non-linear byte substitution (256 values).
@@ -283,8 +287,10 @@ object AesSBox : BaseValueObject() {
      * @return S-box substitution byte
      */
     fun getSBox(value: Int): Byte {
-        require(value in 0..255) { "Value must be in range 0-255, got $value" }
-        return S_BOX[value and 0xFF]
+        require(value in MIN_BYTE_VALUE..MAX_BYTE_VALUE) {
+            "Value must be in range $MIN_BYTE_VALUE-$MAX_BYTE_VALUE, got $value"
+        }
+        return S_BOX[value and BYTE_MASK]
     }
 
     override fun toString(): String {
