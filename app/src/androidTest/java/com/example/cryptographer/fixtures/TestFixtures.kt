@@ -26,6 +26,8 @@ object TestFixtures {
             EncryptionAlgorithm.AES_192 -> 24
             EncryptionAlgorithm.AES_256 -> 32
             EncryptionAlgorithm.CHACHA20_256 -> 32
+            EncryptionAlgorithm.TDES_112 -> 16
+            EncryptionAlgorithm.TDES_168 -> 24
         }
         val keyBytes = ByteArray(keySize).apply {
             random.nextBytes(this)
