@@ -14,15 +14,21 @@
     <!-- Screen titles -->
     <string name="screen_key_generation">Генерация ключей</string>
     <string name="screen_aes_encryption">AES Шифрование</string>
+    <string name="screen_aes_file">AES Обработка файлов</string>
     <string name="screen_chacha20_encryption">ChaCha20 Шифрование</string>
+    <string name="screen_chacha20_file">ChaCha20 Обработка файлов</string>
     <string name="screen_tdes_encryption">3DES Шифрование</string>
+    <string name="screen_tdes_file">3DES Обработка файлов</string>
     <string name="screen_encoding">Кодирование</string>
 
     <!-- Screen names -->
     <string name="key_generation">Генерация ключей</string>
     <string name="aes_encryption">AES Шифрование</string>
+    <string name="aes_file_processing">AES Обработка файлов</string>
     <string name="chacha20_encryption">ChaCha20 Шифрование</string>
+    <string name="chacha20_file_processing">ChaCha20 Обработка файлов</string>
     <string name="tdes_encryption">3DES Шифрование</string>
+    <string name="tdes_file_processing">3DES Обработка файлов</string>
     <string name="encoding">Кодирование</string>
 
     <!-- Key Generation Screen -->
@@ -57,6 +63,8 @@
     <!-- AES Encryption Screen -->
     <string name="aes_encryption_title">AES Шифрование и дешифрование</string>
     <string name="aes_encryption_info">Используйте этот инструмент для шифрования и дешифрования текста с помощью AES ключей (AES-128, AES-192, AES-256). Выберите длину ключа и ключ, затем введите текст для шифрования или дешифрования.</string>
+    <string name="aes_file_title">AES Шифрование и дешифрование файлов</string>
+    <string name="aes_file_info">Используйте этот инструмент для шифрования и дешифрования файлов с помощью AES ключей (AES-128, AES-192, AES-256). Выберите длину ключа и ключ, затем укажите входной и выходной файлы.</string>
     <string name="encryption_section">Шифрование</string>
     <string name="decryption_section">Дешифрование</string>
     <string name="select_key">Выберите ключ</string>
@@ -79,6 +87,8 @@
     <!-- ChaCha20 Encryption Screen -->
     <string name="chacha20_encryption_title">ChaCha20 Шифрование и дешифрование</string>
     <string name="chacha20_encryption_info">Используйте этот инструмент для шифрования и дешифрования текста с помощью ChaCha20–256 ключей. Выберите ключ и введите текст для шифрования или дешифрования.</string>
+    <string name="chacha20_file_title">ChaCha20 Шифрование и дешифрование файлов</string>
+    <string name="chacha20_file_info">Используйте этот инструмент для шифрования и дешифрования файлов с помощью ChaCha20–256 ключей. Выберите ключ и укажите входной и выходной файлы.</string>
     <string name="nonce_label">Nonce:</string>
     <string name="copy_nonce">Копировать Nonce</string>
     <string name="enter_nonce_placeholder">Введите nonce (опционально)…</string>
@@ -86,6 +96,8 @@
     <!-- 3DES Encryption Screen -->
     <string name="tdes_encryption_title">3DES Шифрование и дешифрование</string>
     <string name="tdes_encryption_info">Используйте этот инструмент для шифрования и дешифрования текста с помощью 3DES ключей (3DES-112 или 3DES-168). Выберите ключ и введите текст для шифрования или дешифрования.</string>
+    <string name="tdes_file_title">3DES Шифрование и дешифрование файлов</string>
+    <string name="tdes_file_info">Используйте этот инструмент для шифрования и дешифрования файлов с помощью 3DES ключей (3DES-112 или 3DES-168). Выберите ключ и укажите входной и выходной файлы.</string>
     <string name="error_key_not_tdes">Выбранный ключ не является 3DES ключом</string>
 
     <!-- Encoding Screen -->
@@ -98,15 +110,31 @@
     <string name="ascii">ASCII</string>
     <string name="base64">BASE64</string>
 
+    <!-- File Processing -->
+    <string name="file_encryption_section">Шифрование файлов</string>
+    <string name="file_decryption_section">Дешифрование файлов</string>
+    <string name="input_file_path">Путь к входному файлу</string>
+    <string name="input_file_path_placeholder">Введите путь к входному файлу…</string>
+    <string name="output_file_path">Путь к выходному файлу</string>
+    <string name="output_file_path_placeholder">Введите путь к выходному файлу…</string>
+    <string name="encrypted_file_path">Путь к зашифрованному файлу</string>
+    <string name="encrypted_file_path_placeholder">Введите путь к зашифрованному файлу…</string>
+    <string name="decrypted_file_path">Путь к расшифрованному файлу</string>
+    <string name="select_input_file">Выбрать входной файл</string>
+    <string name="select_output_file">Выбрать выходной файл</string>
+
     <!-- Error messages -->
     <string name="error_key_mismatch">Выбранный ключ не соответствует выбранному алгоритму</string>
     <string name="error_key_not_chacha20">Выбранный ключ не является ChaCha20 ключом</string>
     <string name="error_invalid_algorithm_tdes">Некорректный алгоритм для 3DES: %1$s</string>
     <string name="error_failed_to_load_key">Не удалось загрузить ключ: %1$s</string>
     <string name="error_enter_text_to_encrypt">Введите текст для шифрования</string>
+    <string name="error_enter_input_file_path">Введите путь к входному файлу</string>
     <string name="error_select_key_to_encrypt">Выберите ключ для шифрования</string>
     <string name="error_encryption_failed">Ошибка шифрования: %1$s</string>
     <string name="error_enter_encrypted_text">Введите зашифрованный текст</string>
+    <string name="error_enter_encrypted_file_path">Введите путь к зашифрованному файлу</string>
+    <string name="error_enter_output_file_path">Введите путь к выходному файлу</string>
     <string name="error_select_key_to_decrypt">Выберите ключ для дешифрования</string>
     <string name="error_decryption_failed">Ошибка дешифрования: %1$s</string>
     <string name="error_invalid_base64_format">Некорректный формат Base64 для зашифрованного текста или IV.</string>

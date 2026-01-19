@@ -14,15 +14,21 @@
     <!-- Screen titles -->
     <string name="screen_key_generation">Key Generation</string>
     <string name="screen_aes_encryption">AES Encryption</string>
+    <string name="screen_aes_file">AES File Processing</string>
     <string name="screen_chacha20_encryption">ChaCha20 Encryption</string>
+    <string name="screen_chacha20_file">ChaCha20 File Processing</string>
     <string name="screen_tdes_encryption">3DES Encryption</string>
+    <string name="screen_tdes_file">3DES File Processing</string>
     <string name="screen_encoding">Encoding</string>
 
     <!-- Screen names -->
     <string name="key_generation">Key Generation</string>
     <string name="aes_encryption">AES Encryption</string>
+    <string name="aes_file_processing">AES File Processing</string>
     <string name="chacha20_encryption">ChaCha20 Encryption</string>
+    <string name="chacha20_file_processing">ChaCha20 File Processing</string>
     <string name="tdes_encryption">3DES Encryption</string>
+    <string name="tdes_file_processing">3DES File Processing</string>
     <string name="encoding">Encoding</string>
 
     <!-- Key Generation Screen -->
@@ -57,6 +63,8 @@
     <!-- AES Encryption Screen -->
     <string name="aes_encryption_title">AES Encryption and Decryption</string>
     <string name="aes_encryption_info">Use this tool to encrypt and decrypt text using AES keys (AES-128, AES-192, AES-256). Select key length and a key, then enter text to encrypt or decrypt.</string>
+    <string name="aes_file_title">AES File Encryption and Decryption</string>
+    <string name="aes_file_info">Use this tool to encrypt and decrypt files using AES keys (AES-128, AES-192, AES-256). Select key length and a key, then provide input/output paths.</string>
     <string name="encryption_section">Encryption</string>
     <string name="decryption_section">Decryption</string>
     <string name="select_key">Select Key</string>
@@ -82,9 +90,12 @@
     <string name="error_invalid_algorithm_tdes">Invalid algorithm for 3DES: %1$s</string>
     <string name="error_failed_to_load_key">Failed to load key: %1$s</string>
     <string name="error_enter_text_to_encrypt">Enter text to encrypt</string>
+    <string name="error_enter_input_file_path">Enter input file path</string>
     <string name="error_select_key_to_encrypt">Select a key for encryption</string>
     <string name="error_encryption_failed">Encryption error: %1$s</string>
     <string name="error_enter_encrypted_text">Enter encrypted text</string>
+    <string name="error_enter_encrypted_file_path">Enter encrypted file path</string>
+    <string name="error_enter_output_file_path">Enter output file path</string>
     <string name="error_select_key_to_decrypt">Select a key for decryption</string>
     <string name="error_decryption_failed">Decryption error: %1$s</string>
     <string name="error_invalid_base64_format">Invalid Base64 format for encrypted text or IV.</string>
@@ -93,6 +104,8 @@
     <!-- ChaCha20 Encryption Screen -->
     <string name="chacha20_encryption_title">ChaCha20 Encryption and Decryption</string>
     <string name="chacha20_encryption_info">Use this tool to encrypt and decrypt text using ChaCha20-256 keys. Select a key and enter text to encrypt or decrypt.</string>
+    <string name="chacha20_file_title">ChaCha20 File Encryption and Decryption</string>
+    <string name="chacha20_file_info">Use this tool to encrypt and decrypt files using ChaCha20-256 keys. Select a key and provide input/output paths.</string>
     <string name="nonce_label">Nonce:</string>
     <string name="copy_nonce">Copy Nonce</string>
     <string name="enter_nonce_placeholder">Enter nonce (optional)…</string>
@@ -100,6 +113,8 @@
     <!-- 3DES Encryption Screen -->
     <string name="tdes_encryption_title">3DES Encryption and Decryption</string>
     <string name="tdes_encryption_info">Use this tool to encrypt and decrypt text using 3DES keys (3DES-112 or 3DES-168). Select a key and enter text to encrypt or decrypt.</string>
+    <string name="tdes_file_title">3DES File Encryption and Decryption</string>
+    <string name="tdes_file_info">Use this tool to encrypt and decrypt files using 3DES keys (3DES-112 or 3DES-168). Select a key and provide input/output paths.</string>
     <string name="error_key_not_tdes">Selected key is not a 3DES key</string>
 
     <!-- Encoding Screen -->
@@ -111,6 +126,19 @@
     <string name="utf8">UTF-8</string>
     <string name="ascii">ASCII</string>
     <string name="base64">BASE64</string>
+
+    <!-- File Processing -->
+    <string name="file_encryption_section">File Encryption</string>
+    <string name="file_decryption_section">File Decryption</string>
+    <string name="input_file_path">Input file path</string>
+    <string name="input_file_path_placeholder">Enter input file path…</string>
+    <string name="output_file_path">Output file path</string>
+    <string name="output_file_path_placeholder">Enter output file path…</string>
+    <string name="encrypted_file_path">Encrypted file path</string>
+    <string name="encrypted_file_path_placeholder">Enter encrypted file path…</string>
+    <string name="decrypted_file_path">Decrypted file path</string>
+    <string name="select_input_file">Select input file</string>
+    <string name="select_output_file">Select output file</string>
 
     <!-- Lock Screen -->
     <string name="lock_screen_title">App Protection</string>

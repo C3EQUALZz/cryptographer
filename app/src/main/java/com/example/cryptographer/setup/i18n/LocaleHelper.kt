@@ -3,6 +3,7 @@ package com.example.cryptographer.setup.i18n
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
+import androidx.core.content.edit
 import com.example.cryptographer.domain.common.valueobjects.Language
 import java.util.Locale
 
@@ -40,6 +41,14 @@ object LocaleHelper {
     fun onAttach(context: Context, languageCode: String? = null): Context {
         val code = languageCode ?: getSavedLanguage(context).code
         return updateContextLocale(context, code)
+    }
+
+    /**
+     * Saves the selected language synchronously for attachBaseContext usage.
+     */
+    fun saveLanguage(context: Context, languageCode: String) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit { putString(KEY_SELECTED_LANGUAGE, languageCode) }
     }
 
     /**

@@ -21,8 +21,11 @@ fun getScreenTitle(screen: AppScreen): String {
     return when (screen) {
         AppScreen.KeyGeneration -> stringResource(R.string.screen_key_generation)
         AppScreen.AesEncryption -> stringResource(R.string.screen_aes_encryption)
+        AppScreen.AesFile -> stringResource(R.string.screen_aes_file)
         AppScreen.ChaCha20Encryption -> stringResource(R.string.screen_chacha20_encryption)
+        AppScreen.ChaCha20File -> stringResource(R.string.screen_chacha20_file)
         AppScreen.TripleDesEncryption -> stringResource(R.string.screen_tdes_encryption)
+        AppScreen.TripleDesFile -> stringResource(R.string.screen_tdes_file)
         AppScreen.Encoding -> stringResource(R.string.screen_encoding)
     }
 }

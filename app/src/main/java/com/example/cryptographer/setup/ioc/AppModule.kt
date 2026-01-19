@@ -1,6 +1,12 @@
 package com.example.cryptographer.setup.ioc
 
 import android.content.Context
+import com.example.cryptographer.application.commands.file.decrypt.AesDecryptFileCommandHandler
+import com.example.cryptographer.application.commands.file.decrypt.ChaCha20DecryptFileCommandHandler
+import com.example.cryptographer.application.commands.file.decrypt.TripleDesDecryptFileCommandHandler
+import com.example.cryptographer.application.commands.file.encrypt.AesEncryptFileCommandHandler
+import com.example.cryptographer.application.commands.file.encrypt.ChaCha20EncryptFileCommandHandler
+import com.example.cryptographer.application.commands.file.encrypt.TripleDesEncryptFileCommandHandler
 import com.example.cryptographer.application.commands.key.create.AesGenerateAndSaveKeyCommandHandler
 import com.example.cryptographer.application.commands.key.create.ChaCha20GenerateAndSaveKeyCommandHandler
 import com.example.cryptographer.application.commands.key.create.TripleDesGenerateAndSaveKeyCommandHandler
@@ -15,6 +21,7 @@ import com.example.cryptographer.application.commands.text.encrypt.AesEncryptTex
 import com.example.cryptographer.application.commands.text.encrypt.ChaCha20EncryptTextCommandHandler
 import com.example.cryptographer.application.commands.text.encrypt.TripleDesEncryptTextCommandHandler
 import com.example.cryptographer.application.commands.theme.update.SaveThemeCommandHandler
+import com.example.cryptographer.application.common.ports.file.FileGateway
 import com.example.cryptographer.application.common.ports.key.KeyCommandGateway
 import com.example.cryptographer.application.common.ports.key.KeyQueryGateway
 import com.example.cryptographer.application.common.ports.settings.SettingsCommandGateway
@@ -28,6 +35,7 @@ import com.example.cryptographer.domain.text.services.AesEncryptionService
 import com.example.cryptographer.domain.text.services.ChaCha20EncryptionService
 import com.example.cryptographer.domain.text.services.TextService
 import com.example.cryptographer.domain.text.services.TripleDesEncryptionService
+import com.example.cryptographer.infrastructure.file.FileGatewayAdapter
 import com.example.cryptographer.infrastructure.persistence.adapters.key.KeyCommandGatewayAdapter
 import com.example.cryptographer.infrastructure.persistence.adapters.key.KeyQueryGatewayAdapter
 import com.example.cryptographer.infrastructure.persistence.adapters.settings.SettingsCommandGatewayAdapter
@@ -36,11 +44,14 @@ import com.example.cryptographer.infrastructure.persistence.dao.KeyDao
 import com.example.cryptographer.infrastructure.persistence.dao.SettingsDao
 import com.example.cryptographer.infrastructure.persistence.database.CryptographerDatabase
 import com.example.cryptographer.infrastructure.text.UuidTextIdGenerator
+import com.example.cryptographer.presentation.aes.AesFilePresenter
 import com.example.cryptographer.presentation.aes.AesPresenter
+import com.example.cryptographer.presentation.chacha20.ChaCha20FilePresenter
 import com.example.cryptographer.presentation.chacha20.ChaCha20Presenter
 import com.example.cryptographer.presentation.encoding.EncodingPresenter
 import com.example.cryptographer.presentation.key.KeyGenerationPresenter
 import com.example.cryptographer.presentation.main.MainPresenter
+import com.example.cryptographer.presentation.tdes.TripleDesFilePresenter
 import com.example.cryptographer.presentation.tdes.TripleDesPresenter
 import dagger.Module
 import dagger.Provides
@@ -134,6 +145,14 @@ object AppModule {
      */
     @Provides
     fun provideKeyQueryGateway(adapter: KeyQueryGatewayAdapter): KeyQueryGateway {
+        return adapter
+    }
+
+    /**
+     * Provides FileGateway implementation.
+     */
+    @Provides
+    fun provideFileGateway(adapter: FileGatewayAdapter): FileGateway {
         return adapter
     }
 
@@ -267,6 +286,72 @@ object AppModule {
     }
 
     /**
+     * Provides AesEncryptFileCommandHandler.
+     */
+    @Provides
+    fun provideAesEncryptFileCommandHandler(
+        aesEncryptionService: AesEncryptionService,
+        fileGateway: FileGateway,
+    ): AesEncryptFileCommandHandler {
+        return AesEncryptFileCommandHandler(aesEncryptionService, fileGateway)
+    }
+
+    /**
+     * Provides AesDecryptFileCommandHandler.
+     */
+    @Provides
+    fun provideAesDecryptFileCommandHandler(
+        aesEncryptionService: AesEncryptionService,
+        fileGateway: FileGateway,
+    ): AesDecryptFileCommandHandler {
+        return AesDecryptFileCommandHandler(aesEncryptionService, fileGateway)
+    }
+
+    /**
+     * Provides ChaCha20EncryptFileCommandHandler.
+     */
+    @Provides
+    fun provideChaCha20EncryptFileCommandHandler(
+        chaCha20EncryptionService: ChaCha20EncryptionService,
+        fileGateway: FileGateway,
+    ): ChaCha20EncryptFileCommandHandler {
+        return ChaCha20EncryptFileCommandHandler(chaCha20EncryptionService, fileGateway)
+    }
+
+    /**
+     * Provides ChaCha20DecryptFileCommandHandler.
+     */
+    @Provides
+    fun provideChaCha20DecryptFileCommandHandler(
+        chaCha20EncryptionService: ChaCha20EncryptionService,
+        fileGateway: FileGateway,
+    ): ChaCha20DecryptFileCommandHandler {
+        return ChaCha20DecryptFileCommandHandler(chaCha20EncryptionService, fileGateway)
+    }
+
+    /**
+     * Provides TripleDesEncryptFileCommandHandler.
+     */
+    @Provides
+    fun provideTripleDesEncryptFileCommandHandler(
+        tripleDesEncryptionService: TripleDesEncryptionService,
+        fileGateway: FileGateway,
+    ): TripleDesEncryptFileCommandHandler {
+        return TripleDesEncryptFileCommandHandler(tripleDesEncryptionService, fileGateway)
+    }
+
+    /**
+     * Provides TripleDesDecryptFileCommandHandler.
+     */
+    @Provides
+    fun provideTripleDesDecryptFileCommandHandler(
+        tripleDesEncryptionService: TripleDesEncryptionService,
+        fileGateway: FileGateway,
+    ): TripleDesDecryptFileCommandHandler {
+        return TripleDesDecryptFileCommandHandler(tripleDesEncryptionService, fileGateway)
+    }
+
+    /**
      * Provides ConvertTextEncodingCommandHandler.
      * Uses TextService for encoding conversion to ensure consistency.
      */
@@ -354,6 +439,48 @@ object AppModule {
         tripleDesDecryptHandler: TripleDesDecryptTextCommandHandler,
     ): TripleDesPresenter {
         return TripleDesPresenter(
+            tripleDesEncryptHandler = tripleDesEncryptHandler,
+            tripleDesDecryptHandler = tripleDesDecryptHandler,
+        )
+    }
+
+    /**
+     * Provides AesFilePresenter.
+     */
+    @Provides
+    fun provideAesFilePresenter(
+        aesEncryptHandler: AesEncryptFileCommandHandler,
+        aesDecryptHandler: AesDecryptFileCommandHandler,
+    ): AesFilePresenter {
+        return AesFilePresenter(
+            aesEncryptHandler = aesEncryptHandler,
+            aesDecryptHandler = aesDecryptHandler,
+        )
+    }
+
+    /**
+     * Provides ChaCha20FilePresenter.
+     */
+    @Provides
+    fun provideChaCha20FilePresenter(
+        chaCha20EncryptHandler: ChaCha20EncryptFileCommandHandler,
+        chaCha20DecryptHandler: ChaCha20DecryptFileCommandHandler,
+    ): ChaCha20FilePresenter {
+        return ChaCha20FilePresenter(
+            chaCha20EncryptHandler = chaCha20EncryptHandler,
+            chaCha20DecryptHandler = chaCha20DecryptHandler,
+        )
+    }
+
+    /**
+     * Provides TripleDesFilePresenter.
+     */
+    @Provides
+    fun provideTripleDesFilePresenter(
+        tripleDesEncryptHandler: TripleDesEncryptFileCommandHandler,
+        tripleDesDecryptHandler: TripleDesDecryptFileCommandHandler,
+    ): TripleDesFilePresenter {
+        return TripleDesFilePresenter(
             tripleDesEncryptHandler = tripleDesEncryptHandler,
             tripleDesDecryptHandler = tripleDesDecryptHandler,
         )

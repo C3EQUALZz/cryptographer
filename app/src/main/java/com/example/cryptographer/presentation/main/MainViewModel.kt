@@ -1,9 +1,13 @@
 package com.example.cryptographer.presentation.main
 
+import android.content.Context
+import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cryptographer.domain.text.valueobjects.EncryptionAlgorithm
+import com.example.cryptographer.setup.i18n.LocaleHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,8 +26,14 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val presenter: MainPresenter,
+    @param:ApplicationContext private val context: Context,
 ) : ViewModel() {
     private val logger = KotlinLogging.logger {}
+
+    private companion object {
+        const val THEME_PREFS_NAME = "theme_prefs"
+        const val KEY_THEME_MODE = "theme_mode"
+    }
 
     private val _uiState = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
@@ -43,6 +53,7 @@ class MainViewModel @Inject constructor(
                     _uiState.value = _uiState.value.copy(
                         themeMode = themeMode,
                     )
+                    saveThemeModePref(themeMode)
                 }
                 .onFailure { error ->
                     logger.error(error) { "Failed to load theme mode: ${error.message}" }
@@ -54,6 +65,7 @@ class MainViewModel @Inject constructor(
                     _uiState.value = _uiState.value.copy(
                         languageCode = languageCode,
                     )
+                    LocaleHelper.saveLanguage(context, languageCode)
                 }
                 .onFailure { error ->
                     logger.error(error) { "Failed to load language: ${error.message}" }
@@ -80,6 +92,7 @@ class MainViewModel @Inject constructor(
      */
     fun updateThemeMode(themeMode: String) {
         _uiState.value = _uiState.value.copy(themeMode = themeMode)
+        saveThemeModePref(themeMode)
         viewModelScope.launch {
             presenter.saveThemeMode(themeMode)
                 .onFailure { error ->
@@ -88,6 +101,7 @@ class MainViewModel @Inject constructor(
                     presenter.loadThemeMode()
                         .onSuccess { themeMode ->
                             _uiState.value = _uiState.value.copy(themeMode = themeMode)
+                            saveThemeModePref(themeMode)
                         }
                 }
         }
@@ -98,6 +112,7 @@ class MainViewModel @Inject constructor(
      */
     fun updateLanguage(languageCode: String) {
         _uiState.value = _uiState.value.copy(languageCode = languageCode)
+        LocaleHelper.saveLanguage(context, languageCode)
         viewModelScope.launch {
             presenter.saveLanguage(languageCode)
                 .onFailure { error ->
@@ -106,9 +121,15 @@ class MainViewModel @Inject constructor(
                     presenter.loadLanguage()
                         .onSuccess { languageCode ->
                             _uiState.value = _uiState.value.copy(languageCode = languageCode)
+                            LocaleHelper.saveLanguage(context, languageCode)
                         }
                 }
         }
+    }
+
+    private fun saveThemeModePref(themeMode: String) {
+        val prefs = context.getSharedPreferences(THEME_PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit { putString(KEY_THEME_MODE, themeMode) }
     }
 }
 
@@ -128,7 +149,10 @@ data class MainUiState(
 enum class AppScreen {
     KeyGeneration,
     AesEncryption,
+    AesFile,
     ChaCha20Encryption,
+    ChaCha20File,
     TripleDesEncryption,
+    TripleDesFile,
     Encoding,
 }
