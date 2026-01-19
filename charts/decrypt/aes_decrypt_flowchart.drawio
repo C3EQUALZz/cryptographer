@@ -1,0 +1,400 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0" version="29.3.2">
+  <diagram name="AES Decrypt Flow" id="aes-decrypt-flow">
+    <mxGraphModel dx="511715" dy="365272" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="2000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-1" edge="1" parent="1" source="start" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="check-algo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="start" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontStyle=1" value="начало" vertex="1">
+          <mxGeometry height="50" width="120" x="640" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-2" edge="1" parent="1" source="check-algo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="check-iv">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-22" connectable="0" parent="HCnW5KxzG7VYlNbwYqIt-2" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Да" vertex="1">
+          <mxGeometry relative="1" x="-0.0512" y="-1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="check-algo" parent="1" style="rhombus;whiteSpace=wrap;html=1;align=center;" value="Проверка поддерживаемого алгоритма (AES_128/192/256)" vertex="1">
+          <mxGeometry height="80" width="280" x="560" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="error-unsupported" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="&lt;div&gt;UnsupportedAlgorithmError(&lt;/div&gt;&lt;div&gt;&quot;AesEncryptionService&quot;&lt;/div&gt;&lt;div&gt;)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="230" x="900" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-4" edge="1" parent="1" source="check-iv" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="check-length">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-23" connectable="0" parent="HCnW5KxzG7VYlNbwYqIt-4" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Да" vertex="1">
+          <mxGeometry relative="1" x="-0.2246" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-5" edge="1" parent="1" source="check-iv" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="error-iv">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-21" connectable="0" parent="HCnW5KxzG7VYlNbwYqIt-5" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Нет" vertex="1">
+          <mxGeometry relative="1" x="-0.3426" y="4" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="check-iv" parent="1" style="rhombus;whiteSpace=wrap;html=1;align=center;" value="IV присутствует и длина корректна" vertex="1">
+          <mxGeometry height="70" width="250" x="570" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="error-iv" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="DomainError (IV отсутствует или неверная длина)" vertex="1">
+          <mxGeometry height="70" width="280" x="900" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-6" edge="1" parent="1" source="check-length" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="error-length">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-24" connectable="0" parent="HCnW5KxzG7VYlNbwYqIt-6" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Нет" vertex="1">
+          <mxGeometry relative="1" x="-0.4923" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-7" edge="1" parent="1" source="check-length" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="build-context">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-25" connectable="0" parent="HCnW5KxzG7VYlNbwYqIt-7" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Да" vertex="1">
+          <mxGeometry relative="1" x="-0.314" y="-2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="check-length" parent="1" style="rhombus;whiteSpace=wrap;html=1;align=center;" value="EncryptedData ≥ длины тега" vertex="1">
+          <mxGeometry height="70" width="250" x="570" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="error-length" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="DomainError (данные слишком короткие)" vertex="1">
+          <mxGeometry height="70" width="260" x="900" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-9" edge="1" parent="1" source="build-context" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="split">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="build-context" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="Создать AesKeySize и AesNumRounds&#xa;KeyExpansion: RotWord + SubWord + Rcon (по словам)" vertex="1">
+          <mxGeometry height="80" width="320" x="100" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-26" edge="1" parent="1" source="split" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="gcm-h">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="split" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="Разделить encryptedData на ciphertext + tag" vertex="1">
+          <mxGeometry height="60" width="300" x="110" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="aes-init" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="E(K, X): State = X&#xa;AddRoundKey(state, roundKey[Nr])" vertex="1">
+          <mxGeometry height="60" width="180" x="50" y="710" as="geometry" />
+        </mxCell>
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-10" edge="1" parent="1" source="aes-round-loop-start" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="aes-round-ops">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="aes-round-loop-start" parent="1" style="rhombus;whiteSpace=wrap;html=1;align=center;" value="round &gt; 0?" vertex="1">
+          <mxGeometry height="60" width="140" x="70" y="820" as="geometry" />
+        </mxCell>
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-19" edge="1" parent="1" source="aes-round-ops" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="aes-round-dec">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="aes-round-ops" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="InvShiftRows(state)&#xa;InvSubBytes(state)&#xa;AddRoundKey(state, roundKey[round])&#xa;InvMixColumns(state)" vertex="1">
+          <mxGeometry height="80" width="160" x="60" y="910" as="geometry" />
+        </mxCell>
+        <mxCell id="aes-round-dec" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="round--" vertex="1">
+          <mxGeometry height="40" width="100" x="90" y="1010" as="geometry" />
+        </mxCell>
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-12" edge="1" parent="1" source="aes-final-round" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="gcm-j0">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="560" y="860" />
+              <mxPoint x="560" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aes-final-round" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="InvShiftRows(state)&#xa;InvSubBytes(state)&#xa;AddRoundKey(state, roundKey[0])&#xa;Output = state" vertex="1">
+          <mxGeometry height="80" width="180" x="280" y="810" as="geometry" />
+        </mxCell>
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-11" edge="1" parent="1" source="gcm-h" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="aes-init">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gcm-h" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="H = E(K, 0^128)" vertex="1">
+          <mxGeometry height="60" width="220" x="70" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="gcm-j0" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="J0 = IV || 0x00000001" vertex="1">
+          <mxGeometry height="60" width="220" x="460" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="gcm-ghash" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="GHASH" vertex="1">
+          <mxGeometry height="50" width="180" x="700" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="ghash-prepare-decrypt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="X = AAD || C || len(AAD) || len(C)&#xa;Разбить X на блоки по 128 бит" vertex="1">
+          <mxGeometry height="60" width="180" x="700" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="ghash-init-decrypt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="Y_0 = 0 (128 бит)&#xa;i = 0" vertex="1">
+          <mxGeometry height="60" width="140" x="720" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="ghash-loop-start-decrypt" parent="1" style="rhombus;whiteSpace=wrap;html=1;align=center;" value="i &lt; blocks?" vertex="1">
+          <mxGeometry height="60" width="120" x="730" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="ghash-xor-decrypt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="temp = Y_{i-1} XOR X_i" vertex="1">
+          <mxGeometry height="50" width="140" x="720" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="ghash-multiply-decrypt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="Y_i = temp * H&#xa;(GF(2^128) умножение)" vertex="1">
+          <mxGeometry height="60" width="160" x="710" y="970" as="geometry" />
+        </mxCell>
+        <mxCell id="ghash-inc-decrypt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="i++" vertex="1">
+          <mxGeometry height="40" width="80" x="750" y="1080" as="geometry" />
+        </mxCell>
+        <mxCell id="ghash-output-decrypt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="GHASH = Y_n" vertex="1">
+          <mxGeometry height="50" width="120" x="929" y="785" as="geometry" />
+        </mxCell>
+        <mxCell id="gcm-tagcalc" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="expectedTag = GHASH ⊕ E(K, J0)" vertex="1">
+          <mxGeometry height="30" width="210" x="887" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-13" edge="1" parent="1" source="check-tag" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="ctr-decrypt">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1060" y="655" />
+              <mxPoint x="1060" y="1150" />
+              <mxPoint x="660" y="1150" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-17" connectable="0" parent="HCnW5KxzG7VYlNbwYqIt-13" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Да" vertex="1">
+          <mxGeometry relative="1" x="-0.8708" y="-1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="check-tag" parent="1" style="rhombus;whiteSpace=wrap;html=1;align=center;" value="Тег валиден? (constant-time compare)" vertex="1">
+          <mxGeometry height="70" width="240" x="1070" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="ctr-decrypt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="CTR Mode" vertex="1">
+          <mxGeometry height="50" width="180" x="570" y="1220" as="geometry" />
+        </mxCell>
+        <mxCell id="ctr-init-decrypt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="ctr = J0 + 1&#xa;i = 0" vertex="1">
+          <mxGeometry height="60" width="140" x="590" y="1320" as="geometry" />
+        </mxCell>
+        <mxCell id="ctr-loop-start-decrypt" parent="1" style="rhombus;whiteSpace=wrap;html=1;align=center;" value="i &lt; blocks?" vertex="1">
+          <mxGeometry height="60" width="120" x="599" y="1414" as="geometry" />
+        </mxCell>
+        <mxCell id="ctr-encrypt-decrypt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="S = E(K, ctr)&#xa;(использует AES блок)" vertex="1">
+          <mxGeometry height="60" width="140" x="590" y="1504" as="geometry" />
+        </mxCell>
+        <mxCell id="ctr-xor-decrypt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="P[i] = C[i] XOR S" vertex="1">
+          <mxGeometry height="50" width="140" x="590" y="1584" as="geometry" />
+        </mxCell>
+        <mxCell id="ctr-inc-decrypt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="ctr++&#xa;i++" vertex="1">
+          <mxGeometry height="50" width="100" x="610" y="1654" as="geometry" />
+        </mxCell>
+        <mxCell id="ctr-output-decrypt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="plaintext = P[0]||...||P[n-1]" vertex="1">
+          <mxGeometry height="50" width="180" x="790" y="1419" as="geometry" />
+        </mxCell>
+        <mxCell id="error-auth" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="DomainError (authentication failed)" vertex="1">
+          <mxGeometry height="70" width="260" x="1080" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-15" edge="1" parent="1" source="return-success" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="end">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="return-success" parent="1" style="parallelogram;whiteSpace=wrap;html=1;fontStyle=1;align=center;" value="Result.success(plaintext)" vertex="1">
+          <mxGeometry height="70" width="240" x="809" y="1220" as="geometry" />
+        </mxCell>
+        <mxCell id="end" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontStyle=1" value="конец" vertex="1">
+          <mxGeometry height="80" width="200" x="1120" y="1300" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="start" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=1;" target="check-algo" />
+        <mxCell id="e2" edge="1" parent="1" source="check-algo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="error-unsupported" />
+        <mxCell id="e2-label" parent="e2" style="edgeLabel;html=1;align=center;verticalAlign=middle;" value="Нет" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="-1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="check-algo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="check-iv" value="Да" />
+        <mxCell id="e4" edge="1" parent="1" source="check-iv" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="error-iv" />
+        <mxCell id="e4-label" parent="e4" style="edgeLabel;html=1;align=center;verticalAlign=middle;" value="Нет" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="-1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="check-iv" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="check-length" value="Да" />
+        <mxCell id="e6" edge="1" parent="1" source="check-length" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="error-length" />
+        <mxCell id="e6-label" parent="e6" style="edgeLabel;html=1;align=center;verticalAlign=middle;" value="Нет" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="-1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="check-length" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="build-context" value="Да" />
+        <mxCell id="e8" edge="1" parent="1" source="build-context" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="split" />
+        <mxCell id="e9b" edge="1" parent="1" source="gcm-h" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="gcm-j0" />
+        <mxCell id="e9c" edge="1" parent="1" source="gcm-j0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="gcm-ghash" />
+        <mxCell id="e10" edge="1" parent="1" source="gcm-tagcalc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="check-tag">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1105" y="570" />
+              <mxPoint x="1190" y="570" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="check-tag" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="ctr-decrypt" value="Да" />
+        <mxCell id="e11b" edge="1" parent="1" source="ctr-output-decrypt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="return-success" />
+        <mxCell id="e12" edge="1" parent="1" source="check-tag" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="error-auth" value="Нет" />
+        <mxCell id="e13" edge="1" parent="1" source="return-success" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="end" />
+        <mxCell id="e14" edge="1" parent="1" source="error-unsupported" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="end">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1370" y="165" />
+              <mxPoint x="1370" y="1340" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="error-iv" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="end">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1370" y="285" />
+              <mxPoint x="1370" y="1340" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e16" edge="1" parent="1" source="error-length" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="end">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1370" y="405" />
+              <mxPoint x="1370" y="1340" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e17" edge="1" parent="1" source="error-auth" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="end">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1210" y="960" />
+              <mxPoint x="1370" y="960" />
+              <mxPoint x="1370" y="1340" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aes-arrow-tagcalc" edge="1" parent="1" source="gcm-tagcalc" style="endArrow=classic;html=1;rounded=0;dashed=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" target="aes-init" value="использует E(K, J0)">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="990" y="460" />
+              <mxPoint x="930" y="460" />
+              <mxPoint x="440" y="460" />
+              <mxPoint x="440" y="740" />
+            </Array>
+            <mxPoint x="1030" y="510" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aes-loop-init" edge="1" parent="1" source="aes-init" style="endArrow=classic;html=1;rounded=0;" target="aes-round-loop-start">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="130" y="800" />
+              <mxPoint x="140" y="800" />
+            </Array>
+            <mxPoint x="710" y="600" as="sourcePoint" />
+            <mxPoint x="760" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aes-loop-back" edge="1" parent="1" source="aes-round-dec" style="endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="aes-round-loop-start">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="30" y="1030" />
+              <mxPoint x="30" y="850" />
+            </Array>
+            <mxPoint x="700" y="750" as="sourcePoint" />
+            <mxPoint x="59.99999999998545" y="1000" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aes-loop-no" edge="1" parent="1" source="aes-round-loop-start" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="aes-final-round" value="Нет">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="710" y="600" as="sourcePoint" />
+            <mxPoint x="760" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ctr-arrow-init-decrypt" edge="1" parent="1" source="ctr-decrypt" style="endArrow=classic;html=1;rounded=0;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="ctr-init-decrypt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ctr-loop-start-arrow-decrypt" edge="1" parent="1" source="ctr-init-decrypt" style="endArrow=classic;html=1;rounded=0;" target="ctr-loop-start-decrypt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ctr-loop-yes-decrypt" edge="1" parent="1" source="ctr-loop-start-decrypt" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="ctr-encrypt-decrypt" value="Да">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ctr-arrow-aes-decrypt" edge="1" parent="1" source="ctr-encrypt-decrypt" style="endArrow=classic;html=1;rounded=0;dashed=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="aes-init">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="490" y="1534" />
+              <mxPoint x="500" y="740" />
+              <mxPoint x="360" y="740" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ctr-encrypt-xor-decrypt" edge="1" parent="1" source="ctr-encrypt-decrypt" style="endArrow=classic;html=1;rounded=0;" target="ctr-xor-decrypt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ctr-xor-inc-decrypt" edge="1" parent="1" source="ctr-xor-decrypt" style="endArrow=classic;html=1;rounded=0;" target="ctr-inc-decrypt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ctr-loop-back-decrypt" edge="1" parent="1" source="ctr-inc-decrypt" style="endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="ctr-loop-start-decrypt">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="550" y="1679" />
+              <mxPoint x="550" y="1444" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ctr-loop-no-decrypt" edge="1" parent="1" source="ctr-loop-start-decrypt" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="ctr-output-decrypt" value="Нет">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ghash-arrow-prepare-decrypt" edge="1" parent="1" source="gcm-ghash" style="endArrow=classic;html=1;rounded=0;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="ghash-prepare-decrypt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ghash-prepare-init-decrypt" edge="1" parent="1" source="ghash-prepare-decrypt" style="endArrow=classic;html=1;rounded=0;" target="ghash-init-decrypt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ghash-init-loop-decrypt" edge="1" parent="1" source="ghash-init-decrypt" style="endArrow=classic;html=1;rounded=0;" target="ghash-loop-start-decrypt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ghash-loop-yes-decrypt" edge="1" parent="1" source="ghash-loop-start-decrypt" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="ghash-xor-decrypt" value="Да">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ghash-xor-multiply-decrypt" edge="1" parent="1" source="ghash-xor-decrypt" style="endArrow=classic;html=1;rounded=0;" target="ghash-multiply-decrypt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ghash-arrow-h-decrypt" edge="1" parent="1" source="gcm-h" style="endArrow=classic;html=1;rounded=0;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=default;" target="ghash-multiply-decrypt" value="использует H">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="320" y="620" />
+              <mxPoint x="320" y="1000" />
+              <mxPoint x="520" y="1000" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ghash-multiply-inc-decrypt" edge="1" parent="1" source="ghash-multiply-decrypt" style="endArrow=classic;html=1;rounded=0;" target="ghash-inc-decrypt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ghash-loop-back-decrypt" edge="1" parent="1" source="ghash-inc-decrypt" style="endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="ghash-loop-start-decrypt">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="650" y="1100" />
+              <mxPoint x="650" y="1060" />
+              <mxPoint x="650" y="810" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ghash-loop-no-decrypt" edge="1" parent="1" source="ghash-loop-start-decrypt" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="ghash-output-decrypt" value="Нет">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ghash-to-tagcalc-decrypt" edge="1" parent="1" source="ghash-output-decrypt" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="gcm-tagcalc">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-3" edge="1" parent="1" source="check-algo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.021;entryY=0.371;entryDx=0;entryDy=0;entryPerimeter=0;" target="error-unsupported">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-20" connectable="0" parent="HCnW5KxzG7VYlNbwYqIt-3" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Нет" vertex="1">
+          <mxGeometry relative="1" x="-0.305" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-14" edge="1" parent="1" source="ctr-output-decrypt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.29;entryY=1.032;entryDx=0;entryDy=0;entryPerimeter=0;" target="return-success">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-16" edge="1" parent="1" source="check-tag" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.969;entryY=-0.014;entryDx=0;entryDy=0;entryPerimeter=0;" target="error-auth">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HCnW5KxzG7VYlNbwYqIt-18" connectable="0" parent="HCnW5KxzG7VYlNbwYqIt-16" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Нет" vertex="1">
+          <mxGeometry relative="1" x="-0.017" y="2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

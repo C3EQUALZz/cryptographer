@@ -1,0 +1,329 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0" version="29.3.2">
+  <diagram name="ChaCha20 Encrypt Flow" id="chacha20-encrypt-flow">
+    <mxGraphModel dx="220018" dy="156973" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="2000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="8SRwu1E5l4SnshY5ShuZ-1" edge="1" parent="1" source="start" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="check-algo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="start" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontStyle=1" value="начало" vertex="1">
+          <mxGeometry height="50" width="120" x="640" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="8SRwu1E5l4SnshY5ShuZ-2" edge="1" parent="1" source="check-algo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="check-key-length">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ltx4zrGBe34YlkzjMWE-12" connectable="0" parent="8SRwu1E5l4SnshY5ShuZ-2" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Да" vertex="1">
+          <mxGeometry relative="1" x="-0.5333" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="check-algo" parent="1" style="rhombus;whiteSpace=wrap;html=1;align=center;" value="Проверка алгоритма (CHACHA20_256)" vertex="1">
+          <mxGeometry height="80" width="260" x="570" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="error-unsupported" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="&lt;div&gt;UnsupportedAlgorithmError(&lt;/div&gt;&lt;div&gt;&quot;ChaCha20EncryptionService&quot;&lt;/div&gt;&lt;div&gt;)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="250" x="900" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="2ltx4zrGBe34YlkzjMWE-6" edge="1" parent="1" source="check-key-length" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="generate-nonce">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ltx4zrGBe34YlkzjMWE-13" connectable="0" parent="2ltx4zrGBe34YlkzjMWE-6" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Да" vertex="1">
+          <mxGeometry relative="1" x="-0.5331" y="-4" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="check-key-length" parent="1" style="rhombus;whiteSpace=wrap;html=1;align=center;" value="Проверка длины ключа (32 байта)" vertex="1">
+          <mxGeometry height="70" width="240" x="580" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="error-domain" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="DomainError (неверная длина ключа)" vertex="1">
+          <mxGeometry height="70" width="250" x="900" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="2ltx4zrGBe34YlkzjMWE-2" edge="1" parent="1" source="generate-nonce" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="poly-key-gen">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="generate-nonce" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="Сгенерировать nonce (12 байт)&#xa;SecureRandom().nextBytes(nonce)" vertex="1">
+          <mxGeometry height="70" width="280" x="50" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="2ltx4zrGBe34YlkzjMWE-5" edge="1" parent="1" source="poly-key-gen" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="poly-keygen-init">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="poly-key-gen" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="Генерация Poly1305 ключа" vertex="1">
+          <mxGeometry height="50" width="240" x="390" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="poly-keygen-init" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="ChaCha20.block(key, counter=0, nonce):&#xa;Инициализация state (16 слов)&#xa;constants + key + counter + nonce" vertex="1">
+          <mxGeometry height="70" width="300" x="30" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="poly-keygen-rounds-init" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="Сохранить начальный state&#xa;round = 0" vertex="1">
+          <mxGeometry height="50" width="200" x="80" y="570" as="geometry" />
+        </mxCell>
+        <mxCell id="poly-keygen-loop-start" parent="1" style="rhombus;whiteSpace=wrap;html=1;align=center;" value="round &lt; 10?" vertex="1">
+          <mxGeometry height="60" width="140" x="110" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="poly-keygen-column" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="4 × quarterRound&#xa;(column rounds)" vertex="1">
+          <mxGeometry height="50" width="160" x="100" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="poly-keygen-diagonal" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="4 × quarterRound&#xa;(diagonal rounds)" vertex="1">
+          <mxGeometry height="50" width="160" x="100" y="840" as="geometry" />
+        </mxCell>
+        <mxCell id="poly-keygen-round-inc" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="round++" vertex="1">
+          <mxGeometry height="40" width="100" x="130" y="920" as="geometry" />
+        </mxCell>
+        <mxCell id="poly-keygen-add" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="Добавить начальный state&#xa;к рабочему state" vertex="1">
+          <mxGeometry height="50" width="200" x="320" y="655" as="geometry" />
+        </mxCell>
+        <mxCell id="2ltx4zrGBe34YlkzjMWE-7" edge="1" parent="1" source="poly-keygen-extract" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="chacha20-init">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="650" y="765" />
+              <mxPoint x="650" y="415" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="poly-keygen-extract" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="Конвертировать в байты&#xa;polyKey = block[0..31]" vertex="1">
+          <mxGeometry height="50" width="200" x="320" y="740" as="geometry" />
+        </mxCell>
+        <mxCell id="8SRwu1E5l4SnshY5ShuZ-8" edge="1" parent="1" source="chacha20-init" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="chacha20-loop-start">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="chacha20-init" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="ChaCha20 Stream Cipher:&#xa;counter = 1, offset = 0" vertex="1">
+          <mxGeometry height="60" width="240" x="890" y="385" as="geometry" />
+        </mxCell>
+        <mxCell id="8SRwu1E5l4SnshY5ShuZ-10" edge="1" parent="1" source="chacha20-loop-start" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="chacha20-block">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8SRwu1E5l4SnshY5ShuZ-18" connectable="0" parent="8SRwu1E5l4SnshY5ShuZ-10" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Да" vertex="1">
+          <mxGeometry relative="1" x="-0.8307" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="chacha20-loop-start" parent="1" style="rhombus;whiteSpace=wrap;html=1;align=center;" value="offset &lt; plaintext.size?" vertex="1">
+          <mxGeometry height="70" width="200" x="910" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="chacha20-block" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="keyStream = ChaCha20.block(key, counter, nonce)&#xa;(64 байта)" vertex="1">
+          <mxGeometry height="60" width="280" x="810" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="8SRwu1E5l4SnshY5ShuZ-12" edge="1" parent="1" source="chacha20-xor" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="chacha20-inc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="chacha20-xor" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="ciphertext[offset..offset+blockLen] =&#xa;plaintext[offset..offset+blockLen] XOR keyStream" vertex="1">
+          <mxGeometry height="60" width="320" x="780" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="8SRwu1E5l4SnshY5ShuZ-9" edge="1" parent="1" source="chacha20-inc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="chacha20-loop-start">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="690" y="835" />
+              <mxPoint x="690" y="515" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="chacha20-inc" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="counter++&#xa;offset += blockLen" vertex="1">
+          <mxGeometry height="50" width="140" x="870" y="810" as="geometry" />
+        </mxCell>
+        <mxCell id="8SRwu1E5l4SnshY5ShuZ-13" edge="1" parent="1" source="poly1305-init" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="poly1305-compute">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="poly1305-init" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="Poly1305 MAC:&#xa;macData = AAD || ciphertext || len(AAD) || len(ciphertext)" vertex="1">
+          <mxGeometry height="70" width="360" x="780" y="960" as="geometry" />
+        </mxCell>
+        <mxCell id="poly1305-compute" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="Генерация Poly1305 тега" vertex="1">
+          <mxGeometry height="50" width="240" x="440" y="970" as="geometry" />
+        </mxCell>
+        <mxCell id="poly1305-clamp" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="Clamp r = polyKey[0..15]&#xa;s = polyKey[16..31]" vertex="1">
+          <mxGeometry height="50" width="200" x="180" y="1100" as="geometry" />
+        </mxCell>
+        <mxCell id="poly1305-acc-init" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="Инициализация аккумулятора:&#xa;h = [0, 0, 0, 0, 0]" vertex="1">
+          <mxGeometry height="50" width="220" x="170" y="1180" as="geometry" />
+        </mxCell>
+        <mxCell id="poly1305-block-loop-start" parent="1" style="rhombus;whiteSpace=wrap;html=1;align=center;" value="offset &lt; macData.size?" vertex="1">
+          <mxGeometry height="70" width="180" x="190" y="1260" as="geometry" />
+        </mxCell>
+        <mxCell id="poly1305-get-block" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="block = macData[offset..offset+15]&#xa;(16 байт, padding если нужно)" vertex="1">
+          <mxGeometry height="50" width="240" x="160" y="1370" as="geometry" />
+        </mxCell>
+        <mxCell id="poly1305-add-block" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="h += block&#xa;(с carry propagation)" vertex="1">
+          <mxGeometry height="50" width="180" x="190" y="1450" as="geometry" />
+        </mxCell>
+        <mxCell id="poly1305-multiply" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="h = (h * r) mod (2^130 - 5)&#xa;(partial reduction)" vertex="1">
+          <mxGeometry height="50" width="200" x="180" y="1530" as="geometry" />
+        </mxCell>
+        <mxCell id="poly1305-offset-inc" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="offset += 16" vertex="1">
+          <mxGeometry height="40" width="120" x="220" y="1610" as="geometry" />
+        </mxCell>
+        <mxCell id="poly1305-final-reduce" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="Финальная редукция:&#xa;h = (h + 5) или h" vertex="1">
+          <mxGeometry height="50" width="180" x="450" y="1290" as="geometry" />
+        </mxCell>
+        <mxCell id="poly1305-add-s" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="tag = (h + s) mod 2^128" vertex="1">
+          <mxGeometry height="50" width="180" x="450" y="1370" as="geometry" />
+        </mxCell>
+        <mxCell id="poly1305-convert" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="Конвертировать в 16 байт&#xa;(little-endian)" vertex="1">
+          <mxGeometry height="50" width="200" x="440" y="1450" as="geometry" />
+        </mxCell>
+        <mxCell id="2ltx4zrGBe34YlkzjMWE-9" edge="1" parent="1" source="combine" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="create-entity">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="combine" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="encryptedData = ciphertext || tag" vertex="1">
+          <mxGeometry height="60" width="280" x="800" y="1090" as="geometry" />
+        </mxCell>
+        <mxCell id="8SRwu1E5l4SnshY5ShuZ-16" edge="1" parent="1" source="create-entity" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="return-success">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="create-entity" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=center;" value="EncryptedText(encryptedData, algorithm, nonce)" vertex="1">
+          <mxGeometry height="60" width="300" x="790" y="1210" as="geometry" />
+        </mxCell>
+        <mxCell id="8SRwu1E5l4SnshY5ShuZ-17" edge="1" parent="1" source="return-success" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="end">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="return-success" parent="1" style="parallelogram;whiteSpace=wrap;html=1;fontStyle=1;align=center;" value="Result.success(EncryptedText)" vertex="1">
+          <mxGeometry height="70" width="240" x="820" y="1310" as="geometry" />
+        </mxCell>
+        <mxCell id="end" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontStyle=1" value="конец" vertex="1">
+          <mxGeometry height="80" width="200" x="840" y="1420" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="start" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=1;" target="check-algo" />
+        <mxCell id="e2" edge="1" parent="1" source="check-algo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="error-unsupported" />
+        <mxCell id="e2-label" parent="e2" style="edgeLabel;html=1;align=center;verticalAlign=middle;" value="Нет" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="-1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="check-algo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="check-key-length" value="Да" />
+        <mxCell id="e4" edge="1" parent="1" source="check-key-length" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="error-domain" />
+        <mxCell id="e4-label" parent="e4" style="edgeLabel;html=1;align=center;verticalAlign=middle;" value="Нет" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="-1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="check-key-length" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="generate-nonce" value="Да" />
+        <mxCell id="e6" edge="1" parent="1" source="generate-nonce" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="poly-key-gen" />
+        <mxCell id="e7" edge="1" parent="1" source="poly-key-gen" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="chacha20-init" />
+        <mxCell id="e8" edge="1" parent="1" source="chacha20-init" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="chacha20-loop-start" />
+        <mxCell id="e9" edge="1" parent="1" source="chacha20-loop-start" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="chacha20-block" value="Да" />
+        <mxCell id="e10" edge="1" parent="1" source="chacha20-block" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="chacha20-xor" />
+        <mxCell id="e11" edge="1" parent="1" source="chacha20-xor" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="chacha20-inc" />
+        <mxCell id="e13" edge="1" parent="1" source="chacha20-loop-start" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0.5;entryY=0;" target="poly1305-init" value="Нет">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1140" y="515" />
+              <mxPoint x="1140" y="910" />
+              <mxPoint x="960" y="910" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="poly1305-init" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="poly1305-compute" />
+        <mxCell id="e15" edge="1" parent="1" source="poly1305-compute" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="combine" />
+        <mxCell id="e16" edge="1" parent="1" source="combine" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="create-entity" />
+        <mxCell id="e17" edge="1" parent="1" source="create-entity" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="return-success" />
+        <mxCell id="e18" edge="1" parent="1" source="return-success" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="end" />
+        <mxCell id="e19" edge="1" parent="1" source="error-unsupported" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="end">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1200" y="195" />
+              <mxPoint x="1200" y="1460" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e20" edge="1" parent="1" source="error-domain" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="end">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1200" y="305" />
+              <mxPoint x="1200" y="1460" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8SRwu1E5l4SnshY5ShuZ-3" edge="1" parent="1" source="check-algo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=-0.014;entryY=0.617;entryDx=0;entryDy=0;entryPerimeter=0;" target="error-unsupported">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ltx4zrGBe34YlkzjMWE-11" connectable="0" parent="8SRwu1E5l4SnshY5ShuZ-3" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Нет" vertex="1">
+          <mxGeometry relative="1" x="0.4487" y="-1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8SRwu1E5l4SnshY5ShuZ-4" edge="1" parent="1" source="check-key-length" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=-0.01;entryY=0.411;entryDx=0;entryDy=0;entryPerimeter=0;" target="error-domain">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ltx4zrGBe34YlkzjMWE-10" connectable="0" parent="8SRwu1E5l4SnshY5ShuZ-4" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Нет" vertex="1">
+          <mxGeometry relative="1" x="0.4331" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8SRwu1E5l4SnshY5ShuZ-11" edge="1" parent="1" source="chacha20-block" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.527;entryY=-0.002;entryDx=0;entryDy=0;entryPerimeter=0;" target="chacha20-xor">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="poly-keygen-init-to-rounds" edge="1" parent="1" source="poly-keygen-init" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="poly-keygen-rounds-init">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="poly-keygen-rounds-to-loop" edge="1" parent="1" source="poly-keygen-rounds-init" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="poly-keygen-loop-start">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="poly-keygen-loop-yes" edge="1" parent="1" source="poly-keygen-loop-start" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;" target="poly-keygen-column" value="Да">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="poly-keygen-column-to-diag" edge="1" parent="1" source="poly-keygen-column" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="poly-keygen-diagonal">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="poly-keygen-diag-to-inc" edge="1" parent="1" source="poly-keygen-diagonal" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="poly-keygen-round-inc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="poly-keygen-inc-back" edge="1" parent="1" source="poly-keygen-round-inc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;entryX=0;entryY=0.5;" target="poly-keygen-loop-start">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="80" y="940" />
+              <mxPoint x="80" y="680" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="poly-keygen-loop-no" edge="1" parent="1" source="poly-keygen-loop-start" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;" target="poly-keygen-add" value="Нет">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="poly-keygen-add-to-extract" edge="1" parent="1" source="poly-keygen-add" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="poly-keygen-extract">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="poly1305-compute-detail" edge="1" parent="1" source="poly1305-compute" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;" target="poly1305-clamp">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="poly1305-clamp-to-init" edge="1" parent="1" source="poly1305-clamp" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="poly1305-acc-init">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="poly1305-init-to-loop" edge="1" parent="1" source="poly1305-acc-init" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="poly1305-block-loop-start">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="poly1305-loop-yes" edge="1" parent="1" source="poly1305-block-loop-start" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;" target="poly1305-get-block" value="Да">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="poly1305-get-to-add" edge="1" parent="1" source="poly1305-get-block" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="poly1305-add-block">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="poly1305-add-to-mult" edge="1" parent="1" source="poly1305-add-block" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="poly1305-multiply">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="poly1305-mult-to-inc" edge="1" parent="1" source="poly1305-multiply" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="poly1305-offset-inc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="poly1305-inc-back" edge="1" parent="1" source="poly1305-offset-inc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;entryX=0;entryY=0.5;" target="poly1305-block-loop-start">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="140" y="1630" />
+              <mxPoint x="140" y="1295" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="poly1305-loop-no" edge="1" parent="1" source="poly1305-block-loop-start" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;" target="poly1305-final-reduce" value="Нет">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="poly1305-reduce-to-add-s" edge="1" parent="1" source="poly1305-final-reduce" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="poly1305-add-s">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="poly1305-add-s-to-convert" edge="1" parent="1" source="poly1305-add-s" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="poly1305-convert">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="poly1305-convert-back" edge="1" parent="1" source="poly1305-convert" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="combine">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="540" y="1530" />
+              <mxPoint x="730" y="1530" />
+              <mxPoint x="730" y="1480" />
+              <mxPoint x="740" y="1480" />
+              <mxPoint x="740" y="1120" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
